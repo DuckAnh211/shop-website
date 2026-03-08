@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<title>Admin Login</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+form{
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.1);
+}
+
+input{
+display:block;
+margin:10px 0;
+padding:10px;
+width:250px;
+}
+
+button{
+padding:10px;
+background:#ff4d4f;
+color:white;
+border:none;
+width:100%;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<form id="loginForm">
+
+<h2>Admin Login</h2>
+
+<input type="text" name="username" placeholder="Username">
+
+<input type="password" name="password" placeholder="Password">
+
+<button>Login</button>
+
+</form>
+
+<script>
+
+document.getElementById("loginForm").addEventListener("submit",async e=>{
+
+e.preventDefault()
+
+const form = new FormData(e.target)
+
+const res = await fetch("/admin/login",{
+
+method:"POST",
+body:new URLSearchParams(form)
+
+})
+
+const data = await res.json()
+
+if(data.success){
+
+window.location="/admin.html"
+
+}else{
+
+alert("Invalid username or password")
+
+}
+
+})
+
+</script>
+
+</body>
+</html>

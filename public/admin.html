@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin | Product Management</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+	--bg:#fff8ef;
+	--bg-accent:#ffe3c2;
+	--panel:#fffdf8;
+	--text:#2f241f;
+	--muted:#725c51;
+	--brand:#d9572b;
+	--brand-strong:#bd471f;
+	--line:#f0d9c7;
+	--radius-lg:20px;
+	--radius-md:12px;
+}
+
+*{box-sizing:border-box}
+
+body{
+	margin:0;
+	font-family:"Be Vietnam Pro",sans-serif;
+	background:
+		radial-gradient(circle at 20% 10%, #ffd8ad 0%, transparent 45%),
+		radial-gradient(circle at 85% 80%, #ffe7c9 0%, transparent 35%),
+		var(--bg);
+	color:var(--text);
+}
+
+.wrap{
+	max-width:980px;
+	margin:28px auto;
+	padding:0 18px;
+}
+
+.title{
+	margin:0 0 16px;
+	font-family:"Fraunces",serif;
+	font-size:34px;
+}
+
+.subtitle{
+	margin:0 0 18px;
+	color:var(--muted);
+}
+
+.layout{
+	display:grid;
+	grid-template-columns:1.2fr .8fr;
+	gap:18px;
+}
+
+.panel{
+	background:var(--panel);
+	border:1px solid var(--line);
+	border-radius:var(--radius-lg);
+	padding:20px;
+}
+
+.helper{
+	margin:0;
+	color:var(--muted);
+	font-size:14px;
+}
+
+form{
+	margin-top:10px;
+	display:grid;
+	gap:12px;
+}
+
+label{
+	font-size:14px;
+	font-weight:600;
+}
+
+input, textarea{
+	width:100%;
+	margin-top:6px;
+	border:1px solid var(--line);
+	border-radius:var(--radius-md);
+	padding:10px 12px;
+	font-family:inherit;
+	font-size:14px;
+	background:#fff;
+}
+
+textarea{
+	min-height:110px;
+	resize:vertical;
+}
+
+.row{
+	display:grid;
+	grid-template-columns:1fr 1fr;
+	gap:10px;
+}
+
+.submit-btn{
+	border:none;
+	padding:12px;
+	border-radius:var(--radius-md);
+	background:var(--brand);
+	color:#fff;
+	font-weight:700;
+	cursor:pointer;
+}
+
+.submit-btn:hover{background:var(--brand-strong)}
+
+.ghost-btn{
+	border:1px solid var(--line);
+	padding:12px;
+	border-radius:var(--radius-md);
+	background:#fff;
+	color:var(--text);
+	font-weight:700;
+	cursor:pointer;
+}
+
+.preview{
+	border:1px dashed var(--line);
+	border-radius:var(--radius-md);
+	min-height:180px;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	overflow:hidden;
+	background:#fff;
+	color:var(--muted);
+	font-size:14px;
+	padding:10px;
+}
+
+.preview-grid{
+	width:100%;
+	display:grid;
+	grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
+	gap:8px;
+}
+
+.preview-grid img{
+	width:100%;
+	height:88px;
+	object-fit:cover;
+	border-radius:10px;
+	border:1px solid var(--line);
+}
+
+.meta p{
+	margin:8px 0;
+	color:var(--muted);
+}
+
+.actions{
+	display:grid;
+	grid-template-columns:1fr 1fr;
+	gap:10px;
+}
+
+.picked-tools{
+	margin-top:8px;
+	display:flex;
+	align-items:center;
+	justify-content:space-between;
+	gap:10px;
+}
+
+.picked-note{
+	margin:0;
+	font-size:13px;
+	color:var(--muted);
+}
+
+.picked-list{
+	margin-top:8px;
+	display:flex;
+	flex-wrap:wrap;
+	gap:6px;
+}
+
+.picked-item{
+	display:inline-flex;
+	align-items:center;
+	gap:6px;
+	padding:6px 8px;
+	border-radius:999px;
+	border:1px solid var(--line);
+	background:#fff;
+	font-size:12px;
+	max-width:100%;
+}
+
+.picked-name{
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+	max-width:180px;
+}
+
+.picked-remove{
+	border:none;
+	width:20px;
+	height:20px;
+	border-radius:50%;
+	line-height:1;
+	cursor:pointer;
+	background:#ffe1de;
+	color:#9f2620;
+	font-weight:700;
+}
+
+.list-panel{
+	margin-top:18px;
+}
+
+.product-list{
+	display:grid;
+	gap:12px;
+}
+
+.product-row{
+	border:1px solid var(--line);
+	border-radius:var(--radius-md);
+	padding:12px;
+	background:#fff;
+	display:grid;
+	grid-template-columns:90px 1fr auto;
+	gap:12px;
+	align-items:center;
+}
+
+.product-row img{
+	width:90px;
+	height:70px;
+	object-fit:cover;
+	border-radius:10px;
+	border:1px solid var(--line);
+}
+
+.product-row h4{
+	margin:0;
+	font-size:16px;
+}
+
+.product-row p{
+	margin:4px 0 0;
+	font-size:14px;
+	color:var(--muted);
+}
+
+.row-btns{
+	display:flex;
+	gap:8px;
+}
+
+.small-btn{
+	border:none;
+	padding:8px 10px;
+	border-radius:10px;
+	cursor:pointer;
+	font-weight:700;
+}
+
+.small-btn.edit{
+	background:#fce7cf;
+	color:#7b3b1d;
+}
+
+.small-btn.delete{
+	background:#ffe1de;
+	color:#9f2620;
+}
+
+.muted{
+	margin:0;
+	color:var(--muted);
+	font-size:14px;
+}
+
+.status{
+	min-height:24px;
+	font-size:14px;
+	font-weight:600;
+}
+
+.status.success{color:#1f8b47}
+.status.error{color:#b33425}
+
+@media (max-width:900px){
+	.layout{grid-template-columns:1fr}
+}
+
+@media (max-width:520px){
+	.row{grid-template-columns:1fr}
+	.actions{grid-template-columns:1fr}
+	.product-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+	<h1 class="title">Product Management</h1>
+	<p class="subtitle">Create, update, and delete published products.</p>
+	<div class="layout">
+		<section class="panel">
+			<p id="formHeading" class="helper">Creating a new product.</p>
+			<form id="productForm" enctype="multipart/form-data">
+				<input id="editingId" type="hidden" name="editingId" value="">
+
+				<label>Product name
+					<input id="name" name="name" placeholder="Example: Handmade canvas bag" required>
+				</label>
+
+				<div class="row">
+					<label>Selling price (USD)
+						<input id="price" name="price" type="number" min="0" step="0.01" placeholder="29.90" required>
+					</label>
+					<label>Original price (USD)
+						<input id="originalPrice" name="originalPrice" type="number" min="0" step="0.01" placeholder="39.90" required>
+					</label>
+				</div>
+
+				<label>Discount (%)
+					<input id="discount" name="discount" type="number" min="0" max="99" placeholder="Auto-calculated when left empty">
+				</label>
+
+				<label>Description
+					<textarea id="description" name="description" placeholder="Short details about materials and size..." required></textarea>
+				</label>
+
+				<label>Product images (you can select multiple)
+					<input id="imageInput" type="file" name="images" accept="image/*" multiple>
+					<div class="picked-tools">
+						<p id="pickedNote" class="picked-note">You can choose files multiple times. They will be combined automatically.</p>
+						<button id="clearPickedBtn" class="ghost-btn" type="button">Clear selected images</button>
+					</div>
+					<div id="pickedList" class="picked-list"></div>
+				</label>
+
+				<div class="actions">
+					<button id="submitBtn" class="submit-btn" type="submit">Publish product</button>
+					<button id="cancelEditBtn" class="ghost-btn" type="button">Cancel edit</button>
+				</div>
+
+				<div id="status" class="status" aria-live="polite"></div>
+			</form>
+		</section>
+
+		<aside class="panel meta">
+			<div id="preview" class="preview">Image previews will appear here</div>
+			<p><strong>Tip:</strong> 4:3 or 1:1 images look best on product cards.</p>
+			<p><strong>Note:</strong> During edit, selecting new images replaces the current image set.</p>
+		</aside>
+	</div>
+
+	<section class="panel list-panel">
+		<h3 style="margin:0 0 10px;">Published products</h3>
+		<div id="productList" class="product-list"></div>
+	</section>
+</div>
+
+<script>
+const form = document.getElementById("productForm")
+const imageInput = document.getElementById("imageInput")
+const preview = document.getElementById("preview")
+const statusBox = document.getElementById("status")
+const productList = document.getElementById("productList")
+const submitBtn = document.getElementById("submitBtn")
+const cancelEditBtn = document.getElementById("cancelEditBtn")
+const formHeading = document.getElementById("formHeading")
+const editingId = document.getElementById("editingId")
+const pickedList = document.getElementById("pickedList")
+const pickedNote = document.getElementById("pickedNote")
+const clearPickedBtn = document.getElementById("clearPickedBtn")
+
+let allProducts = []
+let selectedFiles = []
+
+async function readResponsePayload(response){
+	const rawText = await response.text()
+	if(!rawText){
+		return {}
+	}
+
+	if(rawText.trim().startsWith("<!DOCTYPE") || rawText.trim().startsWith("<html")){
+		return { message: `Server returned HTML instead of JSON (HTTP ${response.status}). Please check the backend API or restart the server.` }
+	}
+
+	try{
+		return JSON.parse(rawText)
+	}catch(parseError){
+		return { message: rawText }
+	}
+}
+
+function formatCurrency(value){
+	return new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", minimumFractionDigits:2, maximumFractionDigits:2 }).format(Number(value) || 0)
+}
+
+function getProductImages(product){
+	if(Array.isArray(product.images) && product.images.length){
+		return product.images.map((name)=>`/uploads/${name}`)
+	}
+
+	if(product.image){
+		return [`/uploads/${product.image}`]
+	}
+
+	return []
+}
+
+function getFileIdentity(file){
+	return `${file.name}__${file.size}__${file.lastModified}`
+}
+
+function setPreviewFromUrls(urls){
+	if(!urls.length){
+		preview.textContent = "Image previews will appear here"
+		return
+	}
+
+	const grid = document.createElement("div")
+	grid.className = "preview-grid"
+
+	urls.forEach((url, index)=>{
+		const image = document.createElement("img")
+		image.src = url
+		image.alt = `Preview image ${index + 1}`
+		grid.appendChild(image)
+	})
+
+	preview.innerHTML = ""
+	preview.appendChild(grid)
+}
+
+function resetFormState(){
+	form.reset()
+	editingId.value = ""
+	selectedFiles = []
+	formHeading.textContent = "Creating a new product."
+	submitBtn.textContent = "Publish product"
+	statusBox.className = "status"
+	statusBox.textContent = ""
+	preview.textContent = "Image previews will appear here"
+	renderSelectedFiles()
+}
+
+function enterEditMode(product){
+	editingId.value = String(product._id)
+	formHeading.textContent = `Editing: ${product.name || "Product"}`
+	submitBtn.textContent = "Save changes"
+
+	form.name.value = product.name || ""
+	form.price.value = product.price || 0
+	form.originalPrice.value = product.originalPrice || 0
+	form.discount.value = Number.isFinite(Number(product.discount)) ? product.discount : ""
+	form.description.value = product.description || ""
+	imageInput.value = ""
+	selectedFiles = []
+	renderSelectedFiles()
+
+	setPreviewFromUrls(getProductImages(product))
+	window.scrollTo({ top:0, behavior:"smooth" })
+}
+
+function syncPreviewBySelectedFiles(){
+	if(selectedFiles.length){
+		const objectUrls = selectedFiles.map((file)=>URL.createObjectURL(file))
+		setPreviewFromUrls(objectUrls)
+		window.setTimeout(()=>{
+			objectUrls.forEach((url)=>URL.revokeObjectURL(url))
+		}, 1200)
+		return
+	}
+
+	if(editingId.value){
+		const product = allProducts.find((item)=>String(item._id) === editingId.value)
+		setPreviewFromUrls(product ? getProductImages(product) : [])
+		return
+	}
+
+	preview.textContent = "Image previews will appear here"
+}
+
+function renderSelectedFiles(){
+	pickedList.innerHTML = ""
+	if(!selectedFiles.length){
+		pickedNote.textContent = "You can choose files multiple times. They will be combined automatically."
+		clearPickedBtn.disabled = true
+		return
+	}
+
+	pickedNote.textContent = `${selectedFiles.length} image(s) selected.`
+	clearPickedBtn.disabled = false
+
+	selectedFiles.forEach((file)=>{
+		const item = document.createElement("div")
+		item.className = "picked-item"
+		item.innerHTML = `
+			<span class="picked-name" title="${file.name}">${file.name}</span>
+			<button type="button" class="picked-remove" aria-label="Remove image ${file.name}">x</button>
+		`
+
+		item.querySelector(".picked-remove").addEventListener("click", ()=>{
+			const identity = getFileIdentity(file)
+			selectedFiles = selectedFiles.filter((selected)=>getFileIdentity(selected) !== identity)
+			renderSelectedFiles()
+			syncPreviewBySelectedFiles()
+		})
+
+		pickedList.appendChild(item)
+	})
+}
+
+function renderProducts(){
+	productList.innerHTML = ""
+
+	if(!allProducts.length){
+		productList.innerHTML = '<p class="muted">No products yet.</p>'
+		return
+	}
+
+	allProducts.forEach((product)=>{
+		const images = getProductImages(product)
+		const row = document.createElement("article")
+		row.className = "product-row"
+		row.innerHTML = `
+			<img src="${images[0] || "https://via.placeholder.com/160x120?text=No+Image"}" alt="${product.name || "Product"}">
+			<div>
+				<h4>${product.name || "Product"}</h4>
+				<p>${formatCurrency(product.price)} | ${images.length} image(s)</p>
+			</div>
+			<div class="row-btns">
+				<button type="button" class="small-btn edit">Edit</button>
+				<button type="button" class="small-btn delete">Delete</button>
+			</div>
+		`
+
+		row.querySelector(".edit").addEventListener("click", ()=>enterEditMode(product))
+		row.querySelector(".delete").addEventListener("click", async ()=>{
+			const ok = window.confirm(`Delete product \"${product.name || "Product"}\"?`)
+			if(!ok){
+				return
+			}
+
+			try{
+				const response = await fetch(`/admin/products/${product._id}`, { method:"DELETE" })
+				const payload = await readResponsePayload(response)
+				if(!response.ok){
+					throw new Error(payload.message || `Failed to delete product (HTTP ${response.status})`)
+				}
+
+				statusBox.className = "status success"
+				statusBox.textContent = "Product deleted."
+				await loadProducts()
+				if(editingId.value === String(product._id)){
+					resetFormState()
+				}
+			}catch(error){
+				statusBox.className = "status error"
+				statusBox.textContent = error.message
+			}
+		})
+
+		productList.appendChild(row)
+	})
+}
+
+async function loadProducts(){
+	try{
+		const response = await fetch("/products")
+		const payload = await readResponsePayload(response)
+		if(!response.ok){
+			throw new Error("Unable to load product list.")
+		}
+
+		const products = Array.isArray(payload) ? payload : []
+		allProducts = Array.isArray(products) ? products : []
+		renderProducts()
+	}catch(error){
+		productList.innerHTML = '<p class="muted">Unable to load product list.</p>'
+	}
+}
+
+imageInput.addEventListener("change",()=>{
+	const files = [...imageInput.files]
+	if(!files.length){
+		return
+	}
+
+	const existingIds = new Set(selectedFiles.map((file)=>getFileIdentity(file)))
+	files.forEach((file)=>{
+		const identity = getFileIdentity(file)
+		if(!existingIds.has(identity)){
+			selectedFiles.push(file)
+			existingIds.add(identity)
+		}
+	})
+
+	imageInput.value = ""
+	renderSelectedFiles()
+	syncPreviewBySelectedFiles()
+})
+
+form.addEventListener("submit", async (event)=>{
+	event.preventDefault()
+	statusBox.className = "status"
+	statusBox.textContent = editingId.value ? "Updating product..." : "Publishing product..."
+
+	const formData = new FormData(form)
+	const isEditing = Boolean(editingId.value)
+	formData.delete("images")
+	selectedFiles.forEach((file)=>{
+		formData.append("images", file)
+	})
+
+	const price = Number(formData.get("price"))
+	const originalPrice = Number(formData.get("originalPrice"))
+	const discountText = String(formData.get("discount") || "").trim()
+
+	if(!isEditing && !selectedFiles.length){
+		statusBox.classList.add("error")
+		statusBox.textContent = "Please choose at least one product image."
+		return
+	}
+
+	if(originalPrice > 0 && price > originalPrice){
+		statusBox.classList.add("error")
+		statusBox.textContent = "Selling price cannot be greater than original price."
+		return
+	}
+
+	if(!discountText && originalPrice > 0 && originalPrice > price){
+		const autoDiscount = Math.round(((originalPrice - price) / originalPrice) * 100)
+		formData.set("discount", String(autoDiscount))
+	}
+
+	try{
+		const endpoint = isEditing ? `/admin/products/${editingId.value}` : "/admin/add-product"
+		const method = isEditing ? "PUT" : "POST"
+		const response = await fetch(endpoint,{
+			method,
+			body:formData
+		})
+
+		const payload = await readResponsePayload(response)
+		if(!response.ok){
+			throw new Error(payload.message || "Unable to save product")
+		}
+
+		resetFormState()
+		statusBox.classList.add("success")
+		statusBox.textContent = isEditing ? "Product updated successfully." : "Product published successfully."
+		await loadProducts()
+	}catch(error){
+		statusBox.classList.add("error")
+		statusBox.textContent = error.message
+	}
+})
+
+cancelEditBtn.addEventListener("click", ()=>{
+	resetFormState()
+})
+
+clearPickedBtn.addEventListener("click", ()=>{
+	selectedFiles = []
+	imageInput.value = ""
+	renderSelectedFiles()
+	syncPreviewBySelectedFiles()
+})
+
+renderSelectedFiles()
+loadProducts()
+</script>
+</body>
+</html>
