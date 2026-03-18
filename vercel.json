@@ -1,7 +1,6 @@
 {
   "version": 2,
   "rewrites": [
-    { "source": "/", "destination": "/api" },
     { "source": "/health", "destination": "/api" },
     { "source": "/products", "destination": "/api" },
     { "source": "/admin/login", "destination": "/api" },
