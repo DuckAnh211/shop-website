@@ -10,192 +10,184 @@ let lightboxImages = []
 let lightboxIndex = 0
 
 function formatCurrency(value){
-	return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value) || 0)
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(Number(value) || 0)
 }
 
 function getProductPrices(product){
-	const currentPrice = Number(product.price) || 0
-	const originalPrice = Number(product.originalPrice) || currentPrice
-	let discount = Number(product.discount)
+  const currentPrice = Number(product.price) || 0
+  const originalPrice = Number(product.originalPrice) || currentPrice
+  const parsedDiscount = Number(product.discount)
+  const discount = Number.isFinite(parsedDiscount)
+    ? parsedDiscount
+    : (originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0)
 
-	if(!Number.isFinite(discount)){
-		discount = originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0
-	}
-
-	return {
-		currentPrice,
-		originalPrice,
-		discount: Math.max(0, Math.min(99, discount))
-	}
+  return {
+    currentPrice,
+    originalPrice,
+    discount: Math.max(0, Math.min(99, discount))
+  }
 }
 
 function getProductImages(product){
-	if(Array.isArray(product.images) && product.images.length){
-		return product.images.map((name)=>`/uploads/${name}`)
-	}
+  if(Array.isArray(product.images) && product.images.length){
+    return product.images
+  }
 
-	if(product.image){
-		return [`/uploads/${product.image}`]
-	}
+  if(product.image){
+    return [product.image]
+  }
 
-	return ["https://via.placeholder.com/640x480?text=No+Image"]
+  return ["https://via.placeholder.com/640x480?text=No+Image"]
 }
 
 function openLightbox(images, startIndex){
-	lightboxImages = images
-	lightboxIndex = startIndex
-	lightboxImage.src = lightboxImages[lightboxIndex]
-	lightbox.classList.add("open")
-	lightbox.setAttribute("aria-hidden", "false")
+  lightboxImages = images
+  lightboxIndex = startIndex
+  lightboxImage.src = lightboxImages[lightboxIndex]
+  lightbox.classList.add("open")
+  lightbox.setAttribute("aria-hidden", "false")
 }
 
 function closeLightbox(){
-	lightbox.classList.remove("open")
-	lightbox.setAttribute("aria-hidden", "true")
-	lightboxImage.src = ""
-	lightboxImages = []
-	lightboxIndex = 0
+  lightbox.classList.remove("open")
+  lightbox.setAttribute("aria-hidden", "true")
+  lightboxImage.src = ""
+  lightboxImages = []
+  lightboxIndex = 0
 }
 
 function showRelativeImage(step){
-	if(!lightboxImages.length){
-		return
-	}
+  if(!lightboxImages.length){
+    return
+  }
 
-	lightboxIndex = (lightboxIndex + step + lightboxImages.length) % lightboxImages.length
-	lightboxImage.src = lightboxImages[lightboxIndex]
+  lightboxIndex = (lightboxIndex + step + lightboxImages.length) % lightboxImages.length
+  lightboxImage.src = lightboxImages[lightboxIndex]
 }
 
 function onLightboxImageClick(event){
-	if(!lightboxImages.length){
-		return
-	}
+  if(lightboxImages.length <= 1){
+    return
+  }
 
-	if(lightboxImages.length === 1){
-		return
-	}
-
-	const rect = lightboxImage.getBoundingClientRect()
-	const clickX = event.clientX - rect.left
-	const isLeftSide = clickX < rect.width / 2
-	showRelativeImage(isLeftSide ? -1 : 1)
+  const rect = lightboxImage.getBoundingClientRect()
+  const clickX = event.clientX - rect.left
+  showRelativeImage(clickX < rect.width / 2 ? -1 : 1)
 }
 
 function createProductCard(product, index){
-	const { currentPrice, originalPrice, discount } = getProductPrices(product)
-	const images = getProductImages(product)
+  const { currentPrice, originalPrice, discount } = getProductPrices(product)
+  const images = getProductImages(product)
 
-	const card = document.createElement("article")
-	card.className = "product"
-	card.style.animationDelay = `${index * 60}ms`
+  const card = document.createElement("article")
+  card.className = "product"
+  card.style.animationDelay = `${index * 60}ms`
 
-	card.innerHTML = `
-		<div class="product-media">
-			<img src="${images[0]}" alt="${product.name || "Product"}">
-			${discount > 0 ? `<span class="discount">-${discount}%</span>` : ""}
-		</div>
-		<div class="info">
-			<h4>${product.name || "New Product"}</h4>
-			<p class="description">${product.description || "Product description is being updated."}</p>
-			<div class="thumbs"></div>
-			<div class="prices">
-				<span class="price">${formatCurrency(currentPrice)}</span>
-				${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice)}</span>` : ""}
-			</div>
-			<button class="buy-btn">Add to Cart</button>
-		</div>
-	`
+  card.innerHTML = `
+    <div class="product-media">
+      <img src="${images[0]}" alt="${product.name || "Product"}">
+      ${discount > 0 ? `<span class="discount">-${discount}%</span>` : ""}
+    </div>
+    <div class="info">
+      <h4>${product.name || "New Product"}</h4>
+      <p class="description">${product.description || "Product description is being updated."}</p>
+      <div class="thumbs"></div>
+      <div class="prices">
+        <span class="price">${formatCurrency(currentPrice)}</span>
+        ${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice)}</span>` : ""}
+      </div>
+      <button class="buy-btn" type="button">View details</button>
+    </div>
+  `
 
-	const mainImage = card.querySelector(".product-media img")
-	const thumbs = card.querySelector(".thumbs")
+  const mainImage = card.querySelector(".product-media img")
+  const thumbs = card.querySelector(".thumbs")
+  const openViewer = ()=>{
+    const selectedIndex = images.indexOf(mainImage.src)
+    openLightbox(images, selectedIndex >= 0 ? selectedIndex : 0)
+  }
 
-	mainImage.addEventListener("click", ()=>{
-		const selectedIndex = images.indexOf(mainImage.src)
-		openLightbox(images, selectedIndex >= 0 ? selectedIndex : 0)
-	})
+  mainImage.addEventListener("click", openViewer)
+  card.querySelector(".buy-btn").addEventListener("click", openViewer)
 
-	images.forEach((image, imageIndex)=>{
-		const thumbBtn = document.createElement("button")
-		thumbBtn.type = "button"
-		thumbBtn.className = `thumb${imageIndex === 0 ? " active" : ""}`
-		thumbBtn.innerHTML = `<img src="${image}" alt="Image ${imageIndex + 1} of ${product.name || "product"}">`
+  images.forEach((image, imageIndex)=>{
+    const thumbBtn = document.createElement("button")
+    thumbBtn.type = "button"
+    thumbBtn.className = `thumb${imageIndex === 0 ? " active" : ""}`
+    thumbBtn.innerHTML = `<img src="${image}" alt="Image ${imageIndex + 1} of ${product.name || "product"}">`
 
-		thumbBtn.addEventListener("click", ()=>{
-			mainImage.src = image
-			thumbs.querySelectorAll(".thumb").forEach((btn)=>btn.classList.remove("active"))
-			thumbBtn.classList.add("active")
-		})
+    thumbBtn.addEventListener("click", ()=>{
+      mainImage.src = image
+      thumbs.querySelectorAll(".thumb").forEach((btn)=>btn.classList.remove("active"))
+      thumbBtn.classList.add("active")
+    })
 
-		thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex))
-		thumbs.appendChild(thumbBtn)
-	})
+    thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex))
+    thumbs.appendChild(thumbBtn)
+  })
 
-	return card
+  return card
 }
 
 async function loadProducts(){
-	productsContainer.innerHTML = '<div class="status">Loading products...</div>'
+  productsContainer.innerHTML = '<div class="status">Loading products...</div>'
 
-	try{
-		const response = await fetch("/products")
-		const products = await response.json()
+  try{
+    const response = await fetch("/products")
+    if(!response.ok){
+      throw new Error(`HTTP ${response.status}`)
+    }
 
-		productsContainer.innerHTML = ""
-		productCount.textContent = String(products.length)
+    const products = await response.json()
+    productsContainer.innerHTML = ""
+    productCount.textContent = String(products.length)
 
-		if(!products.length){
-			productsContainer.innerHTML = '<div class="status">No products yet. Add one from the admin page.</div>'
-			return
-		}
+    if(!products.length){
+      productsContainer.innerHTML = '<div class="status">No products yet. Add one from the admin page.</div>'
+      return
+    }
 
-		products.forEach((product, index)=>{
-			productsContainer.appendChild(createProductCard(product, index))
-		})
-	}catch(error){
-		productsContainer.innerHTML = '<div class="status">Unable to load products. Please try again.</div>'
-	}
+    products.forEach((product, index)=>{
+      productsContainer.appendChild(createProductCard(product, index))
+    })
+  }catch(error){
+    productsContainer.innerHTML = '<div class="status">Unable to load products. Please try again.</div>'
+  }
 }
 
 loadProducts()
 
-if(closeLightboxBtn){
-	closeLightboxBtn.addEventListener("click", closeLightbox)
-}
+closeLightboxBtn?.addEventListener("click", closeLightbox)
+prevImageBtn?.addEventListener("click", ()=>showRelativeImage(-1))
+nextImageBtn?.addEventListener("click", ()=>showRelativeImage(1))
 
-if(prevImageBtn){
-	prevImageBtn.addEventListener("click", ()=>showRelativeImage(-1))
-}
+lightbox?.addEventListener("click", (event)=>{
+  if(event.target === lightbox){
+    closeLightbox()
+  }
+})
 
-if(nextImageBtn){
-	nextImageBtn.addEventListener("click", ()=>showRelativeImage(1))
-}
-
-if(lightbox){
-	lightbox.addEventListener("click", (event)=>{
-		if(event.target === lightbox){
-			closeLightbox()
-		}
-	})
-}
-
-if(lightboxImage){
-	lightboxImage.addEventListener("click", onLightboxImageClick)
-}
+lightboxImage?.addEventListener("click", onLightboxImageClick)
 
 document.addEventListener("keydown", (event)=>{
-	if(!lightbox || !lightbox.classList.contains("open")){
-		return
-	}
+  if(!lightbox?.classList.contains("open")){
+    return
+  }
 
-	if(event.key === "Escape"){
-		closeLightbox()
-	}
+  if(event.key === "Escape"){
+    closeLightbox()
+  }
 
-	if(event.key === "ArrowLeft"){
-		showRelativeImage(-1)
-	}
+  if(event.key === "ArrowLeft"){
+    showRelativeImage(-1)
+  }
 
-	if(event.key === "ArrowRight"){
-		showRelativeImage(1)
-	}
+  if(event.key === "ArrowRight"){
+    showRelativeImage(1)
+  }
 })

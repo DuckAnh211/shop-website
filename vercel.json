@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/products", "destination": "/api" },
+    { "source": "/admin/login", "destination": "/api" },
+    { "source": "/admin/add-product", "destination": "/api" },
+    { "source": "/admin/products/:id", "destination": "/api" },
+    { "source": "/health", "destination": "/api" }
+  ]
+}
