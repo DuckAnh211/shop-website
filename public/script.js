@@ -145,7 +145,9 @@ async function loadProducts(){
 
     const products = await response.json()
     productsContainer.innerHTML = ""
-    productCount.textContent = String(products.length)
+    if(productCount){
+      productCount.textContent = String(products.length)
+    }
 
     if(!products.length){
       productsContainer.innerHTML = '<div class="status">No products yet. Add one from the admin page.</div>'
