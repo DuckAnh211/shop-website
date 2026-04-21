@@ -6,21 +6,21 @@
 <title>Contact | KaWo Crotchet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-	--bg:#fff8ef;
-	--bg-accent:#ffe3c2;
-	--panel:#fffdf8;
-	--text:#2f241f;
-	--muted:#725c51;
-	--brand:#d9572b;
-	--brand-strong:#bd471f;
-	--line:#f0d9c7;
-	--radius-lg:20px;
-	--radius-md:14px;
-	--shadow:0 16px 40px rgba(106, 52, 28, 0.14);
+	--bg:#f5dce4;
+	--panel:#fffafc;
+	--text:#4f3140;
+	--muted:#886472;
+	--brand:#c98298;
+	--brand-strong:#a95f77;
+	--line:#eed2db;
+	--shadow:0 24px 60px rgba(138, 76, 100, 0.14);
+	--radius-xl:34px;
+	--radius-lg:24px;
+	--radius-md:18px;
 }
 
 *{box-sizing:border-box}
@@ -30,151 +30,168 @@ body{
 	font-family:"Be Vietnam Pro",sans-serif;
 	color:var(--text);
 	background:
-		radial-gradient(circle at 20% 10%, #ffd8ad 0%, transparent 45%),
-		radial-gradient(circle at 85% 80%, #ffe7c9 0%, transparent 35%),
-		var(--bg);
+		radial-gradient(circle at top left, #f8ebf0 0%, transparent 28%),
+		radial-gradient(circle at bottom right, #f3cbd6 0%, transparent 30%),
+		linear-gradient(180deg, #f2d6df 0%, #f8e6ec 100%);
+}
+
+a{color:inherit}
+
+.page-shell{
+	max-width:1180px;
+	margin:28px auto;
+	padding:22px;
+	background:linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,248,251,.92) 100%);
+	border:1px solid rgba(255,255,255,.7);
+	border-radius:40px;
+	box-shadow:var(--shadow);
 }
 
 .topbar{
-	max-width:1160px;
-	margin:24px auto 0;
-	padding:0 20px;
 	display:flex;
 	justify-content:space-between;
 	align-items:center;
+	gap:16px;
+	padding:8px 8px 22px;
 }
 
 .brand{
-	font-family:"Fraunces",serif;
-	font-size:34px;
 	margin:0;
-	letter-spacing:.5px;
+	font-family:"Cormorant Garamond",serif;
+	font-size:42px;
+	font-weight:700;
+	letter-spacing:.6px;
+}
+
+.brand small{
+	display:block;
+	font-family:"Be Vietnam Pro",sans-serif;
+	font-size:12px;
+	letter-spacing:.3em;
+	text-transform:uppercase;
+	color:var(--muted);
+	margin-top:4px;
 }
 
 .nav{
 	display:flex;
+	flex-wrap:wrap;
 	gap:10px;
 }
 
 .nav a{
-	display:inline-flex;
-	align-items:center;
-	color:var(--muted);
 	text-decoration:none;
-	font-weight:700;
-	border:1px solid var(--line);
-	padding:10px 14px;
+	padding:10px 18px;
 	border-radius:999px;
-	background:rgba(255,255,255,.65);
+	border:1px solid var(--line);
+	background:rgba(255,255,255,.78);
+	font-weight:700;
+	color:var(--muted);
 }
 
 .hero{
-	max-width:1160px;
-	margin:16px auto 0;
-	padding:0 20px;
+	padding:32px;
+	border-radius:var(--radius-xl);
+	background:
+		linear-gradient(120deg, rgba(255,247,250,.82) 0%, rgba(244,201,215,.42) 45%, rgba(203,129,152,.25) 100%),
+		linear-gradient(135deg, #f6dfe6 0%, #ebbecb 100%);
 }
 
-.hero-box{
-	background:linear-gradient(110deg,#fce7cf 0%, #ffd9ba 58%, #f6b88a 100%);
-	border-radius:var(--radius-lg);
-	padding:30px;
-	box-shadow:var(--shadow);
-	position:relative;
-	overflow:hidden;
-}
-
-.hero-box::after{
-	content:"";
-	position:absolute;
-	right:-90px;
-	top:-40px;
-	width:220px;
-	height:220px;
-	border-radius:50%;
-	background:rgba(255,255,255,.35);
+.hero h1,
+.panel h2,
+.panel h3{
+	font-family:"Cormorant Garamond",serif;
 }
 
 .hero h1{
-	margin:0;
-	font-family:"Fraunces",serif;
-	font-size:44px;
-	line-height:1.05;
-	max-width:15ch;
-	position:relative;
-	z-index:1;
+	margin:0 0 14px;
+	font-size:56px;
+	line-height:.95;
+	max-width:10ch;
 }
 
 .hero p{
-	margin:12px 0 0;
-	max-width:62ch;
+	margin:0;
+	max-width:56ch;
+	line-height:1.75;
 	color:var(--muted);
-	position:relative;
-	z-index:1;
 }
 
 .wrap{
-	max-width:1160px;
-	margin:0 auto;
-	padding:18px 20px 50px;
+	margin-top:24px;
 	display:grid;
-	grid-template-columns:1fr 1.25fr;
-	gap:20px;
+	grid-template-columns:1fr 1.05fr;
+	gap:22px;
 }
 
 .panel{
+	padding:28px;
+	border-radius:var(--radius-xl);
 	background:var(--panel);
 	border:1px solid var(--line);
-	border-radius:var(--radius-lg);
-	padding:20px;
-	box-shadow:0 10px 24px rgba(80,50,29,.07);
+	box-shadow:0 12px 30px rgba(123,73,91,.08);
 }
 
-.list{
+.panel h2,
+.panel h3{
+	margin:0 0 14px;
+	font-size:44px;
+	line-height:.95;
+}
+
+.panel p{
+	margin:0;
+	color:var(--muted);
+	line-height:1.75;
+}
+
+.contact-list{
+	margin-top:18px;
 	display:grid;
 	gap:12px;
 }
 
 .item{
+	padding:16px 18px;
+	border-radius:18px;
+	background:linear-gradient(180deg, #fff 0%, #fff7fa 100%);
 	border:1px solid var(--line);
-	border-radius:var(--radius-md);
-	padding:14px;
-	background:#fff;
 }
 
 .label{
 	margin:0;
 	font-size:12px;
-	letter-spacing:.7px;
+	letter-spacing:.12em;
 	text-transform:uppercase;
 	font-weight:800;
-	color:#9f7c67;
+	color:#a37c8c;
 }
 
 .value{
-	margin:6px 0 0;
+	display:inline-block;
+	margin-top:8px;
+	text-decoration:none;
 	font-size:18px;
 	font-weight:700;
-	color:var(--text);
-	text-decoration:none;
-	display:inline-block;
+	word-break:break-word;
 }
 
 .hint{
-	margin:8px 0 0;
+	margin-top:8px;
 	font-size:14px;
 	color:var(--muted);
-	line-height:1.45;
 }
 
 form{
 	display:grid;
-	gap:12px;
+	gap:14px;
+	margin-top:18px;
 }
 
 .row{
 	display:grid;
 	grid-template-columns:1fr 1fr;
-	gap:10px;
+	gap:12px;
 }
 
 label{
@@ -187,32 +204,33 @@ textarea{
 	width:100%;
 	margin-top:6px;
 	border:1px solid var(--line);
-	border-radius:12px;
-	padding:10px 12px;
+	border-radius:14px;
+	padding:12px 14px;
 	font-family:inherit;
 	font-size:14px;
 	background:#fff;
+	color:var(--text);
 }
 
 textarea{
-	min-height:140px;
+	min-height:150px;
 	resize:vertical;
 }
 
 .send-btn{
 	border:none;
-	border-radius:12px;
-	padding:12px;
-	background:var(--brand);
+	border-radius:14px;
+	padding:13px;
+	background:linear-gradient(135deg, #d292a6 0%, #b96c84 100%);
 	color:#fff;
 	font-weight:700;
 	cursor:pointer;
-	transition:background .2s ease, transform .2s ease;
+	transition:transform .2s ease, filter .2s ease;
 }
 
 .send-btn:hover{
-	background:var(--brand-strong);
 	transform:translateY(-2px);
+	filter:brightness(.97);
 }
 
 .status{
@@ -225,89 +243,150 @@ textarea{
 .status.success{color:#1f8b47}
 .status.error{color:#b33425}
 
+.footer-note{
+	margin-top:22px;
+	padding:22px 24px;
+	border-radius:var(--radius-xl);
+	background:linear-gradient(120deg, #fbe8ee 0%, #f3cfda 100%);
+	border:1px solid var(--line);
+}
+
+.footer-note h3{
+	margin:0 0 12px;
+	font-size:40px;
+	line-height:.95;
+}
+
+.footer-note a{
+	color:var(--brand-strong);
+	font-weight:700;
+	text-decoration:none;
+}
+
 @media (max-width:960px){
 	.wrap{grid-template-columns:1fr}
 }
 
-@media (max-width:620px){
-	.brand{font-size:28px}
-	.hero h1{font-size:34px}
-	.hero-box{padding:24px}
+@media (max-width:680px){
+	.page-shell{
+		margin:14px;
+		padding:14px;
+		border-radius:28px;
+	}
+
+	.topbar{
+		flex-direction:column;
+		align-items:flex-start;
+	}
+
+	.hero,
+	.panel,
+	.footer-note{
+		padding:22px;
+	}
+
+	.hero h1,
+	.panel h2,
+	.panel h3{
+		font-size:40px;
+	}
+
 	.row{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
-<header class="topbar">
-	<h1 class="brand">KaWo Crotchet</h1>
-	<nav class="nav">
-		<a href="index.html">Home</a>
-		<a href="login.html">Login</a>
-	</nav>
-</header>
+<div class="page-shell">
+	<header class="topbar">
+		<div>
+			<h1 class="brand">KaWo Crotchet<small>Handcrafted Collection</small></h1>
+		</div>
+		<nav class="nav">
+			<a href="index.html">Home</a>
+			<a href="contacrt.html">Contact</a>
+			<a href="login.html">Login</a>
+		</nav>
+	</header>
 
-<section class="hero">
-	<div class="hero-box">
+	<section class="hero">
 		<h1>Contact us for quick support</h1>
 		<p>Need custom handmade gifts, bulk pricing, or made-to-order products? Send your request and our team will get back to you during business hours.</p>
-	</div>
-</section>
-
-<main class="wrap">
-	<section class="panel">
-		<div class="list">
-			<div class="item">
-				<p class="label">Hotline</p>
-				<a class="value" href="tel:0900000000">0900 000 000</a>
-				<p class="hint">Available daily from 08:00 to 21:00.</p>
-			</div>
-
-			<div class="item">
-				<p class="label">Email</p>
-				<a class="value" href="mailto:hello@shophandmade.vn">hello@shophandmade.vn</a>
-				<p class="hint">Best for custom orders and partnerships.</p>
-			</div>
-
-			<div class="item">
-				<p class="label">Address</p>
-				<p class="value">128 Nguyen Van Cu, Q5, TP.HCM</p>
-				<p class="hint">In-store product samples are available on weekends.</p>
-			</div>
-		</div>
 	</section>
 
-	<section class="panel">
-		<form id="contactForm" novalidate>
-			<div class="row">
-				<label>Full name
-					<input id="name" name="name" placeholder="Enter your full name" required>
-				</label>
-				<label>Phone number
-					<input id="phone" name="phone" placeholder="Example: 0900000000" required>
-				</label>
+	<main class="wrap">
+		<section class="panel">
+			<h2>Contact & Social</h2>
+			<p>All contact information below has been updated with your latest details.</p>
+
+			<div class="contact-list">
+				<div class="item">
+					<p class="label">Phone</p>
+					<a class="value" href="tel:+886973424279">+886 0973424279</a>
+					<p class="hint">Available for direct inquiries and order support.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Email</p>
+					<a class="value" href="mailto:katietran3011@gmail.com">katietran3011@gmail.com</a>
+					<p class="hint">Best for detailed product questions and partnership requests.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Line</p>
+					<a class="value" href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">line.me/ti/p/TCVn7wKCCy</a>
+					<p class="hint">Quick messaging for simple follow-ups.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Instagram</p>
+					<a class="value" href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">instagram.com/katienrain__</a>
+					<p class="hint">Browse social presence and message through Instagram.</p>
+				</div>
 			</div>
+		</section>
 
-			<label>Email
-				<input id="email" type="email" name="email" placeholder="ban@example.com" required>
-			</label>
+		<section class="panel">
+			<h3>Send a Message</h3>
+			<p>The form remains on the page so visitors can still leave quick inquiries directly from the website.</p>
 
-			<label>Message
-				<textarea id="message" name="message" placeholder="Tell us what you need..." required></textarea>
-			</label>
+			<form id="contactForm" novalidate>
+				<div class="row">
+					<label>Full name
+						<input id="name" name="name" placeholder="Enter your full name" required>
+					</label>
+					<label>Phone number
+						<input id="phone" name="phone" placeholder="Example: 0973424279" required>
+					</label>
+				</div>
 
-			<button type="submit" class="send-btn">Send message</button>
-			<div id="status" class="status" aria-live="polite"></div>
-		</form>
+				<label>Email
+					<input id="email" type="email" name="email" placeholder="ban@example.com" required>
+				</label>
+
+				<label>Message
+					<textarea id="message" name="message" placeholder="Tell us what you need..." required></textarea>
+				</label>
+
+				<button type="submit" class="send-btn">Send message</button>
+				<div id="status" class="status" aria-live="polite"></div>
+			</form>
+		</section>
+	</main>
+
+	<section class="footer-note">
+		<h3>Direct Links</h3>
+		<p>Line: <a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">https://line.me/ti/p/TCVn7wKCCy</a></p>
+		<p>Instagram: <a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">https://www.instagram.com/katienrain__/?hl=en</a></p>
 	</section>
-</main>
+</div>
 
 <script>
 const form = document.getElementById("contactForm")
 const statusBox = document.getElementById("status")
 
 function isPhoneValid(value){
-	return /^\d{9,11}$/.test(value.trim())
+	return /^[+\d][\d\s]{8,15}$/.test(value.trim())
 }
 
 form.addEventListener("submit", (event)=>{
@@ -327,7 +406,7 @@ form.addEventListener("submit", (event)=>{
 
 	if(!isPhoneValid(phone)){
 		statusBox.classList.add("error")
-		statusBox.textContent = "Phone number must contain 9 to 11 digits."
+		statusBox.textContent = "Phone number must contain 9 to 16 characters and may include spaces."
 		return
 	}
 

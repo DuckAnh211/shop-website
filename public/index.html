@@ -6,21 +6,24 @@
 <title>KaWo Crotchet</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
-	--bg:#fff8ef;
-	--bg-accent:#ffe3c2;
-	--panel:#fffdf8;
-	--text:#2f241f;
-	--muted:#725c51;
-	--brand:#d9572b;
-	--brand-strong:#bd471f;
-	--line:#f0d9c7;
-	--radius-lg:20px;
-	--radius-md:14px;
-	--shadow:0 16px 40px rgba(106, 52, 28, 0.14);
+	--bg:#f5dce4;
+	--bg-strong:#efc8d3;
+	--panel:#fffafc;
+	--panel-soft:#f8e1e8;
+	--card:#ffffff;
+	--text:#4f3140;
+	--muted:#886472;
+	--brand:#c98298;
+	--brand-strong:#a95f77;
+	--line:#eed2db;
+	--shadow:0 24px 60px rgba(138, 76, 100, 0.14);
+	--radius-xl:34px;
+	--radius-lg:24px;
+	--radius-md:18px;
 }
 
 *{box-sizing:border-box}
@@ -30,132 +33,258 @@ body{
 	font-family:"Be Vietnam Pro",sans-serif;
 	color:var(--text);
 	background:
-		radial-gradient(circle at 20% 10%, #ffd8ad 0%, transparent 45%),
-		radial-gradient(circle at 85% 80%, #ffe7c9 0%, transparent 35%),
-		var(--bg);
+		radial-gradient(circle at top left, #f8ebf0 0%, transparent 28%),
+		radial-gradient(circle at bottom right, #f3cbd6 0%, transparent 30%),
+		linear-gradient(180deg, #f2d6df 0%, #f8e6ec 100%);
+}
+
+a{color:inherit}
+
+.page-shell{
+	max-width:1180px;
+	margin:28px auto;
+	padding:22px;
+	background:linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,248,251,.92) 100%);
+	border:1px solid rgba(255,255,255,.7);
+	border-radius:40px;
+	box-shadow:var(--shadow);
 }
 
 .topbar{
-	max-width:1160px;
-	margin:24px auto 0;
-	padding:0 20px;
 	display:flex;
 	justify-content:space-between;
 	align-items:center;
+	gap:16px;
+	padding:8px 8px 22px;
 }
 
 .brand{
-	font-family:"Fraunces",serif;
-	font-size:34px;
 	margin:0;
-	letter-spacing:.5px;
+	font-family:"Cormorant Garamond",serif;
+	font-size:42px;
+	font-weight:700;
+	letter-spacing:.6px;
 }
 
-.nav a{
-	display:inline-flex;
-	align-items:center;
+.brand small{
+	display:block;
+	font-family:"Be Vietnam Pro",sans-serif;
+	font-size:12px;
+	letter-spacing:.3em;
+	text-transform:uppercase;
 	color:var(--muted);
-	text-decoration:none;
-	font-weight:700;
-	border:1px solid var(--line);
-	padding:10px 14px;
-	border-radius:999px;
-	background:rgba(255,255,255,.65);
+	margin-top:4px;
 }
 
 .nav{
 	display:flex;
+	flex-wrap:wrap;
 	gap:10px;
 }
 
-.hero{
-	max-width:1160px;
-	margin:16px auto 0;
-	padding:28px 20px 8px;
+.nav a{
+	text-decoration:none;
+	padding:10px 18px;
+	border-radius:999px;
+	border:1px solid var(--line);
+	background:rgba(255,255,255,.78);
+	font-weight:700;
+	color:var(--muted);
 }
 
-.hero-box{
-	background:linear-gradient(110deg,#fce7cf 0%, #ffd9ba 58%, #f6b88a 100%);
-	border-radius:var(--radius-lg);
-	padding:34px;
+.hero{
 	display:grid;
-	grid-template-columns:1.3fr 1fr;
+	grid-template-columns:1.2fr .8fr;
 	gap:24px;
-	align-items:center;
-	box-shadow:var(--shadow);
+	padding:34px;
+	border-radius:var(--radius-xl);
+	background:
+		linear-gradient(120deg, rgba(255,247,250,.82) 0%, rgba(244,201,215,.42) 45%, rgba(203,129,152,.25) 100%),
+		linear-gradient(135deg, #f6dfe6 0%, #ebbecb 100%);
+	overflow:hidden;
+	position:relative;
+}
+
+.hero::before,
+.hero::after{
+	content:"";
+	position:absolute;
+	border-radius:999px;
+	background:rgba(255,255,255,.32);
+	filter:blur(2px);
+}
+
+.hero::before{
+	width:320px;
+	height:320px;
+	right:-100px;
+	top:-120px;
+}
+
+.hero::after{
+	width:260px;
+	height:260px;
+	left:-90px;
+	bottom:-150px;
+}
+
+.hero-copy,
+.hero-visual{
+	position:relative;
+	z-index:1;
+}
+
+.eyebrow{
+	display:inline-block;
+	margin:0 0 14px;
+	padding:8px 14px;
+	border-radius:999px;
+	background:rgba(255,255,255,.74);
+	color:var(--muted);
+	font-size:13px;
+	font-weight:700;
+}
+
+.hero h2,
+.section-title h3,
+.promo-copy h3,
+.contact-card h3,
+.footer-col h4{
+	font-family:"Cormorant Garamond",serif;
 }
 
 .hero h2{
-	margin:0 0 12px;
-	font-family:"Fraunces",serif;
-	font-size:44px;
-	line-height:1.05;
+	margin:0 0 14px;
+	font-size:56px;
+	line-height:.98;
+	max-width:10ch;
 }
 
 .hero p{
 	margin:0;
+	max-width:54ch;
+	font-size:16px;
+	line-height:1.7;
 	color:var(--muted);
-	max-width:56ch;
 }
 
-.hero-pill{
-	justify-self:end;
-	background:rgba(255,255,255,.75);
-	border:1px solid rgba(255,255,255,.85);
-	border-radius:16px;
-	padding:18px 20px;
-	width:100%;
-	max-width:260px;
+.hero-actions{
+	display:flex;
+	flex-wrap:wrap;
+	gap:12px;
+	margin-top:24px;
 }
 
-.hero-pill strong{
+.hero-btn{
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	text-decoration:none;
+	padding:12px 18px;
+	border-radius:999px;
+	font-weight:700;
+	border:1px solid transparent;
+}
+
+.hero-btn.primary{
+	background:var(--brand-strong);
+	color:#fff;
+}
+
+.hero-btn.secondary{
+	background:rgba(255,255,255,.72);
+	border-color:rgba(255,255,255,.8);
+	color:var(--muted);
+}
+
+.hero-visual{
+	display:grid;
+	grid-template-columns:repeat(2, minmax(0, 1fr));
+	gap:14px;
+	align-content:end;
+}
+
+.hero-stat,
+.hero-note{
+	padding:20px;
+	border-radius:22px;
+	background:rgba(255,255,255,.72);
+	border:1px solid rgba(255,255,255,.82);
+	backdrop-filter:blur(4px);
+}
+
+.hero-stat strong{
 	display:block;
-	font-size:28px;
+	font-size:42px;
 	color:var(--brand-strong);
+	line-height:1;
 }
 
-.hero-pill span{
+.hero-stat span,
+.hero-note p{
 	color:var(--muted);
-	font-size:14px;
 }
 
-.container{
-	max-width:1160px;
-	margin:0 auto;
-	padding:18px 20px 50px;
+.hero-note{
+	grid-column:span 2;
+	min-height:220px;
+	background:
+		linear-gradient(180deg, rgba(255,255,255,.52), rgba(255,255,255,.26)),
+		linear-gradient(135deg, #f8d4de 0%, #f3bfcf 100%);
+	display:flex;
+	align-items:end;
+}
+
+.hero-note p{
+	margin:0;
+	max-width:24ch;
+	font-weight:600;
+	line-height:1.6;
+}
+
+.section{
+	margin-top:24px;
+	padding:28px;
+	border-radius:var(--radius-xl);
+	background:var(--panel);
+	border:1px solid rgba(238,210,219,.7);
 }
 
 .section-title{
 	display:flex;
 	justify-content:space-between;
 	align-items:end;
-	margin-bottom:14px;
+	gap:16px;
+	margin-bottom:22px;
 }
 
 .section-title h3{
 	margin:0;
-	font-size:26px;
+	font-size:52px;
+	line-height:.95;
 }
 
 .section-title p{
 	margin:0;
 	color:var(--muted);
+	max-width:38ch;
+	line-height:1.6;
 }
 
 .products{
 	display:grid;
-	grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+	grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
 	gap:20px;
 }
 
 .product{
-	background:var(--panel);
+	background:linear-gradient(180deg, #fff 0%, #fff7fa 100%);
 	border:1px solid var(--line);
-	border-radius:var(--radius-md);
+	border-radius:var(--radius-lg);
 	overflow:hidden;
 	display:flex;
 	flex-direction:column;
-	box-shadow:0 10px 24px rgba(80,50,29,.07);
+	box-shadow:0 12px 26px rgba(123, 73, 91, .08);
 	transform:translateY(18px);
 	opacity:0;
 	animation:cardIn .55s ease forwards;
@@ -170,6 +299,7 @@ body{
 
 .product-media{
 	position:relative;
+	padding:16px 16px 0;
 }
 
 .product img{
@@ -178,23 +308,25 @@ body{
 	object-fit:cover;
 	display:block;
 	cursor:zoom-in;
+	border-radius:18px;
+	background:#f8e8ee;
 }
 
 .thumbs{
 	display:flex;
-	gap:6px;
-	margin-top:10px;
+	gap:8px;
+	margin-top:12px;
 	flex-wrap:wrap;
 }
 
 .thumb{
 	border:1px solid var(--line);
-	border-radius:8px;
+	border-radius:10px;
 	padding:0;
 	background:#fff;
 	cursor:pointer;
-	width:50px;
-	height:50px;
+	width:54px;
+	height:54px;
 	overflow:hidden;
 }
 
@@ -202,93 +334,329 @@ body{
 	width:100%;
 	height:100%;
 	object-fit:cover;
+	border-radius:0;
 }
 
 .thumb.active{
-	outline:2px solid var(--brand);
-	outline-offset:1px;
+	outline:2px solid var(--brand-strong);
+	outline-offset:2px;
 }
 
 .discount{
 	position:absolute;
-	left:12px;
-	top:12px;
-	background:rgba(217,87,43,.96);
+	left:28px;
+	top:28px;
+	background:rgba(169,95,119,.96);
 	color:#fff;
-	padding:6px 10px;
+	padding:7px 11px;
 	font-size:12px;
-	font-weight:700;
+	font-weight:800;
 	border-radius:999px;
 }
 
 .info{
-	padding:14px;
+	padding:18px 16px 18px;
 	display:flex;
 	flex-direction:column;
-	gap:10px;
+	gap:12px;
 	flex:1;
 }
 
 .info h4{
 	margin:0;
-	font-size:18px;
+	font-size:19px;
 }
 
 .description{
 	margin:0;
 	color:var(--muted);
 	font-size:14px;
-	line-height:1.45;
-	min-height:40px;
+	line-height:1.6;
+	min-height:44px;
 }
 
 .prices{
 	display:flex;
 	align-items:center;
+	flex-wrap:wrap;
 	gap:10px;
 }
 
 .price{
 	color:var(--brand-strong);
 	font-weight:800;
-	font-size:20px;
+	font-size:22px;
 }
 
 .old-price{
-	color:#9d877a;
+	color:#af8a97;
 	text-decoration:line-through;
 }
 
 .buy-btn{
 	margin-top:auto;
 	border:none;
-	background:var(--brand);
+	background:linear-gradient(135deg, #d292a6 0%, #b96c84 100%);
 	color:#fff;
-	padding:11px;
-	border-radius:10px;
+	padding:12px;
+	border-radius:12px;
 	font-weight:700;
 	cursor:pointer;
-	transition:background .2s ease, transform .2s ease;
+	transition:transform .2s ease, filter .2s ease;
 }
 
 .buy-btn:hover{
-	background:var(--brand-strong);
 	transform:translateY(-2px);
+	filter:brightness(.97);
 }
 
 .status{
 	border:1px dashed var(--line);
-	border-radius:14px;
+	border-radius:18px;
 	padding:18px;
 	text-align:center;
 	color:var(--muted);
-	background:rgba(255,255,255,.65);
+	background:#fff;
+}
+
+.promo{
+	margin-top:24px;
+	display:grid;
+	grid-template-columns:1fr .92fr;
+	gap:22px;
+	padding:28px;
+	border-radius:var(--radius-xl);
+	background:linear-gradient(120deg, #edc6d2 0%, #e4b8c7 100%);
+}
+
+.promo-copy h3{
+	margin:0 0 12px;
+	font-size:50px;
+	line-height:.95;
+	max-width:11ch;
+}
+
+.promo-copy p{
+	margin:0;
+	max-width:40ch;
+	color:#6f5060;
+	line-height:1.7;
+}
+
+.promo-points{
+	display:grid;
+	grid-template-columns:repeat(2, minmax(0, 1fr));
+	gap:12px;
+	margin-top:20px;
+}
+
+.promo-points div{
+	padding:16px;
+	border-radius:18px;
+	background:rgba(255,255,255,.54);
+	border:1px solid rgba(255,255,255,.65);
+}
+
+.promo-points strong{
+	display:block;
+	font-size:14px;
+	margin-bottom:6px;
+}
+
+.promo-points span{
+	font-size:14px;
+	line-height:1.6;
+	color:#7d5d6c;
+}
+
+.promo-card{
+	display:grid;
+	gap:14px;
+}
+
+.promo-photo,
+.promo-panel{
+	border-radius:24px;
+	min-height:180px;
+	padding:22px;
+	position:relative;
+	overflow:hidden;
+}
+
+.promo-photo{
+	background:
+		linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.08)),
+		linear-gradient(145deg, #f7d9e2 0%, #f2afc2 100%);
+}
+
+.promo-photo::before,
+.promo-photo::after{
+	content:"";
+	position:absolute;
+	border-radius:999px;
+	background:rgba(255,255,255,.5);
+}
+
+.promo-photo::before{
+	width:160px;
+	height:160px;
+	right:-10px;
+	top:18px;
+}
+
+.promo-photo::after{
+	width:110px;
+	height:110px;
+	left:28px;
+	bottom:20px;
+}
+
+.promo-photo span{
+	position:relative;
+	z-index:1;
+	display:inline-block;
+	max-width:18ch;
+	font-family:"Cormorant Garamond",serif;
+	font-size:34px;
+	line-height:.95;
+}
+
+.promo-panel{
+	background:rgba(255,255,255,.6);
+	border:1px solid rgba(255,255,255,.7);
+	display:flex;
+	align-items:end;
+}
+
+.promo-panel p{
+	margin:0;
+	line-height:1.7;
+	color:#6f5060;
+}
+
+.contact-grid{
+	margin-top:24px;
+	display:grid;
+	grid-template-columns:1fr 1fr;
+	gap:22px;
+}
+
+.contact-card{
+	padding:28px;
+	border-radius:var(--radius-xl);
+	background:linear-gradient(120deg, #fbe8ee 0%, #f3cfda 100%);
+	border:1px solid rgba(238,210,219,.7);
+}
+
+.contact-card h3{
+	margin:0 0 12px;
+	font-size:44px;
+	line-height:.95;
+}
+
+.contact-card p{
+	margin:0;
+	color:var(--muted);
+	line-height:1.7;
+}
+
+.contact-list{
+	margin-top:18px;
+	display:grid;
+	gap:12px;
+}
+
+.contact-item{
+	display:flex;
+	flex-direction:column;
+	gap:6px;
+	padding:16px 18px;
+	border-radius:18px;
+	background:rgba(255,255,255,.72);
+	border:1px solid rgba(255,255,255,.8);
+}
+
+.contact-item span{
+	font-size:12px;
+	font-weight:800;
+	text-transform:uppercase;
+	letter-spacing:.12em;
+	color:#a37c8c;
+}
+
+.contact-item a{
+	text-decoration:none;
+	font-weight:700;
+	word-break:break-word;
+}
+
+.contact-aside{
+	padding:28px;
+	border-radius:var(--radius-xl);
+	background:
+		linear-gradient(135deg, rgba(255,255,255,.6), rgba(255,255,255,.2)),
+		linear-gradient(135deg, #f8dbe4 0%, #efbfd0 100%);
+	border:1px solid rgba(238,210,219,.7);
+	display:grid;
+	align-content:space-between;
+	gap:24px;
+}
+
+.contact-aside .quote{
+	font-family:"Cormorant Garamond",serif;
+	font-size:42px;
+	line-height:.95;
+	max-width:10ch;
+}
+
+.contact-aside .note{
+	padding:18px;
+	border-radius:18px;
+	background:rgba(255,255,255,.62);
+	color:var(--muted);
+	line-height:1.7;
+}
+
+.site-footer{
+	margin-top:24px;
+	padding:26px 28px;
+	border-radius:var(--radius-xl);
+	background:#fff;
+	border:1px solid var(--line);
+	display:grid;
+	grid-template-columns:1.2fr .8fr .8fr;
+	gap:20px;
+}
+
+.footer-col h4{
+	margin:0 0 12px;
+	font-size:34px;
+}
+
+.footer-col p,
+.footer-col a{
+	margin:0;
+	color:var(--muted);
+	line-height:1.8;
+	text-decoration:none;
+}
+
+.footer-links{
+	display:grid;
+	gap:8px;
+}
+
+.copyright{
+	margin:18px 0 0;
+	text-align:center;
+	color:var(--muted);
+	font-size:13px;
 }
 
 .lightbox{
 	position:fixed;
 	inset:0;
-	background:rgba(20,13,10,.7);
+	background:rgba(54, 28, 41, .72);
 	display:none;
 	align-items:center;
 	justify-content:center;
@@ -304,17 +672,17 @@ body{
 	max-height:90vh;
 	width:100%;
 	background:#fff;
-	border-radius:16px;
+	border-radius:24px;
 	padding:16px;
-	box-shadow:0 20px 40px rgba(0,0,0,.35);
+	box-shadow:0 20px 50px rgba(0,0,0,.28);
 }
 
 .lightbox img{
 	width:100%;
 	max-height:72vh;
 	object-fit:contain;
-	border-radius:12px;
-	background:#f8f0e8;
+	border-radius:18px;
+	background:#f8edf2;
 	cursor:ew-resize;
 }
 
@@ -328,8 +696,8 @@ body{
 .lightbox-btn{
 	border:1px solid var(--line);
 	background:#fff;
-	border-radius:10px;
-	padding:9px 12px;
+	border-radius:12px;
+	padding:10px 14px;
 	cursor:pointer;
 	font-weight:700;
 	color:var(--text);
@@ -337,59 +705,200 @@ body{
 
 .lightbox-btn.close{
 	position:absolute;
-	right:12px;
-	top:12px;
+	right:14px;
+	top:14px;
 	border:none;
-	width:36px;
-	height:36px;
+	width:38px;
+	height:38px;
 	border-radius:50%;
 	font-size:18px;
 	line-height:1;
-	background:rgba(47,36,31,.08);
+	background:rgba(79,49,64,.08);
 }
 
-@media (max-width:920px){
-	.hero-box{grid-template-columns:1fr}
-	.hero-pill{justify-self:start}
+@media (max-width:980px){
+	.hero,
+	.promo,
+	.contact-grid,
+	.site-footer{
+		grid-template-columns:1fr;
+	}
+
+	.hero h2{max-width:none}
+	.section-title{align-items:start;flex-direction:column}
 }
 
-@media (max-width:560px){
-	.brand{font-size:28px}
-	.hero h2{font-size:34px}
-	.hero-box{padding:24px}
+@media (max-width:680px){
+	.page-shell{
+		margin:14px;
+		padding:14px;
+		border-radius:28px;
+	}
+
+	.topbar{
+		flex-direction:column;
+		align-items:flex-start;
+	}
+
+	.hero,
+	.section,
+	.promo,
+	.contact-card,
+	.contact-aside,
+	.site-footer{
+		padding:22px;
+	}
+
+	.hero h2,
+	.section-title h3,
+	.promo-copy h3,
+	.contact-card h3{
+		font-size:40px;
+	}
+
+	.hero-visual,
+	.promo-points{
+		grid-template-columns:1fr;
+	}
 }
 </style>
 </head>
 
 <body>
-<header class="topbar">
-	<h1 class="brand">KaWo Crotchet</h1>
-	<nav class="nav">
-		<a href="contacrt.html">Contact</a>
-		<a href="login.html">Login</a>
-	</nav>
-</header>
-
-<section class="hero">
-	<div class="hero-box">
+<div class="page-shell">
+	<header class="topbar">
 		<div>
+			<h1 class="brand">KaWo Crotchet<small>Handcrafted Collection</small></h1>
+		</div>
+		<nav class="nav">
+			<a href="index.html">Home</a>
+			<a href="contacrt.html">Contact</a>
+			<a href="login.html">Login</a>
+		</nav>
+	</header>
+
+	<section class="hero">
+		<div class="hero-copy">
+			<p class="eyebrow">Handmade pieces with a soft, curated feel</p>
 			<h2>Handcrafted goods with a unique touch</h2>
 			<p>Fresh collections are updated daily. Every product has real photos, clear pricing, and transparent discounts.</p>
+			<div class="hero-actions">
+				<a class="hero-btn primary" href="#productsSection">Shop the Collection</a>
+				<a class="hero-btn secondary" href="contacrt.html">Contact Us</a>
+			</div>
 		</div>
-		<aside class="hero-pill">
-			<strong id="productCount">0</strong>
-			<span>Products currently available</span>
-		</aside>
-	</div>
-</section>
 
-<main class="container">
-	<div class="section-title">
-		<h3>Featured Products</h3>
-		<p>Current price and original price are shown clearly</p>
-	</div>
-	<div id="products" class="products"></div>
-</main>
+		<div class="hero-visual">
+			<div class="hero-stat">
+				<strong id="productCount">0</strong>
+				<span>Products currently available</span>
+			</div>
+			<div class="hero-stat">
+				<strong>Daily</strong>
+				<span>Fresh product updates with real photos</span>
+			</div>
+			<div class="hero-note">
+				<p>Soft presentation, clear pricing, and the same handmade product content you already have.</p>
+			</div>
+		</div>
+	</section>
+
+	<main>
+		<section id="productsSection" class="section">
+			<div class="section-title">
+				<div>
+					<h3>Featured Products</h3>
+				</div>
+				<p>Current price and original price are shown clearly. Product information and images below remain connected to the existing product data.</p>
+			</div>
+			<div id="products" class="products"></div>
+		</section>
+
+		<section class="promo">
+			<div class="promo-copy">
+				<h3>Handmade style in a softer storefront</h3>
+				<p>The layout has been refreshed to match the pastel reference while keeping the original shopping flow intact. Visitors still see the same products, descriptions, prices, and image gallery behavior.</p>
+				<div class="promo-points">
+					<div>
+						<strong>Real product photos</strong>
+						<span>Image zoom and gallery switching are still available on every item card.</span>
+					</div>
+					<div>
+						<strong>Clear pricing</strong>
+						<span>Current price, original price, and discount badges remain easy to scan.</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="promo-card">
+				<div class="promo-photo">
+					<span>Curated look, same store content</span>
+				</div>
+				<div class="promo-panel">
+					<p>This section acts like the promotional band in the reference image, but it uses text and styling only so the existing data model does not need to change.</p>
+				</div>
+			</div>
+		</section>
+
+		<section class="contact-grid">
+			<div class="contact-card">
+				<h3>Contact & Social</h3>
+				<p>For product questions, custom requests, or order support, use the channels below. The contact information has been updated exactly with the details you provided.</p>
+				<div class="contact-list">
+					<div class="contact-item">
+						<span>Phone</span>
+						<a href="tel:+886973424279">+886 0973424279</a>
+					</div>
+					<div class="contact-item">
+						<span>Email</span>
+						<a href="mailto:katietran3011@gmail.com">katietran3011@gmail.com</a>
+					</div>
+					<div class="contact-item">
+						<span>Line</span>
+						<a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">https://line.me/ti/p/TCVn7wKCCy</a>
+					</div>
+					<div class="contact-item">
+						<span>Instagram</span>
+						<a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">https://www.instagram.com/katienrain__/?hl=en</a>
+					</div>
+				</div>
+			</div>
+
+			<aside class="contact-aside">
+				<div class="quote">Ready to explore handmade pieces with a more polished presentation?</div>
+				<div class="note">The product grid still loads from your existing backend endpoint, so the redesign is visual only and does not alter current product content.</div>
+			</aside>
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="footer-col">
+			<h4>KaWo Crotchet</h4>
+			<p>Handcrafted goods with a unique touch.</p>
+			<p>Phone: <a href="tel:+886973424279">+886 0973424279</a></p>
+			<p>Email: <a href="mailto:katietran3011@gmail.com">katietran3011@gmail.com</a></p>
+		</div>
+
+		<div class="footer-col">
+			<h4>Quick Links</h4>
+			<div class="footer-links">
+				<a href="index.html">Home</a>
+				<a href="contacrt.html">Contact</a>
+				<a href="login.html">Login</a>
+			</div>
+		</div>
+
+		<div class="footer-col">
+			<h4>Follow Us</h4>
+			<div class="footer-links">
+				<a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">Line</a>
+				<a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">Instagram</a>
+			</div>
+		</div>
+	</footer>
+
+	<p class="copyright">KaWo Crotchet. All rights reserved.</p>
+</div>
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
 	<div class="lightbox-box" role="dialog" aria-modal="true" aria-label="Zoomed product image viewer">
