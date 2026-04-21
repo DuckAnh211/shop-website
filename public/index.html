@@ -215,14 +215,22 @@ a{color:inherit}
 
 .hero-stat strong{
 	display:block;
-	font-size:42px;
+	font-size:34px;
 	color:var(--brand-strong);
-	line-height:1;
+	line-height:1.05;
+	word-break:break-word;
 }
 
 .hero-stat span,
 .hero-note p{
 	color:var(--muted);
+}
+
+.hero-stat span{
+	display:block;
+	margin-top:6px;
+	font-size:15px;
+	line-height:1.35;
 }
 
 .hero-note{
@@ -788,16 +796,16 @@ a{color:inherit}
 			</div>
 		</div>
 
-		<div class="hero-visual">
-			<div class="hero-stat">
-				<strong>Limited</strong>
-				<span>Pieces made in small batches</span>
-			</div>
-			<div class="hero-stat">
-				<strong>Updated</strong>
-				<span>Regularly refreshed selections</span>
-			</div>
+	<div class="hero-visual">
+		<div class="hero-stat">
+			<strong>Limited</strong>
+			<span>Pieces made in small batches</span>
 		</div>
+		<div class="hero-stat">
+			<strong>Fresh Picks</strong>
+			<span>Updated regularly</span>
+		</div>
+	</div>
 	</section>
 
 	<main>
