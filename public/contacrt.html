@@ -119,9 +119,7 @@ a{color:inherit}
 
 .wrap{
 	margin-top:24px;
-	display:grid;
-	grid-template-columns:1fr 1.05fr;
-	gap:22px;
+	display:block;
 }
 
 .panel{
@@ -182,67 +180,6 @@ a{color:inherit}
 	color:var(--muted);
 }
 
-form{
-	display:grid;
-	gap:14px;
-	margin-top:18px;
-}
-
-.row{
-	display:grid;
-	grid-template-columns:1fr 1fr;
-	gap:12px;
-}
-
-label{
-	font-size:14px;
-	font-weight:700;
-}
-
-input,
-textarea{
-	width:100%;
-	margin-top:6px;
-	border:1px solid var(--line);
-	border-radius:14px;
-	padding:12px 14px;
-	font-family:inherit;
-	font-size:14px;
-	background:#fff;
-	color:var(--text);
-}
-
-textarea{
-	min-height:150px;
-	resize:vertical;
-}
-
-.send-btn{
-	border:none;
-	border-radius:14px;
-	padding:13px;
-	background:linear-gradient(135deg, #d292a6 0%, #b96c84 100%);
-	color:#fff;
-	font-weight:700;
-	cursor:pointer;
-	transition:transform .2s ease, filter .2s ease;
-}
-
-.send-btn:hover{
-	transform:translateY(-2px);
-	filter:brightness(.97);
-}
-
-.status{
-	min-height:22px;
-	font-size:14px;
-	font-weight:700;
-	color:var(--muted);
-}
-
-.status.success{color:#1f8b47}
-.status.error{color:#b33425}
-
 .footer-note{
 	margin-top:22px;
 	padding:22px 24px;
@@ -261,10 +198,6 @@ textarea{
 	color:var(--brand-strong);
 	font-weight:700;
 	text-decoration:none;
-}
-
-@media (max-width:960px){
-	.wrap{grid-template-columns:1fr}
 }
 
 @media (max-width:680px){
@@ -290,8 +223,6 @@ textarea{
 	.panel h3{
 		font-size:40px;
 	}
-
-	.row{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -345,33 +276,6 @@ textarea{
 				</div>
 			</div>
 		</section>
-
-		<section class="panel">
-			<h3>Send a Message</h3>
-			<p>The form remains on the page so visitors can still leave quick inquiries directly from the website.</p>
-
-			<form id="contactForm" novalidate>
-				<div class="row">
-					<label>Full name
-						<input id="name" name="name" placeholder="Enter your full name" required>
-					</label>
-					<label>Phone number
-						<input id="phone" name="phone" placeholder="Example: 0973424279" required>
-					</label>
-				</div>
-
-				<label>Email
-					<input id="email" type="email" name="email" placeholder="ban@example.com" required>
-				</label>
-
-				<label>Message
-					<textarea id="message" name="message" placeholder="Tell us what you need..." required></textarea>
-				</label>
-
-				<button type="submit" class="send-btn">Send message</button>
-				<div id="status" class="status" aria-live="polite"></div>
-			</form>
-		</section>
 	</main>
 
 	<section class="footer-note">
@@ -381,39 +285,5 @@ textarea{
 	</section>
 </div>
 
-<script>
-const form = document.getElementById("contactForm")
-const statusBox = document.getElementById("status")
-
-function isPhoneValid(value){
-	return /^[+\d][\d\s]{8,15}$/.test(value.trim())
-}
-
-form.addEventListener("submit", (event)=>{
-	event.preventDefault()
-	statusBox.className = "status"
-
-	const name = form.name.value.trim()
-	const phone = form.phone.value.trim()
-	const email = form.email.value.trim()
-	const message = form.message.value.trim()
-
-	if(!name || !phone || !email || !message){
-		statusBox.classList.add("error")
-		statusBox.textContent = "Please complete all required fields."
-		return
-	}
-
-	if(!isPhoneValid(phone)){
-		statusBox.classList.add("error")
-		statusBox.textContent = "Phone number must contain 9 to 16 characters and may include spaces."
-		return
-	}
-
-	statusBox.classList.add("success")
-	statusBox.textContent = "Thank you. We received your message and will contact you soon."
-	form.reset()
-})
-</script>
 </body>
 </html>
