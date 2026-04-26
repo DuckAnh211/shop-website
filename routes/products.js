@@ -6,7 +6,9 @@ const { mapProduct } = require("../utils/productMapper")
 router.get(
   "/",
   asyncHandler(async (req, res)=>{
-    const products = await Product.find().sort({ createdAt: -1 })
+    const products = await Product.find()
+      .sort({ createdAt: -1 })
+      .populate("bundleRequiredProducts", "name")
     res.json(products.map(mapProduct))
   })
 )

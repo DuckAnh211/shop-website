@@ -1,3 +1,5 @@
+const mongoose = require("mongoose")
+
 function parseNumber(value, fallback = 0){
   const parsedValue = Number(value)
   return Number.isFinite(parsedValue) ? parsedValue : fallback
@@ -17,12 +19,32 @@ function computeDiscount(price, originalPrice, discount){
   return Math.max(0, Math.min(99, safeDiscount))
 }
 
+function parseProductIds(value){
+  if(!value){
+    return []
+  }
+
+  const rawValues = Array.isArray(value)
+    ? value
+    : String(value).split(",")
+
+  return [...new Set(
+    rawValues
+      .map((item)=>String(item).trim())
+      .filter((item)=>mongoose.Types.ObjectId.isValid(item))
+  )]
+}
+
 function validateAndBuildProductInput(payload, fallbackValues = {}){
   const name = String(payload.name ?? fallbackValues.name ?? "").trim()
   const description = String(payload.description ?? fallbackValues.description ?? "").trim()
   const price = parseNumber(payload.price, parseNumber(fallbackValues.price, 0))
   const originalPrice = parseNumber(payload.originalPrice, parseNumber(fallbackValues.originalPrice, price))
   const discount = computeDiscount(price, originalPrice, payload.discount ?? fallbackValues.discount)
+  const bundleDiscountPercent = computeDiscount(0, 0, payload.bundleDiscountPercent ?? fallbackValues.bundleDiscountPercent)
+  const bundleRequiredProducts = parseProductIds(
+    payload.bundleRequiredProducts ?? fallbackValues.bundleRequiredProducts
+  )
 
   if(!name){
     const error = new Error("Product name is required.")
@@ -42,12 +64,20 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     throw error
   }
 
+  if(bundleDiscountPercent > 0 && !bundleRequiredProducts.length){
+    const error = new Error("Choose at least one product for the bundle discount.")
+    error.statusCode = 400
+    throw error
+  }
+
   return {
     name,
     description,
     price,
     originalPrice,
-    discount
+    discount,
+    bundleDiscountPercent,
+    bundleRequiredProducts
   }
 }
 

@@ -45,6 +45,20 @@ function getProductImages(product){
   return ["https://via.placeholder.com/640x480?text=No+Image"]
 }
 
+function getBundlePromoText(product){
+  const bundleDiscount = Number(product.bundleDiscountPercent) || 0
+  const requiredProducts = Array.isArray(product.bundleRequiredProducts)
+    ? product.bundleRequiredProducts
+    : []
+  const requiredNames = requiredProducts.map((item)=>item.name).filter(Boolean)
+
+  if(bundleDiscount <= 0 || !requiredNames.length){
+    return ""
+  }
+
+  return `Buy with ${requiredNames.join(", ")} to get ${bundleDiscount}% off this item.`
+}
+
 function openLightbox(images, startIndex){
   lightboxImages = images
   lightboxIndex = startIndex
@@ -83,6 +97,7 @@ function onLightboxImageClick(event){
 function createProductCard(product, index){
   const { currentPrice, originalPrice, discount } = getProductPrices(product)
   const images = getProductImages(product)
+  const bundlePromoText = getBundlePromoText(product)
 
   const card = document.createElement("article")
   card.className = "product"
@@ -101,6 +116,7 @@ function createProductCard(product, index){
         <span class="price">${formatCurrency(currentPrice)}</span>
         ${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice)}</span>` : ""}
       </div>
+      ${bundlePromoText ? `<p class="bundle-promo">${bundlePromoText}</p>` : ""}
       <button class="buy-btn" type="button">View details</button>
     </div>
   `

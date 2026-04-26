@@ -13,6 +13,22 @@ function normalizeImage(image){
   }
 }
 
+function normalizeBundleProduct(product){
+  if(!product){
+    return null
+  }
+
+  if(typeof product === "string"){
+    return { _id: product, name: "" }
+  }
+
+  const id = product._id || product
+  return {
+    _id: String(id),
+    name: product.name || ""
+  }
+}
+
 function mapProduct(productDocument){
   const product = productDocument.toObject ? productDocument.toObject() : productDocument
   const normalizedImages = Array.isArray(product.images)
@@ -26,7 +42,11 @@ function mapProduct(productDocument){
     ...product,
     image: images[0]?.url || "",
     images: images.map((item)=>item.url),
-    imageObjects: images
+    imageObjects: images,
+    bundleDiscountPercent: Number(product.bundleDiscountPercent) || 0,
+    bundleRequiredProducts: Array.isArray(product.bundleRequiredProducts)
+      ? product.bundleRequiredProducts.map(normalizeBundleProduct).filter(Boolean)
+      : []
   }
 }
 

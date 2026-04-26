@@ -74,6 +74,10 @@ router.put(
     existingProduct.price = productInput.price
     existingProduct.originalPrice = productInput.originalPrice
     existingProduct.discount = productInput.discount
+    existingProduct.bundleDiscountPercent = productInput.bundleDiscountPercent
+    existingProduct.bundleRequiredProducts = productInput.bundleRequiredProducts.filter(
+      (productId)=>String(productId) !== String(existingProduct._id)
+    )
     existingProduct.images = nextImages
     existingProduct.image = nextImages[0] || null
 
@@ -96,6 +100,10 @@ router.delete(
     }
 
     await deleteImages(existingProduct.images)
+    await Product.updateMany(
+      { bundleRequiredProducts: existingProduct._id },
+      { $pull: { bundleRequiredProducts: existingProduct._id } }
+    )
     await existingProduct.deleteOne()
 
     res.json({ message: "Product deleted successfully." })

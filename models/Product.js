@@ -14,6 +14,11 @@ const ProductSchema = new mongoose.Schema(
     price: { type: Number, default: 0, min: 0 },
     originalPrice: { type: Number, default: 0, min: 0 },
     discount: { type: Number, default: 0, min: 0, max: 99 },
+    bundleDiscountPercent: { type: Number, default: 0, min: 0, max: 99 },
+    bundleRequiredProducts: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+      default: []
+    },
     image: {
       type: ProductImageSchema,
       default: null
