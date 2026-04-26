@@ -46,7 +46,7 @@ function getProductImages(product){
 }
 
 function getBundlePromoText(product){
-  const bundleDiscount = Number(product.bundleDiscountPercent) || 0
+  const bundleDiscount = Number(product.bundleDiscountAmount) || 0
   const requiredProducts = Array.isArray(product.bundleRequiredProducts)
     ? product.bundleRequiredProducts
     : []
@@ -56,7 +56,7 @@ function getBundlePromoText(product){
     return ""
   }
 
-  return `Buy with ${requiredNames.join(", ")} to get ${bundleDiscount}% off this item.`
+  return `Buy with ${requiredNames.join(", ")} to get ${formatCurrency(bundleDiscount)} off this item.`
 }
 
 function openLightbox(images, startIndex){

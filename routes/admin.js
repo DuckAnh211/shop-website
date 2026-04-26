@@ -74,7 +74,7 @@ router.put(
     existingProduct.price = productInput.price
     existingProduct.originalPrice = productInput.originalPrice
     existingProduct.discount = productInput.discount
-    existingProduct.bundleDiscountPercent = productInput.bundleDiscountPercent
+    existingProduct.bundleDiscountAmount = productInput.bundleDiscountAmount
     existingProduct.bundleRequiredProducts = productInput.bundleRequiredProducts.filter(
       (productId)=>String(productId) !== String(existingProduct._id)
     )

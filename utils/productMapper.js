@@ -43,7 +43,7 @@ function mapProduct(productDocument){
     image: images[0]?.url || "",
     images: images.map((item)=>item.url),
     imageObjects: images,
-    bundleDiscountPercent: Number(product.bundleDiscountPercent) || 0,
+    bundleDiscountAmount: Number(product.bundleDiscountAmount) || 0,
     bundleRequiredProducts: Array.isArray(product.bundleRequiredProducts)
       ? product.bundleRequiredProducts.map(normalizeBundleProduct).filter(Boolean)
       : []

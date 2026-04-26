@@ -41,7 +41,10 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
   const price = parseNumber(payload.price, parseNumber(fallbackValues.price, 0))
   const originalPrice = parseNumber(payload.originalPrice, parseNumber(fallbackValues.originalPrice, price))
   const discount = computeDiscount(price, originalPrice, payload.discount ?? fallbackValues.discount)
-  const bundleDiscountPercent = computeDiscount(0, 0, payload.bundleDiscountPercent ?? fallbackValues.bundleDiscountPercent)
+  const bundleDiscountAmount = parseNumber(
+    payload.bundleDiscountAmount,
+    parseNumber(fallbackValues.bundleDiscountAmount, 0)
+  )
   const bundleRequiredProducts = parseProductIds(
     payload.bundleRequiredProducts ?? fallbackValues.bundleRequiredProducts
   )
@@ -64,7 +67,19 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     throw error
   }
 
-  if(bundleDiscountPercent > 0 && !bundleRequiredProducts.length){
+  if(bundleDiscountAmount < 0){
+    const error = new Error("Bundle discount amount must be zero or greater.")
+    error.statusCode = 400
+    throw error
+  }
+
+  if(bundleDiscountAmount > price){
+    const error = new Error("Bundle discount amount cannot be greater than selling price.")
+    error.statusCode = 400
+    throw error
+  }
+
+  if(bundleDiscountAmount > 0 && !bundleRequiredProducts.length){
     const error = new Error("Choose at least one product for the bundle discount.")
     error.statusCode = 400
     throw error
@@ -76,7 +91,7 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     price,
     originalPrice,
     discount,
-    bundleDiscountPercent,
+    bundleDiscountAmount,
     bundleRequiredProducts
   }
 }
