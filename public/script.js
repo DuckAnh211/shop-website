@@ -5,6 +5,7 @@ const lightboxImage = document.getElementById("lightboxImage")
 const closeLightboxBtn = document.getElementById("closeLightbox")
 const prevImageBtn = document.getElementById("prevImage")
 const nextImageBtn = document.getElementById("nextImage")
+const heroShowcase = document.getElementById("heroShowcase")
 
 let lightboxImages = []
 let lightboxIndex = 0
@@ -57,6 +58,27 @@ function getBundlePromoText(product){
   }
 
   return `Buy with ${requiredNames.join(", ")} to get ${formatCurrency(bundleDiscount)} off this item.`
+}
+
+function renderHeroShowcase(products){
+  if(!heroShowcase || !Array.isArray(products) || !products.length){
+    return
+  }
+
+  const featured = products.find((product)=>getProductImages(product).length) || products[0]
+  const images = getProductImages(featured).slice(0, 4)
+  const mainImage = images[0]
+
+  heroShowcase.innerHTML = `
+    <img class="showcase-main" src="${mainImage}" alt="${featured.name || "Featured handmade product"}">
+    <div class="showcase-thumbs">
+      ${images.slice(1, 4).map((image, index)=>`<img src="${image}" alt="Featured product preview ${index + 2}">`).join("")}
+    </div>
+    <div class="showcase-caption">
+      <strong>${featured.name || "Featured handmade pick"}</strong>
+      <span>Just added</span>
+    </div>
+  `
 }
 
 function openLightbox(images, startIndex){
@@ -170,6 +192,8 @@ async function loadProducts(){
       return
     }
 
+    renderHeroShowcase(products)
+
     products.forEach((product, index)=>{
       productsContainer.appendChild(createProductCard(product, index))
     })
@@ -209,3 +233,22 @@ document.addEventListener("keydown", (event)=>{
     showRelativeImage(1)
   }
 })
+
+const revealItems = document.querySelectorAll("[data-reveal]")
+
+if("IntersectionObserver" in window){
+  const revealObserver = new IntersectionObserver((entries)=>{
+    entries.forEach((entry)=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add("is-visible")
+        revealObserver.unobserve(entry.target)
+      }
+    })
+  }, {
+    threshold: 0.15
+  })
+
+  revealItems.forEach((item)=>revealObserver.observe(item))
+}else{
+  revealItems.forEach((item)=>item.classList.add("is-visible"))
+}
