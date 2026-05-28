@@ -68,6 +68,11 @@ function Trim-Slashes($Value){
   return ([string]$Value).Trim("/")
 }
 
+function Has-RealValue($Value){
+  $text = ([string]$Value).Trim()
+  return $text -and $text -notmatch "^your-" -and $text -notmatch "^<.*>$"
+}
+
 function Read-DotEnv($Path){
   $values = @{}
   if(-not (Test-Path -LiteralPath $Path)){
@@ -513,9 +518,9 @@ $keyPrefix = if($runtimeEnv.ContainsKey("AWS_S3_KEY_PREFIX") -and $runtimeEnv["A
 }else{
   "shop-website/products"
 }
-$s3BucketName = if($S3Bucket){
+$s3BucketName = if(Has-RealValue $S3Bucket){
   ConvertTo-S3BucketName $S3Bucket
-}elseif($runtimeEnv.ContainsKey("AWS_S3_BUCKET") -and $runtimeEnv["AWS_S3_BUCKET"]){
+}elseif($runtimeEnv.ContainsKey("AWS_S3_BUCKET") -and (Has-RealValue $runtimeEnv["AWS_S3_BUCKET"])){
   ConvertTo-S3BucketName $runtimeEnv["AWS_S3_BUCKET"]
 }else{
   ConvertTo-S3BucketName "$ServiceName-$accountId-$Region-assets"
