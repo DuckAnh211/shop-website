@@ -48,7 +48,9 @@ function Invoke-Native([string]$Command, [string[]]$Arguments){
 }
 
 function Write-JsonFile($Path, $Value){
-  $Value | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $Path -Encoding UTF8
+  $json = $Value | ConvertTo-Json -Depth 20
+  $encoding = [System.Text.UTF8Encoding]::new($false)
+  [System.IO.File]::WriteAllText($Path, $json, $encoding)
 }
 
 function ConvertTo-S3BucketName($Value){
