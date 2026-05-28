@@ -9,7 +9,7 @@ Express + MongoDB Atlas + Amazon S3 shop website, organized into service boundar
 - Amazon S3 for product image storage
 - Static frontend in `public/`
 - Dockerized production runtime
-- GitHub Actions deployment to AWS App Runner through Amazon ECR
+- GitHub Actions deployment to AWS EC2 through Amazon ECR and SSM
 
 ## Architecture
 
@@ -72,16 +72,16 @@ This repo includes automated deployment with GitHub Actions:
 
 - Build Docker image
 - Push image to Amazon ECR
-- Start deployment on AWS App Runner
+- Deploy the container on AWS EC2 through AWS Systems Manager
 
 Fast path after you are logged in to AWS and GitHub locally:
 
 ```powershell
 Copy-Item .env.example .env
 # Fill .env with production MongoDB, S3, and admin values first.
-.\scripts\aws-bootstrap-apprunner.ps1 -Region ap-southeast-1
+.\scripts\aws-bootstrap-ec2.ps1 -Region ap-southeast-1
 git add .
-git commit -m "Prepare AWS App Runner deployment"
+git commit -m "Prepare AWS EC2 deployment"
 git push origin main
 ```
 
@@ -90,9 +90,9 @@ The bootstrap script creates or updates:
 - Amazon ECR repository
 - Amazon S3 bucket for product images
 - Initial Docker image tagged `latest`
-- App Runner ECR access role
-- App Runner instance role for S3 access
-- App Runner service
+- EC2 IAM instance profile with SSM, ECR pull, and S3 image permissions
+- EC2 security group with public HTTP on port 80
+- EC2 instance running Docker
 - GitHub OIDC provider and deploy role
 - GitHub Actions secrets and variables
 
@@ -100,23 +100,23 @@ Manual equivalent if you do not use the bootstrap script:
 
 1. Create an ECR repository, for example `shop-website`.
 2. Create an S3 bucket for product images and allow public read for product image objects.
-3. Push an initial `latest` image to that repository once, so App Runner can be created from it.
-4. Create an AWS App Runner service from the ECR image `shop-website:latest` with an App Runner ECR access role.
-5. Attach an App Runner instance role with `s3:PutObject`, `s3:DeleteObject`, and `s3:ListBucket` permissions for the image bucket.
-6. Add the app environment variables from `.env.example` to the App Runner service.
-7. Set App Runner health check path to `/health`.
+3. Push an initial `latest` image to that repository.
+4. Create an EC2 IAM instance profile with `AmazonSSMManagedInstanceCore`, ECR pull access, and S3 image permissions.
+5. Launch an Amazon Linux 2023 EC2 instance in a public subnet and attach the instance profile.
+6. Allow inbound TCP port 80 on the EC2 security group.
+7. Install Docker on the instance and run the app with `--env-file /opt/shop-website/.env -p 80:3000`.
 8. Create a GitHub OIDC IAM role for deployment.
 9. Add GitHub repository secrets and variables below.
 
 GitHub repository secrets:
 
 - `AWS_ROLE_TO_ASSUME` - IAM role ARN used by GitHub Actions
-- `APP_RUNNER_SERVICE_ARN` - App Runner service ARN
 
 GitHub repository variables:
 
 - `AWS_REGION` - for example `ap-southeast-1`
 - `ECR_REPOSITORY` - for example `shop-website`
+- `EC2_INSTANCE_ID` - target instance for SSM deployment
 
 Minimum permissions for the GitHub deployment role:
 
@@ -128,10 +128,13 @@ Minimum permissions for the GitHub deployment role:
 - `ecr:UploadLayerPart`
 - `ecr:CompleteLayerUpload`
 - `ecr:PutImage`
-- `apprunner:StartDeployment`
+- `ssm:SendCommand`
+- `ssm:GetCommandInvocation`
+- `ssm:ListCommandInvocations`
+- `ec2:DescribeInstances`
 
 After this setup, every push to `main` deploys automatically. You can also run the workflow manually from GitHub Actions.
-Keep app runtime secrets in App Runner environment variables; the GitHub workflow only needs deployment permissions.
+Keep app runtime secrets in `/opt/shop-website/.env` on EC2; the GitHub workflow only needs deployment permissions.
 
 ## Docker
 

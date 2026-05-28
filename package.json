@@ -15,7 +15,7 @@
     "s3",
     "docker",
     "aws",
-    "apprunner"
+    "ec2"
   ],
   "author": "",
   "license": "ISC",
