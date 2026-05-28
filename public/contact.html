@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact | KaWo Crotchet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+	--bg:#f5dce4;
+	--panel:#fffafc;
+	--text:#4f3140;
+	--muted:#886472;
+	--brand:#c98298;
+	--brand-strong:#a95f77;
+	--line:#eed2db;
+	--shadow:0 24px 60px rgba(138, 76, 100, 0.14);
+	--radius-xl:34px;
+	--radius-lg:24px;
+	--radius-md:18px;
+}
+
+*{box-sizing:border-box}
+
+body{
+	margin:0;
+	font-family:"Be Vietnam Pro",sans-serif;
+	color:var(--text);
+	background:
+		radial-gradient(circle at top left, #f8ebf0 0%, transparent 28%),
+		radial-gradient(circle at bottom right, #f3cbd6 0%, transparent 30%),
+		linear-gradient(180deg, #f2d6df 0%, #f8e6ec 100%);
+}
+
+a{color:inherit}
+
+.page-shell{
+	max-width:1180px;
+	margin:28px auto;
+	padding:22px;
+	background:linear-gradient(180deg, rgba(255,255,255,.55) 0%, rgba(255,248,251,.92) 100%);
+	border:1px solid rgba(255,255,255,.7);
+	border-radius:40px;
+	box-shadow:var(--shadow);
+}
+
+.topbar{
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
+	gap:16px;
+	padding:8px 8px 22px;
+}
+
+.brand{
+	margin:0;
+	font-family:"Cormorant Garamond",serif;
+	font-size:42px;
+	font-weight:700;
+	letter-spacing:.6px;
+}
+
+.brand small{
+	display:block;
+	font-family:"Be Vietnam Pro",sans-serif;
+	font-size:12px;
+	letter-spacing:.3em;
+	text-transform:uppercase;
+	color:var(--muted);
+	margin-top:4px;
+}
+
+.nav{
+	display:flex;
+	flex-wrap:wrap;
+	gap:10px;
+}
+
+.nav a{
+	text-decoration:none;
+	padding:10px 18px;
+	border-radius:999px;
+	border:1px solid var(--line);
+	background:rgba(255,255,255,.78);
+	font-weight:700;
+	color:var(--muted);
+}
+
+.hero{
+	padding:32px;
+	border-radius:var(--radius-xl);
+	background:
+		linear-gradient(120deg, rgba(255,247,250,.82) 0%, rgba(244,201,215,.42) 45%, rgba(203,129,152,.25) 100%),
+		linear-gradient(135deg, #f6dfe6 0%, #ebbecb 100%);
+}
+
+.hero h1,
+.panel h2,
+.panel h3{
+	font-family:"Cormorant Garamond",serif;
+}
+
+.hero h1{
+	margin:0 0 14px;
+	font-size:56px;
+	line-height:.95;
+	max-width:10ch;
+}
+
+.hero p{
+	margin:0;
+	max-width:56ch;
+	line-height:1.75;
+	color:var(--muted);
+}
+
+.wrap{
+	margin-top:24px;
+	display:block;
+}
+
+.panel{
+	padding:28px;
+	border-radius:var(--radius-xl);
+	background:var(--panel);
+	border:1px solid var(--line);
+	box-shadow:0 12px 30px rgba(123,73,91,.08);
+}
+
+.panel h2,
+.panel h3{
+	margin:0 0 14px;
+	font-size:44px;
+	line-height:.95;
+}
+
+.panel p{
+	margin:0;
+	color:var(--muted);
+	line-height:1.75;
+}
+
+.contact-list{
+	margin-top:18px;
+	display:grid;
+	gap:12px;
+}
+
+.item{
+	padding:16px 18px;
+	border-radius:18px;
+	background:linear-gradient(180deg, #fff 0%, #fff7fa 100%);
+	border:1px solid var(--line);
+}
+
+.label{
+	margin:0;
+	font-size:12px;
+	letter-spacing:.12em;
+	text-transform:uppercase;
+	font-weight:800;
+	color:#a37c8c;
+}
+
+.value{
+	display:inline-block;
+	margin-top:8px;
+	text-decoration:none;
+	font-size:18px;
+	font-weight:700;
+	word-break:break-word;
+}
+
+.hint{
+	margin-top:8px;
+	font-size:14px;
+	color:var(--muted);
+}
+
+.footer-note{
+	margin-top:22px;
+	padding:22px 24px;
+	border-radius:var(--radius-xl);
+	background:linear-gradient(120deg, #fbe8ee 0%, #f3cfda 100%);
+	border:1px solid var(--line);
+}
+
+.footer-note h3{
+	margin:0 0 12px;
+	font-size:40px;
+	line-height:.95;
+}
+
+.footer-note a{
+	color:var(--brand-strong);
+	font-weight:700;
+	text-decoration:none;
+}
+
+@media (max-width:680px){
+	.page-shell{
+		margin:14px;
+		padding:14px;
+		border-radius:28px;
+	}
+
+	.topbar{
+		flex-direction:column;
+		align-items:flex-start;
+	}
+
+	.hero,
+	.panel,
+	.footer-note{
+		padding:22px;
+	}
+
+	.hero h1,
+	.panel h2,
+	.panel h3{
+		font-size:40px;
+	}
+}
+</style>
+</head>
+
+<body>
+<div class="page-shell">
+	<header class="topbar">
+		<div>
+			<h1 class="brand">KaWo Crotchet<small>Handcrafted Collection</small></h1>
+		</div>
+		<nav class="nav">
+			<a href="index.html">Home</a>
+			<a href="contact.html">Contact</a>
+			<a href="login.html">Login</a>
+		</nav>
+	</header>
+
+	<section class="hero">
+		<h1>Contact us for quick support</h1>
+		<p>Need custom handmade gifts, bulk pricing, or made-to-order products? Send your request and our team will get back to you during business hours.</p>
+	</section>
+
+	<main class="wrap">
+		<section class="panel">
+			<h2>Contact & Social</h2>
+			<p>All contact information below has been updated with your latest details.</p>
+
+			<div class="contact-list">
+				<div class="item">
+					<p class="label">Phone</p>
+					<a class="value" href="tel:+886973424279">+886 0973424279</a>
+					<p class="hint">Available for direct inquiries and order support.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Email</p>
+					<a class="value" href="mailto:katietran3011@gmail.com">katietran3011@gmail.com</a>
+					<p class="hint">Best for detailed product questions and partnership requests.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Line</p>
+					<a class="value" href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">line.me/ti/p/TCVn7wKCCy</a>
+					<p class="hint">Quick messaging for simple follow-ups.</p>
+				</div>
+
+				<div class="item">
+					<p class="label">Instagram</p>
+					<a class="value" href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">instagram.com/katienrain__</a>
+					<p class="hint">Browse social presence and message through Instagram.</p>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<section class="footer-note">
+		<h3>Direct Links</h3>
+		<p>Line: <a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">https://line.me/ti/p/TCVn7wKCCy</a></p>
+		<p>Instagram: <a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">https://www.instagram.com/katienrain__/?hl=en</a></p>
+	</section>
+</div>
+
+</body>
+</html>

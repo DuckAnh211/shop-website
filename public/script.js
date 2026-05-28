@@ -6,9 +6,23 @@ const closeLightboxBtn = document.getElementById("closeLightbox")
 const prevImageBtn = document.getElementById("prevImage")
 const nextImageBtn = document.getElementById("nextImage")
 const heroShowcase = document.getElementById("heroShowcase")
+const productSearch = document.getElementById("productSearch")
+const categoryFilter = document.getElementById("categoryFilter")
+const statusFilter = document.getElementById("statusFilter")
+const sortFilter = document.getElementById("sortFilter")
 
 let lightboxImages = []
 let lightboxIndex = 0
+let searchTimer
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;")
+}
 
 function formatCurrency(value){
   return new Intl.NumberFormat("en-US", {
@@ -60,23 +74,80 @@ function getBundlePromoText(product){
   return `Buy with ${requiredNames.join(", ")} to get ${formatCurrency(bundleDiscount)} off this item.`
 }
 
+function getStockLabel(product){
+  const stock = Number(product.stock) || 0
+
+  if(stock <= 0){
+    return { text: "Sold out", className: "sold-out" }
+  }
+
+  if(stock <= 3){
+    return { text: `${stock} left`, className: "low-stock" }
+  }
+
+  return { text: "In stock", className: "in-stock" }
+}
+
+function buildProductsUrl(){
+  const params = new URLSearchParams()
+  const query = productSearch?.value.trim()
+  const category = categoryFilter?.value
+  const status = statusFilter?.value
+  const sort = sortFilter?.value || "featured"
+
+  if(query){
+    params.set("q", query)
+  }
+
+  if(category){
+    params.set("category", category)
+  }
+
+  if(status){
+    params.set("status", status)
+  }
+
+  if(sort){
+    params.set("sort", sort)
+  }
+
+  const queryString = params.toString()
+  return queryString ? `/products?${queryString}` : "/products"
+}
+
+function createInquiryHref(product, currentPrice){
+  const subject = `Product inquiry: ${product.name || "Product"}`
+  const lines = [
+    "Hi, I am interested in this product:",
+    "",
+    `Name: ${product.name || "Product"}`,
+    `Price: ${formatCurrency(currentPrice)}`,
+    product.category ? `Category: ${product.category}` : "",
+    `Shop: ${window.location.origin}/#productsSection`
+  ].filter(Boolean)
+
+  return `mailto:katietran3011@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`
+}
+
 function renderHeroShowcase(products){
   if(!heroShowcase || !Array.isArray(products) || !products.length){
     return
   }
 
-  const featured = products.find((product)=>getProductImages(product).length) || products[0]
+  const featured = products.find((product)=>product.isFeatured && getProductImages(product).length)
+    || products.find((product)=>getProductImages(product).length)
+    || products[0]
   const images = getProductImages(featured).slice(0, 4)
   const mainImage = images[0]
 
   heroShowcase.innerHTML = `
-    <img class="showcase-main" src="${mainImage}" alt="${featured.name || "Featured handmade product"}">
+    <img class="showcase-main" src="${mainImage}" alt="${escapeHtml(featured.name || "Featured handmade product")}">
     <div class="showcase-thumbs">
       ${images.slice(1, 4).map((image, index)=>`<img src="${image}" alt="Featured product preview ${index + 2}">`).join("")}
     </div>
     <div class="showcase-caption">
-      <strong>${featured.name || "Featured handmade pick"}</strong>
-      <span>Just added</span>
+      <strong>${escapeHtml(featured.name || "Featured handmade pick")}</strong>
+      <span>${featured.isFeatured ? "Featured" : "Just added"}</span>
     </div>
   `
 }
@@ -120,6 +191,9 @@ function createProductCard(product, index){
   const { currentPrice, originalPrice, discount } = getProductPrices(product)
   const images = getProductImages(product)
   const bundlePromoText = getBundlePromoText(product)
+  const stockLabel = getStockLabel(product)
+  const tags = Array.isArray(product.tags) ? product.tags.slice(0, 3) : []
+  let selectedImageIndex = 0
 
   const card = document.createElement("article")
   card.className = "product"
@@ -127,28 +201,36 @@ function createProductCard(product, index){
 
   card.innerHTML = `
     <div class="product-media">
-      <img src="${images[0]}" alt="${product.name || "Product"}">
-      ${discount > 0 ? `<span class="discount">-${discount}%</span>` : ""}
+      <img src="${images[0]}" alt="${escapeHtml(product.name || "Product")}">
+      <div class="product-flags">
+        ${product.isFeatured ? '<span class="flag featured">Featured</span>' : ""}
+        ${discount > 0 ? `<span class="flag discount">-${discount}%</span>` : ""}
+        <span class="flag stock ${stockLabel.className}">${stockLabel.text}</span>
+      </div>
     </div>
     <div class="info">
-      <h4>${product.name || "New Product"}</h4>
-      <p class="description">${product.description || "Product description is being updated."}</p>
+      <div class="product-meta">
+        <span>${escapeHtml(product.category || "Uncategorized")}</span>
+      </div>
+      <h4>${escapeHtml(product.name || "New Product")}</h4>
+      <p class="description">${escapeHtml(product.description || "Product description is being updated.")}</p>
       <div class="thumbs"></div>
+      ${tags.length ? `<div class="tag-list">${tags.map((tag)=>`<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       <div class="prices">
         <span class="price">${formatCurrency(currentPrice)}</span>
         ${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice)}</span>` : ""}
       </div>
-      ${bundlePromoText ? `<p class="bundle-promo">${bundlePromoText}</p>` : ""}
-      <button class="buy-btn" type="button">View details</button>
+      ${bundlePromoText ? `<p class="bundle-promo">${escapeHtml(bundlePromoText)}</p>` : ""}
+      <div class="product-actions">
+        <button class="buy-btn" type="button">View details</button>
+        <a class="inquiry-btn" href="${createInquiryHref(product, currentPrice)}">Ask to buy</a>
+      </div>
     </div>
   `
 
   const mainImage = card.querySelector(".product-media img")
   const thumbs = card.querySelector(".thumbs")
-  const openViewer = ()=>{
-    const selectedIndex = images.indexOf(mainImage.src)
-    openLightbox(images, selectedIndex >= 0 ? selectedIndex : 0)
-  }
+  const openViewer = ()=>openLightbox(images, selectedImageIndex)
 
   mainImage.addEventListener("click", openViewer)
   card.querySelector(".buy-btn").addEventListener("click", openViewer)
@@ -157,9 +239,10 @@ function createProductCard(product, index){
     const thumbBtn = document.createElement("button")
     thumbBtn.type = "button"
     thumbBtn.className = `thumb${imageIndex === 0 ? " active" : ""}`
-    thumbBtn.innerHTML = `<img src="${image}" alt="Image ${imageIndex + 1} of ${product.name || "product"}">`
+    thumbBtn.innerHTML = `<img src="${image}" alt="Image ${imageIndex + 1} of ${escapeHtml(product.name || "product")}">`
 
     thumbBtn.addEventListener("click", ()=>{
+      selectedImageIndex = imageIndex
       mainImage.src = image
       thumbs.querySelectorAll(".thumb").forEach((btn)=>btn.classList.remove("active"))
       thumbBtn.classList.add("active")
@@ -172,11 +255,37 @@ function createProductCard(product, index){
   return card
 }
 
+async function loadCategories(){
+  if(!categoryFilter){
+    return
+  }
+
+  try{
+    const response = await fetch("/products/meta/categories")
+    if(!response.ok){
+      throw new Error(`HTTP ${response.status}`)
+    }
+
+    const categories = await response.json()
+    const currentCategory = categoryFilter.value
+    categoryFilter.innerHTML = '<option value="">All categories</option>'
+    categories.forEach((category)=>{
+      const option = document.createElement("option")
+      option.value = category
+      option.textContent = category
+      categoryFilter.appendChild(option)
+    })
+    categoryFilter.value = currentCategory
+  }catch(error){
+    categoryFilter.innerHTML = '<option value="">All categories</option>'
+  }
+}
+
 async function loadProducts(){
   productsContainer.innerHTML = '<div class="status">Loading products...</div>'
 
   try{
-    const response = await fetch("/products")
+    const response = await fetch(buildProductsUrl())
     if(!response.ok){
       throw new Error(`HTTP ${response.status}`)
     }
@@ -188,7 +297,7 @@ async function loadProducts(){
     }
 
     if(!products.length){
-      productsContainer.innerHTML = '<div class="status">No products yet. Add one from the admin page.</div>'
+      productsContainer.innerHTML = '<div class="status">No products match the current filters.</div>'
       return
     }
 
@@ -202,7 +311,18 @@ async function loadProducts(){
   }
 }
 
+function scheduleProductsReload(){
+  window.clearTimeout(searchTimer)
+  searchTimer = window.setTimeout(loadProducts, 250)
+}
+
+loadCategories()
 loadProducts()
+
+productSearch?.addEventListener("input", scheduleProductsReload)
+categoryFilter?.addEventListener("change", loadProducts)
+statusFilter?.addEventListener("change", loadProducts)
+sortFilter?.addEventListener("change", loadProducts)
 
 closeLightboxBtn?.addEventListener("click", closeLightbox)
 prevImageBtn?.addEventListener("click", ()=>showRelativeImage(-1))

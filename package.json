@@ -5,6 +5,7 @@
   "main": "server.js",
   "type": "commonjs",
   "scripts": {
+    "check": "node scripts/check-js.js",
     "dev": "node server.js",
     "start": "node server.js"
   },
@@ -12,7 +13,9 @@
     "express",
     "mongodb",
     "cloudinary",
-    "vercel"
+    "docker",
+    "aws",
+    "apprunner"
   ],
   "author": "",
   "license": "ISC",

@@ -17,6 +17,8 @@
   --brand:#d9572b;
   --brand-strong:#bd471f;
   --line:#f0d9c7;
+  --success:#1f8b47;
+  --danger:#b33425;
   --radius-lg:20px;
   --radius-md:12px;
 }
@@ -30,7 +32,7 @@ body{
     var(--bg);
   color:var(--text);
 }
-.wrap{max-width:980px;margin:28px auto;padding:0 18px}
+.wrap{max-width:1080px;margin:28px auto;padding:0 18px}
 .header{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .title{margin:0 0 16px;font-family:"Fraunces",serif;font-size:34px}
 .subtitle{margin:0 0 18px;color:var(--muted)}
@@ -39,9 +41,11 @@ body{
 .helper{margin:0;color:var(--muted);font-size:14px}
 form{margin-top:10px;display:grid;gap:12px}
 label{font-size:14px;font-weight:600}
-input, textarea{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 12px;font-family:inherit;font-size:14px;background:#fff}
+input, textarea, select{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:var(--radius-md);padding:10px 12px;font-family:inherit;font-size:14px;background:#fff}
 textarea{min-height:110px;resize:vertical}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.toggle{display:flex;align-items:center;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--radius-md);background:#fff}
+.toggle input{width:auto;margin:0}
 .bundle-box{border:1px solid var(--line);border-radius:var(--radius-md);padding:12px;background:#fff}
 .bundle-box legend{font-size:14px;font-weight:700;padding:0 6px}
 .bundle-products{margin-top:10px;display:grid;gap:8px;max-height:150px;overflow:auto}
@@ -51,6 +55,7 @@ textarea{min-height:110px;resize:vertical}
 .submit-btn{border:none;padding:12px;border-radius:var(--radius-md);background:var(--brand);color:#fff;font-weight:700;cursor:pointer}
 .submit-btn:hover{background:var(--brand-strong)}
 .ghost-btn{border:1px solid var(--line);padding:12px;border-radius:var(--radius-md);background:#fff;color:var(--text);font-weight:700;cursor:pointer}
+.ghost-btn:disabled{opacity:.55;cursor:not-allowed}
 .preview{border:1px dashed var(--line);border-radius:var(--radius-md);min-height:180px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff;color:var(--muted);font-size:14px;padding:10px}
 .preview-grid{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px}
 .preview-grid img{width:100%;height:88px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
@@ -66,13 +71,23 @@ textarea{min-height:110px;resize:vertical}
 .product-list{display:grid;gap:12px}
 .product-row{border:1px solid var(--line);border-radius:var(--radius-md);padding:12px;background:#fff;display:grid;grid-template-columns:90px 1fr auto;gap:12px;align-items:center}
 .product-row img{width:90px;height:70px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
-.product-row h4{margin:0;font-size:16px}.product-row p{margin:4px 0 0;font-size:14px;color:var(--muted)}
-.row-btns{display:flex;gap:8px}.small-btn{border:none;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:700}
-.small-btn.edit{background:#fce7cf;color:#7b3b1d}.small-btn.delete{background:#ffe1de;color:#9f2620}
-.muted{margin:0;color:var(--muted);font-size:14px}.status{min-height:24px;font-size:14px;font-weight:600}
-.status.success{color:#1f8b47}.status.error{color:#b33425}
+.product-row h4{margin:0;font-size:16px}
+.product-row p{margin:4px 0 0;font-size:14px;color:var(--muted);line-height:1.5}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 8px;background:#f9ead8;color:#7b3b1d;font-size:12px;font-weight:700}
+.badge.success{background:#e2f4e8;color:#1f6c3c}
+.badge.danger{background:#ffe1de;color:#9f2620}
+.badge.neutral{background:#f2eee8;color:#725c51}
+.row-btns{display:flex;gap:8px}
+.small-btn{border:none;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:700}
+.small-btn.edit{background:#fce7cf;color:#7b3b1d}
+.small-btn.delete{background:#ffe1de;color:#9f2620}
+.muted{margin:0;color:var(--muted);font-size:14px}
+.status{min-height:24px;font-size:14px;font-weight:600}
+.status.success{color:var(--success)}
+.status.error{color:var(--danger)}
 @media (max-width:900px){.layout{grid-template-columns:1fr}}
-@media (max-width:520px){.row{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.product-row{grid-template-columns:1fr}}
+@media (max-width:620px){.row,.actions{grid-template-columns:1fr}.product-row{grid-template-columns:1fr}.row-btns{display:grid;grid-template-columns:1fr 1fr}.picked-tools{align-items:stretch;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -80,28 +95,74 @@ textarea{min-height:110px;resize:vertical}
   <div class="header">
     <div>
       <h1 class="title">Product Management</h1>
-      <p class="subtitle">Create, update, and delete published products.</p>
+      <p class="subtitle">Create, update, hide, feature, and delete published products.</p>
     </div>
     <button id="logoutBtn" class="ghost-btn" type="button">Log out</button>
   </div>
+
   <div class="layout">
     <section class="panel">
       <p id="formHeading" class="helper">Creating a new product.</p>
       <form id="productForm" enctype="multipart/form-data">
         <input id="editingId" type="hidden" name="editingId" value="">
-        <label>Product name<input id="name" name="name" placeholder="Example: Handmade canvas bag" required></label>
+
+        <label>Product name
+          <input id="name" name="name" placeholder="Example: Handmade canvas bag" required>
+        </label>
+
         <div class="row">
-          <label>Selling price (USD)<input id="price" name="price" type="number" min="0" step="0.01" placeholder="29.90" required></label>
-          <label>Original price (USD)<input id="originalPrice" name="originalPrice" type="number" min="0" step="0.01" placeholder="39.90" required></label>
+          <label>Category
+            <input id="category" name="category" placeholder="Example: Bags">
+          </label>
+          <label>Tags
+            <input id="tags" name="tags" placeholder="gift, pastel, crochet">
+          </label>
         </div>
-        <label>Discount (%)<input id="discount" name="discount" type="number" min="0" max="99" placeholder="Auto-calculated when left empty"></label>
+
+        <div class="row">
+          <label>Selling price (USD)
+            <input id="price" name="price" type="number" min="0" step="0.01" placeholder="29.90" required>
+          </label>
+          <label>Original price (USD)
+            <input id="originalPrice" name="originalPrice" type="number" min="0" step="0.01" placeholder="39.90" required>
+          </label>
+        </div>
+
+        <div class="row">
+          <label>Discount (%)
+            <input id="discount" name="discount" type="number" min="0" max="99" placeholder="Auto-calculated when left empty">
+          </label>
+          <label>Stock
+            <input id="stock" name="stock" type="number" min="0" step="1" value="0">
+          </label>
+        </div>
+
+        <div class="row">
+          <label>Publish status
+            <select id="isPublished" name="isPublished">
+              <option value="true">Published</option>
+              <option value="false">Draft / hidden</option>
+            </select>
+          </label>
+          <label class="toggle">
+            <input id="isFeatured" name="isFeatured" type="checkbox" value="true">
+            Featured product
+          </label>
+        </div>
+
         <fieldset class="bundle-box">
           <legend>Discount when bought with selected products</legend>
-          <label>Bundle discount amount (USD)<input id="bundleDiscountAmount" name="bundleDiscountAmount" type="number" min="0" step="0.01" placeholder="Example: 1.50"></label>
+          <label>Bundle discount amount (USD)
+            <input id="bundleDiscountAmount" name="bundleDiscountAmount" type="number" min="0" step="0.01" placeholder="Example: 1.50">
+          </label>
           <div id="bundleProductOptions" class="bundle-products"></div>
           <p id="bundleEmpty" class="bundle-empty">Create another product first to choose bundle conditions.</p>
         </fieldset>
-        <label>Description<textarea id="description" name="description" placeholder="Short details about materials and size..." required></textarea></label>
+
+        <label>Description
+          <textarea id="description" name="description" placeholder="Short details about materials and size..." required></textarea>
+        </label>
+
         <label>Product images (you can select multiple)
           <input id="imageInput" type="file" name="images" accept="image/*" multiple>
           <div class="picked-tools">
@@ -110,6 +171,7 @@ textarea{min-height:110px;resize:vertical}
           </div>
           <div id="pickedList" class="picked-list"></div>
         </label>
+
         <div class="actions">
           <button id="submitBtn" class="submit-btn" type="submit">Publish product</button>
           <button id="cancelEditBtn" class="ghost-btn" type="button">Cancel edit</button>
@@ -117,23 +179,28 @@ textarea{min-height:110px;resize:vertical}
         <div id="status" class="status" aria-live="polite"></div>
       </form>
     </section>
+
     <aside class="panel meta">
       <div id="preview" class="preview">Image previews will appear here</div>
       <p><strong>Tip:</strong> 4:3 or 1:1 images look best on product cards.</p>
       <p><strong>Note:</strong> During edit, selecting new images replaces the current image set.</p>
+      <p><strong>Draft:</strong> Hidden products stay available in admin but do not appear on the shop page.</p>
     </aside>
   </div>
+
   <section class="panel list-panel">
-    <h3 style="margin:0 0 10px;">Published products</h3>
+    <h3 style="margin:0 0 10px;">Products</h3>
     <div id="productList" class="product-list"></div>
   </section>
 </div>
+
 <script>
 const ADMIN_TOKEN_KEY = "shopAdminToken"
 const adminToken = localStorage.getItem(ADMIN_TOKEN_KEY)
 if(!adminToken){
   window.location.replace("/login.html")
 }
+
 const form = document.getElementById("productForm")
 const imageInput = document.getElementById("imageInput")
 const preview = document.getElementById("preview")
@@ -149,29 +216,417 @@ const clearPickedBtn = document.getElementById("clearPickedBtn")
 const logoutBtn = document.getElementById("logoutBtn")
 const bundleProductOptions = document.getElementById("bundleProductOptions")
 const bundleEmpty = document.getElementById("bundleEmpty")
+
 let allProducts = []
 let selectedFiles = []
-function getAdminHeaders(extraHeaders = {}){ return { Authorization: `Bearer ${localStorage.getItem(ADMIN_TOKEN_KEY) || ""}`, ...extraHeaders } }
-async function readResponsePayload(response){ const rawText = await response.text(); if(!rawText){ return {} } try{ return JSON.parse(rawText) }catch(error){ return { message: rawText } } }
-function handleUnauthorized(response){ if(response.status === 401){ localStorage.removeItem(ADMIN_TOKEN_KEY); window.location.replace("/login.html"); return true } return false }
-function formatCurrency(value){ return new Intl.NumberFormat("en-US", { style:"currency", currency:"USD", minimumFractionDigits:2, maximumFractionDigits:2 }).format(Number(value) || 0) }
-function getProductImages(product){ if(Array.isArray(product.images) && product.images.length){ return product.images } if(product.image){ return [product.image] } return [] }
-function getBundleProductIds(product){ return new Set((product.bundleRequiredProducts || []).map((item)=>String(item._id || item))) }
-function getFileIdentity(file){ return `${file.name}__${file.size}__${file.lastModified}` }
-function setPreviewFromUrls(urls){ if(!urls.length){ preview.textContent = "Image previews will appear here"; return } const grid = document.createElement("div"); grid.className = "preview-grid"; urls.forEach((url, index)=>{ const image = document.createElement("img"); image.src = url; image.alt = `Preview image ${index + 1}`; grid.appendChild(image) }); preview.innerHTML = ""; preview.appendChild(grid) }
-function resetFormState(){ form.reset(); editingId.value = ""; selectedFiles = []; formHeading.textContent = "Creating a new product."; submitBtn.textContent = "Publish product"; statusBox.className = "status"; statusBox.textContent = ""; preview.textContent = "Image previews will appear here"; renderSelectedFiles(); renderBundleOptions() }
-function enterEditMode(product){ editingId.value = String(product._id); formHeading.textContent = `Editing: ${product.name || "Product"}`; submitBtn.textContent = "Save changes"; form.name.value = product.name || ""; form.price.value = product.price || 0; form.originalPrice.value = product.originalPrice || 0; form.discount.value = Number.isFinite(Number(product.discount)) ? product.discount : ""; form.bundleDiscountAmount.value = Number.isFinite(Number(product.bundleDiscountAmount)) ? product.bundleDiscountAmount : ""; form.description.value = product.description || ""; imageInput.value = ""; selectedFiles = []; renderSelectedFiles(); renderBundleOptions(getBundleProductIds(product)); setPreviewFromUrls(getProductImages(product)); window.scrollTo({ top:0, behavior:"smooth" }) }
-function syncPreviewBySelectedFiles(){ if(selectedFiles.length){ const objectUrls = selectedFiles.map((file)=>URL.createObjectURL(file)); setPreviewFromUrls(objectUrls); window.setTimeout(()=>objectUrls.forEach((url)=>URL.revokeObjectURL(url)), 1200); return } if(editingId.value){ const product = allProducts.find((item)=>String(item._id) === editingId.value); setPreviewFromUrls(product ? getProductImages(product) : []); return } preview.textContent = "Image previews will appear here" }
-function renderSelectedFiles(){ pickedList.innerHTML = ""; if(!selectedFiles.length){ pickedNote.textContent = "You can choose files multiple times. They will be combined automatically."; clearPickedBtn.disabled = true; return } pickedNote.textContent = `${selectedFiles.length} image(s) selected.`; clearPickedBtn.disabled = false; selectedFiles.forEach((file)=>{ const item = document.createElement("div"); item.className = "picked-item"; item.innerHTML = `<span class="picked-name" title="${file.name}">${file.name}</span><button type="button" class="picked-remove" aria-label="Remove image ${file.name}">x</button>`; item.querySelector(".picked-remove").addEventListener("click", ()=>{ const identity = getFileIdentity(file); selectedFiles = selectedFiles.filter((selected)=>getFileIdentity(selected) !== identity); renderSelectedFiles(); syncPreviewBySelectedFiles() }); pickedList.appendChild(item) }) }
-function renderBundleOptions(selectedIds = new Set()){ const currentId = editingId.value; const choices = allProducts.filter((product)=>String(product._id) !== currentId); bundleProductOptions.innerHTML = ""; bundleEmpty.style.display = choices.length ? "none" : "block"; choices.forEach((product)=>{ const label = document.createElement("label"); label.className = "bundle-option"; const input = document.createElement("input"); input.type = "checkbox"; input.name = "bundleRequiredProducts"; input.value = product._id; input.checked = selectedIds.has(String(product._id)); label.appendChild(input); label.append(document.createTextNode(product.name || "Product")); bundleProductOptions.appendChild(label) }) }
-function renderProducts(){ productList.innerHTML = ""; if(!allProducts.length){ productList.innerHTML = '<p class="muted">No products yet.</p>'; return } allProducts.forEach((product)=>{ const images = getProductImages(product); const bundleNames = (product.bundleRequiredProducts || []).map((item)=>item.name).filter(Boolean).join(", "); const bundleText = Number(product.bundleDiscountAmount) > 0 && bundleNames ? ` | Bundle: ${formatCurrency(product.bundleDiscountAmount)} off with ${bundleNames}` : ""; const row = document.createElement("article"); row.className = "product-row"; row.innerHTML = `<img src="${images[0] || "https://via.placeholder.com/160x120?text=No+Image"}" alt="${product.name || "Product"}"><div><h4>${product.name || "Product"}</h4><p>${formatCurrency(product.price)} | ${images.length} image(s)${bundleText}</p></div><div class="row-btns"><button type="button" class="small-btn edit">Edit</button><button type="button" class="small-btn delete">Delete</button></div>`; row.querySelector(".edit").addEventListener("click", ()=>enterEditMode(product)); row.querySelector(".delete").addEventListener("click", async ()=>{ if(!window.confirm(`Delete product \"${product.name || "Product"}\"?`)){ return } try{ const response = await fetch(`/admin/products/${product._id}`, { method:"DELETE", headers: getAdminHeaders() }); if(handleUnauthorized(response)){ return } const payload = await readResponsePayload(response); if(!response.ok){ throw new Error(payload.message || `Failed to delete product (HTTP ${response.status})`) } statusBox.className = "status success"; statusBox.textContent = "Product deleted."; await loadProducts(); if(editingId.value === String(product._id)){ resetFormState() } }catch(error){ statusBox.className = "status error"; statusBox.textContent = error.message } }); productList.appendChild(row) }) }
-async function loadProducts(){ try{ const response = await fetch("/products"); const payload = await readResponsePayload(response); if(!response.ok){ throw new Error("Unable to load product list.") } allProducts = Array.isArray(payload) ? payload : []; renderProducts(); renderBundleOptions(editingId.value ? getBundleProductIds(allProducts.find((item)=>String(item._id) === editingId.value) || {}) : new Set()) }catch(error){ productList.innerHTML = '<p class="muted">Unable to load product list.</p>' } }
-imageInput.addEventListener("change", ()=>{ const files = [...imageInput.files]; if(!files.length){ return } const existingIds = new Set(selectedFiles.map((file)=>getFileIdentity(file))); files.forEach((file)=>{ const identity = getFileIdentity(file); if(!existingIds.has(identity)){ selectedFiles.push(file); existingIds.add(identity) } }); imageInput.value = ""; renderSelectedFiles(); syncPreviewBySelectedFiles() })
-form.addEventListener("submit", async (event)=>{ event.preventDefault(); statusBox.className = "status"; statusBox.textContent = editingId.value ? "Updating product..." : "Publishing product..."; const formData = new FormData(form); const isEditing = Boolean(editingId.value); formData.delete("images"); selectedFiles.forEach((file)=>formData.append("images", file)); const selectedBundleProducts = [...bundleProductOptions.querySelectorAll("input:checked")].map((input)=>input.value); formData.delete("bundleRequiredProducts"); if(selectedBundleProducts.length){ selectedBundleProducts.forEach((productId)=>formData.append("bundleRequiredProducts", productId)) }else{ formData.set("bundleRequiredProducts", "") } const price = Number(formData.get("price")); const originalPrice = Number(formData.get("originalPrice")); const discountText = String(formData.get("discount") || "").trim(); const bundleDiscount = Number(formData.get("bundleDiscountAmount")); if(!isEditing && !selectedFiles.length){ statusBox.classList.add("error"); statusBox.textContent = "Please choose at least one product image."; return } if(originalPrice > 0 && price > originalPrice){ statusBox.classList.add("error"); statusBox.textContent = "Selling price cannot be greater than original price."; return } if(bundleDiscount > price){ statusBox.classList.add("error"); statusBox.textContent = "Bundle discount amount cannot be greater than selling price."; return } if(bundleDiscount > 0 && !selectedBundleProducts.length){ statusBox.classList.add("error"); statusBox.textContent = "Choose at least one product for the bundle discount."; return } if(!discountText && originalPrice > 0 && originalPrice > price){ formData.set("discount", String(Math.round(((originalPrice - price) / originalPrice) * 100))) } try{ const endpoint = isEditing ? `/admin/products/${editingId.value}` : "/admin/add-product"; const method = isEditing ? "PUT" : "POST"; const response = await fetch(endpoint, { method, headers: getAdminHeaders(), body: formData }); if(handleUnauthorized(response)){ return } const payload = await readResponsePayload(response); if(!response.ok){ throw new Error(payload.message || "Unable to save product") } resetFormState(); statusBox.classList.add("success"); statusBox.textContent = isEditing ? "Product updated successfully." : "Product published successfully."; await loadProducts() }catch(error){ statusBox.classList.add("error"); statusBox.textContent = error.message } })
+
+function getAdminHeaders(extraHeaders = {}){
+  return {
+    Authorization: `Bearer ${localStorage.getItem(ADMIN_TOKEN_KEY) || ""}`,
+    ...extraHeaders
+  }
+}
+
+async function readResponsePayload(response){
+  const rawText = await response.text()
+  if(!rawText){
+    return {}
+  }
+
+  try{
+    return JSON.parse(rawText)
+  }catch(error){
+    return { message: rawText }
+  }
+}
+
+function handleUnauthorized(response){
+  if(response.status === 401){
+    localStorage.removeItem(ADMIN_TOKEN_KEY)
+    window.location.replace("/login.html")
+    return true
+  }
+
+  return false
+}
+
+function formatCurrency(value){
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(Number(value) || 0)
+}
+
+function getProductImages(product){
+  if(Array.isArray(product.images) && product.images.length){
+    return product.images
+  }
+
+  if(product.image){
+    return [product.image]
+  }
+
+  return []
+}
+
+function getBundleProductIds(product){
+  return new Set((product.bundleRequiredProducts || []).map((item)=>String(item._id || item)))
+}
+
+function getFileIdentity(file){
+  return `${file.name}__${file.size}__${file.lastModified}`
+}
+
+function getStockBadge(product){
+  const stock = Number(product.stock) || 0
+
+  if(stock <= 0){
+    return '<span class="badge danger">Sold out</span>'
+  }
+
+  if(stock <= 3){
+    return `<span class="badge">Low stock: ${stock}</span>`
+  }
+
+  return `<span class="badge success">Stock: ${stock}</span>`
+}
+
+function setPreviewFromUrls(urls){
+  if(!urls.length){
+    preview.textContent = "Image previews will appear here"
+    return
+  }
+
+  const grid = document.createElement("div")
+  grid.className = "preview-grid"
+  urls.forEach((url, index)=>{
+    const image = document.createElement("img")
+    image.src = url
+    image.alt = `Preview image ${index + 1}`
+    grid.appendChild(image)
+  })
+
+  preview.innerHTML = ""
+  preview.appendChild(grid)
+}
+
+function renderSelectedFiles(){
+  pickedList.innerHTML = ""
+
+  if(!selectedFiles.length){
+    pickedNote.textContent = "You can choose files multiple times. They will be combined automatically."
+    clearPickedBtn.disabled = true
+    return
+  }
+
+  pickedNote.textContent = `${selectedFiles.length} image(s) selected.`
+  clearPickedBtn.disabled = false
+  selectedFiles.forEach((file)=>{
+    const item = document.createElement("div")
+    item.className = "picked-item"
+    item.innerHTML = `<span class="picked-name" title="${file.name}">${file.name}</span><button type="button" class="picked-remove" aria-label="Remove image ${file.name}">x</button>`
+    item.querySelector(".picked-remove").addEventListener("click", ()=>{
+      const identity = getFileIdentity(file)
+      selectedFiles = selectedFiles.filter((selected)=>getFileIdentity(selected) !== identity)
+      renderSelectedFiles()
+      syncPreviewBySelectedFiles()
+    })
+    pickedList.appendChild(item)
+  })
+}
+
+function renderBundleOptions(selectedIds = new Set()){
+  const currentId = editingId.value
+  const choices = allProducts.filter((product)=>String(product._id) !== currentId)
+  bundleProductOptions.innerHTML = ""
+  bundleEmpty.style.display = choices.length ? "none" : "block"
+
+  choices.forEach((product)=>{
+    const label = document.createElement("label")
+    label.className = "bundle-option"
+    const input = document.createElement("input")
+    input.type = "checkbox"
+    input.name = "bundleRequiredProducts"
+    input.value = product._id
+    input.checked = selectedIds.has(String(product._id))
+    label.appendChild(input)
+    label.append(document.createTextNode(product.name || "Product"))
+    bundleProductOptions.appendChild(label)
+  })
+}
+
+function syncPreviewBySelectedFiles(){
+  if(selectedFiles.length){
+    const objectUrls = selectedFiles.map((file)=>URL.createObjectURL(file))
+    setPreviewFromUrls(objectUrls)
+    window.setTimeout(()=>objectUrls.forEach((url)=>URL.revokeObjectURL(url)), 1200)
+    return
+  }
+
+  if(editingId.value){
+    const product = allProducts.find((item)=>String(item._id) === editingId.value)
+    setPreviewFromUrls(product ? getProductImages(product) : [])
+    return
+  }
+
+  preview.textContent = "Image previews will appear here"
+}
+
+function resetFormState(){
+  form.reset()
+  editingId.value = ""
+  form.isPublished.value = "true"
+  form.isFeatured.checked = false
+  selectedFiles = []
+  formHeading.textContent = "Creating a new product."
+  submitBtn.textContent = "Publish product"
+  statusBox.className = "status"
+  statusBox.textContent = ""
+  preview.textContent = "Image previews will appear here"
+  renderSelectedFiles()
+  renderBundleOptions()
+}
+
+function enterEditMode(product){
+  editingId.value = String(product._id)
+  formHeading.textContent = `Editing: ${product.name || "Product"}`
+  submitBtn.textContent = "Save changes"
+  form.name.value = product.name || ""
+  form.category.value = product.category || ""
+  form.tags.value = Array.isArray(product.tags) ? product.tags.join(", ") : ""
+  form.price.value = product.price || 0
+  form.originalPrice.value = product.originalPrice || 0
+  form.discount.value = Number.isFinite(Number(product.discount)) ? product.discount : ""
+  form.stock.value = Number.isFinite(Number(product.stock)) ? product.stock : 0
+  form.isPublished.value = product.isPublished === false ? "false" : "true"
+  form.isFeatured.checked = Boolean(product.isFeatured)
+  form.bundleDiscountAmount.value = Number.isFinite(Number(product.bundleDiscountAmount)) ? product.bundleDiscountAmount : ""
+  form.description.value = product.description || ""
+  imageInput.value = ""
+  selectedFiles = []
+  renderSelectedFiles()
+  renderBundleOptions(getBundleProductIds(product))
+  setPreviewFromUrls(getProductImages(product))
+  window.scrollTo({ top: 0, behavior: "smooth" })
+}
+
+function renderProducts(){
+  productList.innerHTML = ""
+
+  if(!allProducts.length){
+    productList.innerHTML = '<p class="muted">No products yet.</p>'
+    return
+  }
+
+  allProducts.forEach((product)=>{
+    const images = getProductImages(product)
+    const bundleNames = (product.bundleRequiredProducts || []).map((item)=>item.name).filter(Boolean).join(", ")
+    const bundleText = Number(product.bundleDiscountAmount) > 0 && bundleNames
+      ? ` | Bundle: ${formatCurrency(product.bundleDiscountAmount)} off with ${bundleNames}`
+      : ""
+    const row = document.createElement("article")
+    row.className = "product-row"
+    row.innerHTML = `
+      <img src="${images[0] || "https://via.placeholder.com/160x120?text=No+Image"}" alt="${product.name || "Product"}">
+      <div>
+        <h4>${product.name || "Product"}</h4>
+        <p>${formatCurrency(product.price)} | ${product.category || "Uncategorized"} | ${images.length} image(s)${bundleText}</p>
+        <div class="badges">
+          <span class="badge ${product.isPublished === false ? "neutral" : "success"}">${product.isPublished === false ? "Draft" : "Published"}</span>
+          ${product.isFeatured ? '<span class="badge">Featured</span>' : ""}
+          ${getStockBadge(product)}
+        </div>
+      </div>
+      <div class="row-btns">
+        <button type="button" class="small-btn edit">Edit</button>
+        <button type="button" class="small-btn delete">Delete</button>
+      </div>
+    `
+
+    row.querySelector(".edit").addEventListener("click", ()=>enterEditMode(product))
+    row.querySelector(".delete").addEventListener("click", async ()=>{
+      if(!window.confirm(`Delete product "${product.name || "Product"}"?`)){
+        return
+      }
+
+      try{
+        const response = await fetch(`/admin/products/${product._id}`, {
+          method: "DELETE",
+          headers: getAdminHeaders()
+        })
+        if(handleUnauthorized(response)){
+          return
+        }
+
+        const payload = await readResponsePayload(response)
+        if(!response.ok){
+          throw new Error(payload.message || `Failed to delete product (HTTP ${response.status})`)
+        }
+
+        statusBox.className = "status success"
+        statusBox.textContent = "Product deleted."
+        await loadProducts()
+        if(editingId.value === String(product._id)){
+          resetFormState()
+        }
+      }catch(error){
+        statusBox.className = "status error"
+        statusBox.textContent = error.message
+      }
+    })
+
+    productList.appendChild(row)
+  })
+}
+
+async function loadProducts(){
+  try{
+    const response = await fetch("/admin/products?sort=featured", {
+      headers: getAdminHeaders()
+    })
+    if(handleUnauthorized(response)){
+      return
+    }
+
+    const payload = await readResponsePayload(response)
+    if(!response.ok){
+      throw new Error(payload.message || "Unable to load product list.")
+    }
+
+    allProducts = Array.isArray(payload) ? payload : []
+    renderProducts()
+    renderBundleOptions(
+      editingId.value
+        ? getBundleProductIds(allProducts.find((item)=>String(item._id) === editingId.value) || {})
+        : new Set()
+    )
+  }catch(error){
+    productList.innerHTML = '<p class="muted">Unable to load product list.</p>'
+  }
+}
+
+imageInput.addEventListener("change", ()=>{
+  const files = [...imageInput.files]
+  if(!files.length){
+    return
+  }
+
+  const existingIds = new Set(selectedFiles.map((file)=>getFileIdentity(file)))
+  files.forEach((file)=>{
+    const identity = getFileIdentity(file)
+    if(!existingIds.has(identity)){
+      selectedFiles.push(file)
+      existingIds.add(identity)
+    }
+  })
+
+  imageInput.value = ""
+  renderSelectedFiles()
+  syncPreviewBySelectedFiles()
+})
+
+form.addEventListener("submit", async (event)=>{
+  event.preventDefault()
+  statusBox.className = "status"
+  statusBox.textContent = editingId.value ? "Updating product..." : "Publishing product..."
+
+  const formData = new FormData(form)
+  const isEditing = Boolean(editingId.value)
+  formData.delete("images")
+  selectedFiles.forEach((file)=>formData.append("images", file))
+  formData.set("isFeatured", form.isFeatured.checked ? "true" : "false")
+
+  const selectedBundleProducts = [...bundleProductOptions.querySelectorAll("input:checked")].map((input)=>input.value)
+  formData.delete("bundleRequiredProducts")
+  if(selectedBundleProducts.length){
+    selectedBundleProducts.forEach((productId)=>formData.append("bundleRequiredProducts", productId))
+  }else{
+    formData.set("bundleRequiredProducts", "")
+  }
+
+  const price = Number(formData.get("price"))
+  const originalPrice = Number(formData.get("originalPrice"))
+  const stock = Number(formData.get("stock"))
+  const discountText = String(formData.get("discount") || "").trim()
+  const bundleDiscount = Number(formData.get("bundleDiscountAmount") || 0)
+
+  if(!isEditing && !selectedFiles.length){
+    statusBox.classList.add("error")
+    statusBox.textContent = "Please choose at least one product image."
+    return
+  }
+
+  if(price < 0 || originalPrice < 0 || stock < 0){
+    statusBox.classList.add("error")
+    statusBox.textContent = "Price and stock values must be zero or greater."
+    return
+  }
+
+  if(originalPrice > 0 && price > originalPrice){
+    statusBox.classList.add("error")
+    statusBox.textContent = "Selling price cannot be greater than original price."
+    return
+  }
+
+  if(bundleDiscount > price){
+    statusBox.classList.add("error")
+    statusBox.textContent = "Bundle discount amount cannot be greater than selling price."
+    return
+  }
+
+  if(bundleDiscount > 0 && !selectedBundleProducts.length){
+    statusBox.classList.add("error")
+    statusBox.textContent = "Choose at least one product for the bundle discount."
+    return
+  }
+
+  if(!discountText && originalPrice > 0 && originalPrice > price){
+    formData.set("discount", String(Math.round(((originalPrice - price) / originalPrice) * 100)))
+  }
+
+  try{
+    const endpoint = isEditing ? `/admin/products/${editingId.value}` : "/admin/add-product"
+    const method = isEditing ? "PUT" : "POST"
+    const response = await fetch(endpoint, {
+      method,
+      headers: getAdminHeaders(),
+      body: formData
+    })
+    if(handleUnauthorized(response)){
+      return
+    }
+
+    const payload = await readResponsePayload(response)
+    if(!response.ok){
+      throw new Error(payload.message || "Unable to save product")
+    }
+
+    resetFormState()
+    statusBox.classList.add("success")
+    statusBox.textContent = isEditing ? "Product updated successfully." : "Product published successfully."
+    await loadProducts()
+  }catch(error){
+    statusBox.classList.add("error")
+    statusBox.textContent = error.message
+  }
+})
+
 cancelEditBtn.addEventListener("click", ()=>resetFormState())
-clearPickedBtn.addEventListener("click", ()=>{ selectedFiles = []; imageInput.value = ""; renderSelectedFiles(); syncPreviewBySelectedFiles() })
-logoutBtn.addEventListener("click", ()=>{ localStorage.removeItem(ADMIN_TOKEN_KEY); window.location.replace("/login.html") })
-renderSelectedFiles(); loadProducts()
+clearPickedBtn.addEventListener("click", ()=>{
+  selectedFiles = []
+  imageInput.value = ""
+  renderSelectedFiles()
+  syncPreviewBySelectedFiles()
+})
+logoutBtn.addEventListener("click", ()=>{
+  localStorage.removeItem(ADMIN_TOKEN_KEY)
+  window.location.replace("/login.html")
+})
+
+renderSelectedFiles()
+loadProducts()
 </script>
 </body>
 </html>

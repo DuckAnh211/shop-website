@@ -1,5 +1,5 @@
 const { app, connectDatabase } = require("./app")
-const env = require("./config/env")
+const env = require("./src/shared/config/env")
 
 async function startServer(){
   await connectDatabase()

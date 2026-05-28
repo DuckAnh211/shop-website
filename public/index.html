@@ -422,6 +422,26 @@ a{color:inherit}
 	line-height:1.6;
 }
 
+.catalog-toolbar{
+	display:grid;
+	grid-template-columns:1.5fr repeat(3, minmax(150px, .7fr));
+	gap:12px;
+	margin-bottom:22px;
+}
+
+.catalog-toolbar input,
+.catalog-toolbar select{
+	width:100%;
+	border:1px solid var(--line);
+	border-radius:14px;
+	background:#fff;
+	color:var(--text);
+	font:inherit;
+	font-size:14px;
+	padding:12px 14px;
+	box-shadow:0 10px 20px rgba(123,73,91,.06);
+}
+
 .products{
 	display:grid;
 	grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
@@ -513,16 +533,42 @@ a{color:inherit}
 	outline-offset:2px;
 }
 
-.discount{
+.product-flags{
 	position:absolute;
 	left:28px;
+	right:28px;
 	top:28px;
-	background:rgba(169,95,119,.96);
+	display:flex;
+	flex-wrap:wrap;
+	gap:7px;
+	align-items:flex-start;
+}
+
+.flag{
 	color:#fff;
 	padding:7px 11px;
 	font-size:12px;
 	font-weight:800;
 	border-radius:999px;
+	background:rgba(169,95,119,.96);
+	box-shadow:0 10px 20px rgba(47,57,65,.16);
+}
+
+.flag.featured{
+	background:rgba(128,159,135,.96);
+}
+
+.flag.stock{
+	margin-left:auto;
+	background:rgba(47,57,65,.78);
+}
+
+.flag.low-stock{
+	background:rgba(198,154,78,.96);
+}
+
+.flag.sold-out{
+	background:rgba(85,74,78,.9);
 }
 
 .info{
@@ -538,12 +584,39 @@ a{color:inherit}
 	font-size:19px;
 }
 
+.product-meta{
+	display:flex;
+	align-items:center;
+	gap:8px;
+	color:#8d6b76;
+	font-size:12px;
+	font-weight:800;
+	text-transform:uppercase;
+	letter-spacing:.08em;
+}
+
 .description{
 	margin:0;
 	color:var(--muted);
 	font-size:14px;
 	line-height:1.6;
 	min-height:44px;
+}
+
+.tag-list{
+	display:flex;
+	flex-wrap:wrap;
+	gap:6px;
+}
+
+.tag-list span{
+	border:1px solid var(--line);
+	border-radius:999px;
+	background:#fff;
+	color:#8d6b76;
+	font-size:12px;
+	font-weight:700;
+	padding:5px 8px;
 }
 
 .prices{
@@ -576,8 +649,14 @@ a{color:inherit}
 	padding:8px 10px;
 }
 
-.buy-btn{
+.product-actions{
 	margin-top:auto;
+	display:grid;
+	grid-template-columns:1fr 1fr;
+	gap:10px;
+}
+
+.buy-btn{
 	border:none;
 	background:linear-gradient(135deg, var(--brand-strong) 0%, #be6e81 55%, var(--sage) 100%);
 	color:#fff;
@@ -589,7 +668,23 @@ a{color:inherit}
 	transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
 }
 
-.buy-btn:hover{
+.inquiry-btn{
+	display:inline-flex;
+	align-items:center;
+	justify-content:center;
+	text-decoration:none;
+	border:1px solid var(--line);
+	background:#fff;
+	color:var(--brand-strong);
+	padding:12px;
+	border-radius:12px;
+	font-weight:800;
+	box-shadow:0 12px 26px rgba(157,79,103,.08);
+	transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+
+.buy-btn:hover,
+.inquiry-btn:hover{
 	transform:translateY(-2px);
 	filter:brightness(.97);
 	box-shadow:0 16px 32px rgba(157,79,103,.24);
@@ -945,6 +1040,10 @@ a{color:inherit}
 	.hero h2{max-width:none}
 	.section-title{align-items:start;flex-direction:column}
 	.hero{min-height:auto}
+
+	.catalog-toolbar{
+		grid-template-columns:1fr 1fr;
+	}
 }
 
 @media (max-width:680px){
@@ -992,6 +1091,11 @@ a{color:inherit}
 		grid-template-columns:1fr;
 	}
 
+	.catalog-toolbar,
+	.product-actions{
+		grid-template-columns:1fr;
+	}
+
 	.hero-showcase,
 	.showcase-main{
 		min-height:270px;
@@ -1013,7 +1117,7 @@ a{color:inherit}
 		</div>
 		<nav class="nav">
 			<a href="index.html">Home</a>
-			<a href="contacrt.html">Contact</a>
+			<a href="contact.html">Contact</a>
 			<a href="login.html">Login</a>
 		</nav>
 	</header>
@@ -1025,7 +1129,7 @@ a{color:inherit}
 			<p>Fresh collections are updated daily. Every product has real photos, clear pricing, and transparent discounts.</p>
 			<div class="hero-actions">
 				<a class="hero-btn primary" href="#productsSection">Shop the Collection</a>
-				<a class="hero-btn secondary" href="contacrt.html">Contact Us</a>
+				<a class="hero-btn secondary" href="contact.html">Contact Us</a>
 			</div>
 		</div>
 
@@ -1051,7 +1155,28 @@ a{color:inherit}
 			<div class="section-title">
 				<div>
 					<h3>Featured Products</h3>
+					<p><span id="productCount">0</span> products available</p>
 				</div>
+			</div>
+			<div class="catalog-toolbar" aria-label="Product filters">
+				<input id="productSearch" type="search" placeholder="Search products">
+				<select id="categoryFilter" aria-label="Filter by category">
+					<option value="">All categories</option>
+				</select>
+				<select id="statusFilter" aria-label="Filter by status">
+					<option value="">All products</option>
+					<option value="in-stock">In stock</option>
+					<option value="sale">On sale</option>
+					<option value="featured">Featured</option>
+				</select>
+				<select id="sortFilter" aria-label="Sort products">
+					<option value="featured">Featured first</option>
+					<option value="newest">Newest first</option>
+					<option value="price-asc">Price: low to high</option>
+					<option value="price-desc">Price: high to low</option>
+					<option value="discount">Best discount</option>
+					<option value="name">Name A-Z</option>
+				</select>
 			</div>
 			<div id="products" class="products"></div>
 		</section>
@@ -1125,7 +1250,7 @@ a{color:inherit}
 			<h4>Quick Links</h4>
 			<div class="footer-links">
 				<a href="index.html">Home</a>
-				<a href="contacrt.html">Contact</a>
+				<a href="contact.html">Contact</a>
 				<a href="login.html">Login</a>
 			</div>
 		</div>
