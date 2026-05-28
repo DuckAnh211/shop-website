@@ -19,10 +19,12 @@ module.exports = {
   jwtSecret: requireEnv("JWT_SECRET"),
   adminUsername: requireEnv("ADMIN_USERNAME"),
   adminPassword: requireEnv("ADMIN_PASSWORD"),
-  cloudinary: {
-    cloudName: requireEnv("CLOUDINARY_CLOUD_NAME"),
-    apiKey: requireEnv("CLOUDINARY_API_KEY"),
-    apiSecret: requireEnv("CLOUDINARY_API_SECRET"),
-    folder: process.env.CLOUDINARY_FOLDER || "shop-website/products"
+  aws: {
+    region: process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || "ap-southeast-1",
+    s3: {
+      bucket: requireEnv("AWS_S3_BUCKET"),
+      keyPrefix: process.env.AWS_S3_KEY_PREFIX || "shop-website/products",
+      publicBaseUrl: process.env.AWS_S3_PUBLIC_BASE_URL || ""
+    }
   }
 }

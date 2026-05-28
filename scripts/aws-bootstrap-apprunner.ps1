@@ -2,6 +2,7 @@ param(
   [string]$Region = $(if($env:AWS_REGION){ $env:AWS_REGION }else{ "ap-southeast-1" }),
   [string]$EcrRepository = $(if($env:ECR_REPOSITORY){ $env:ECR_REPOSITORY }else{ "shop-website" }),
   [string]$ServiceName = $(if($env:APP_RUNNER_SERVICE_NAME){ $env:APP_RUNNER_SERVICE_NAME }else{ "shop-website" }),
+  [string]$S3Bucket = $(if($env:AWS_S3_BUCKET){ $env:AWS_S3_BUCKET }else{ "" }),
   [string]$GitHubRepo = "",
   [string]$Branch = "main",
   [string]$GitHubOidcThumbprint = $(if($env:GITHUB_OIDC_THUMBPRINT){ $env:GITHUB_OIDC_THUMBPRINT }else{ "6938fd4d98bab03faadb97b34396831e3780aea1" }),
@@ -48,6 +49,23 @@ function Invoke-Native([string]$Command, [string[]]$Arguments){
 
 function Write-JsonFile($Path, $Value){
   $Value | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $Path -Encoding UTF8
+}
+
+function ConvertTo-S3BucketName($Value){
+  $name = ([string]$Value).ToLowerInvariant() -replace "[^a-z0-9-]", "-"
+  $name = $name -replace "-+", "-"
+  $name = $name.Trim("-")
+  if($name.Length -gt 63){
+    $name = $name.Substring(0, 63).Trim("-")
+  }
+  if($name.Length -lt 3){
+    throw "Generated S3 bucket name is too short."
+  }
+  return $name
+}
+
+function Trim-Slashes($Value){
+  return ([string]$Value).Trim("/")
 }
 
 function Read-DotEnv($Path){
@@ -149,6 +167,108 @@ function Ensure-AppRunnerEcrAccessRole(){
   }
 }
 
+function Ensure-AppRunnerInstanceRole($BucketName, $KeyPrefix){
+  $roleName = "$ServiceName-apprunner-runtime"
+  if($roleName.Length -gt 64){
+    $roleName = $roleName.Substring(0, 64)
+  }
+
+  $objectArn = if($KeyPrefix){ "arn:aws:s3:::$BucketName/$KeyPrefix/*" }else{ "arn:aws:s3:::$BucketName/*" }
+  $bucketArn = "arn:aws:s3:::$BucketName"
+  $trustPath = Join-Path ([System.IO.Path]::GetTempPath()) "$roleName-trust.json"
+  $policyPath = Join-Path ([System.IO.Path]::GetTempPath()) "$roleName-policy.json"
+
+  $trustPolicy = @{
+    Version = "2012-10-17"
+    Statement = @(
+      @{
+        Effect = "Allow"
+        Principal = @{ Service = "tasks.apprunner.amazonaws.com" }
+        Action = "sts:AssumeRole"
+      }
+    )
+  }
+
+  $policy = @{
+    Version = "2012-10-17"
+    Statement = @(
+      @{
+        Effect = "Allow"
+        Action = @("s3:ListBucket")
+        Resource = $bucketArn
+      },
+      @{
+        Effect = "Allow"
+        Action = @("s3:PutObject", "s3:DeleteObject")
+        Resource = $objectArn
+      }
+    )
+  }
+
+  Write-JsonFile $trustPath $trustPolicy
+  Write-JsonFile $policyPath $policy
+
+  try{
+    $roleArn = Invoke-AwsText @("iam", "get-role", "--role-name", $roleName, "--query", "Role.Arn")
+    Invoke-AwsJson @("iam", "update-assume-role-policy", "--role-name", $roleName, "--policy-document", "file://$trustPath") | Out-Null
+  }catch{
+    Invoke-AwsJson @("iam", "create-role", "--role-name", $roleName, "--assume-role-policy-document", "file://$trustPath") | Out-Null
+    Start-Sleep -Seconds 10
+    $roleArn = Invoke-AwsText @("iam", "get-role", "--role-name", $roleName, "--query", "Role.Arn")
+  }
+
+  Invoke-AwsJson @("iam", "put-role-policy", "--role-name", $roleName, "--policy-name", "$ServiceName-s3-media", "--policy-document", "file://$policyPath") | Out-Null
+  return $roleArn
+}
+
+function Ensure-S3Bucket($BucketName, $KeyPrefix){
+  try{
+    Invoke-AwsJson @("s3api", "head-bucket", "--bucket", $BucketName) | Out-Null
+  }catch{
+    if($Region -eq "us-east-1"){
+      Invoke-AwsJson @("s3api", "create-bucket", "--bucket", $BucketName) | Out-Null
+    }else{
+      Invoke-AwsJson @(
+        "s3api", "create-bucket",
+        "--bucket", $BucketName,
+        "--create-bucket-configuration", "LocationConstraint=$Region"
+      ) | Out-Null
+    }
+  }
+
+  $publicAccessPath = Join-Path ([System.IO.Path]::GetTempPath()) "$BucketName-public-access.json"
+  $policyPath = Join-Path ([System.IO.Path]::GetTempPath()) "$BucketName-public-policy.json"
+  $publicAccess = @{
+    BlockPublicAcls = $false
+    IgnorePublicAcls = $false
+    BlockPublicPolicy = $false
+    RestrictPublicBuckets = $false
+  }
+  $objectArn = if($KeyPrefix){ "arn:aws:s3:::$BucketName/$KeyPrefix/*" }else{ "arn:aws:s3:::$BucketName/*" }
+  $policy = @{
+    Version = "2012-10-17"
+    Statement = @(
+      @{
+        Sid = "PublicReadProductImages"
+        Effect = "Allow"
+        Principal = "*"
+        Action = "s3:GetObject"
+        Resource = $objectArn
+      }
+    )
+  }
+
+  Write-JsonFile $publicAccessPath $publicAccess
+  Write-JsonFile $policyPath $policy
+
+  Invoke-AwsJson @(
+    "s3api", "put-public-access-block",
+    "--bucket", $BucketName,
+    "--public-access-block-configuration", "file://$publicAccessPath"
+  ) | Out-Null
+  Invoke-AwsJson @("s3api", "put-bucket-policy", "--bucket", $BucketName, "--policy", "file://$policyPath") | Out-Null
+}
+
 function Push-InitialImage($Registry, $RepositoryUri){
   if($SkipDockerBuild){
     return
@@ -181,10 +301,21 @@ function Build-SourceConfiguration($AccessRoleArn, $ImageUri, $RuntimeEnv){
   }
 }
 
-function Ensure-AppRunnerService($AccessRoleArn, $ImageUri, $RuntimeEnv){
+function Build-InstanceConfiguration($InstanceRoleArn){
+  return @{
+    Cpu = "1024"
+    Memory = "2048"
+    InstanceRoleArn = $InstanceRoleArn
+  }
+}
+
+function Ensure-AppRunnerService($AccessRoleArn, $InstanceRoleArn, $ImageUri, $RuntimeEnv){
   $sourcePath = Join-Path ([System.IO.Path]::GetTempPath()) "$ServiceName-source.json"
+  $instancePath = Join-Path ([System.IO.Path]::GetTempPath()) "$ServiceName-instance.json"
   $sourceConfig = Build-SourceConfiguration $AccessRoleArn $ImageUri $RuntimeEnv
+  $instanceConfig = Build-InstanceConfiguration $InstanceRoleArn
   Write-JsonFile $sourcePath $sourceConfig
+  Write-JsonFile $instancePath $instanceConfig
 
   $services = Invoke-AwsJson @("apprunner", "list-services")
   $service = $services.ServiceSummaryList | Where-Object { $_.ServiceName -eq $ServiceName } | Select-Object -First 1
@@ -193,7 +324,8 @@ function Ensure-AppRunnerService($AccessRoleArn, $ImageUri, $RuntimeEnv){
     Invoke-AwsJson @(
       "apprunner", "update-service",
       "--service-arn", $service.ServiceArn,
-      "--source-configuration", "file://$sourcePath"
+      "--source-configuration", "file://$sourcePath",
+      "--instance-configuration", "file://$instancePath"
     ) | Out-Null
     return $service.ServiceArn
   }
@@ -201,7 +333,8 @@ function Ensure-AppRunnerService($AccessRoleArn, $ImageUri, $RuntimeEnv){
   $created = Invoke-AwsJson @(
     "apprunner", "create-service",
     "--service-name", $ServiceName,
-    "--source-configuration", "file://$sourcePath"
+    "--source-configuration", "file://$sourcePath",
+    "--instance-configuration", "file://$instancePath"
   )
   return $created.Service.ServiceArn
 }
@@ -280,9 +413,13 @@ function Ensure-GitHubDeployRole($AccountId, $ProviderArn, $RepositoryArn, $Serv
       },
       @{
         Effect = "Allow"
+        Action = @("ecr:CreateRepository")
+        Resource = "*"
+      },
+      @{
+        Effect = "Allow"
         Action = @(
           "ecr:DescribeRepositories",
-          "ecr:CreateRepository",
           "ecr:BatchCheckLayerAvailability",
           "ecr:InitiateLayerUpload",
           "ecr:UploadLayerPart",
@@ -338,10 +475,7 @@ $requiredEnv = @(
   "MONGODB_URI",
   "JWT_SECRET",
   "ADMIN_USERNAME",
-  "ADMIN_PASSWORD",
-  "CLOUDINARY_CLOUD_NAME",
-  "CLOUDINARY_API_KEY",
-  "CLOUDINARY_API_SECRET"
+  "ADMIN_PASSWORD"
 )
 
 foreach($name in $requiredEnv){
@@ -356,10 +490,10 @@ $allowedRuntimeEnv = @(
   "JWT_SECRET",
   "ADMIN_USERNAME",
   "ADMIN_PASSWORD",
-  "CLOUDINARY_CLOUD_NAME",
-  "CLOUDINARY_API_KEY",
-  "CLOUDINARY_API_SECRET",
-  "CLOUDINARY_FOLDER",
+  "AWS_REGION",
+  "AWS_S3_BUCKET",
+  "AWS_S3_KEY_PREFIX",
+  "AWS_S3_PUBLIC_BASE_URL",
   "CORS_ORIGIN"
 )
 
@@ -374,19 +508,39 @@ $appRunnerEnv["NODE_ENV"] = "production"
 $identity = Invoke-AwsJson @("sts", "get-caller-identity")
 $accountId = $identity.Account
 $registry = "$accountId.dkr.ecr.$Region.amazonaws.com"
+$keyPrefix = if($runtimeEnv.ContainsKey("AWS_S3_KEY_PREFIX") -and $runtimeEnv["AWS_S3_KEY_PREFIX"]){
+  Trim-Slashes $runtimeEnv["AWS_S3_KEY_PREFIX"]
+}else{
+  "shop-website/products"
+}
+$s3BucketName = if($S3Bucket){
+  ConvertTo-S3BucketName $S3Bucket
+}elseif($runtimeEnv.ContainsKey("AWS_S3_BUCKET") -and $runtimeEnv["AWS_S3_BUCKET"]){
+  ConvertTo-S3BucketName $runtimeEnv["AWS_S3_BUCKET"]
+}else{
+  ConvertTo-S3BucketName "$ServiceName-$accountId-$Region-assets"
+}
+
+$appRunnerEnv["AWS_REGION"] = $Region
+$appRunnerEnv["AWS_S3_BUCKET"] = $s3BucketName
+$appRunnerEnv["AWS_S3_KEY_PREFIX"] = $keyPrefix
 
 Write-Host "AWS account: $accountId"
 Write-Host "GitHub repo: $repositoryName"
 Write-Host "Region: $Region"
+Write-Host "S3 bucket: $s3BucketName"
 
 $repository = Ensure-EcrRepository
 $repositoryUri = $repository.repositoryUri
 $repositoryArn = $repository.repositoryArn
 
+Ensure-S3Bucket $s3BucketName $keyPrefix
+
 Push-InitialImage $registry $repositoryUri
 
 $accessRoleArn = Ensure-AppRunnerEcrAccessRole
-$serviceArn = Ensure-AppRunnerService $accessRoleArn "$repositoryUri`:latest" $appRunnerEnv
+$instanceRoleArn = Ensure-AppRunnerInstanceRole $s3BucketName $keyPrefix
+$serviceArn = Ensure-AppRunnerService $accessRoleArn $instanceRoleArn "$repositoryUri`:latest" $appRunnerEnv
 $service = Wait-AppRunnerRunning $serviceArn
 
 $providerArn = Ensure-GitHubOidcProvider $accountId
@@ -397,4 +551,5 @@ Write-Host ""
 Write-Host "AWS bootstrap complete."
 Write-Host "App Runner URL: https://$($service.ServiceUrl)"
 Write-Host "ECR image: $repositoryUri`:latest"
+Write-Host "S3 bucket: $s3BucketName"
 Write-Host "GitHub deploy role: $deployRoleArn"

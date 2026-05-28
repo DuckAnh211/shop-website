@@ -1,12 +1,12 @@
 # Shop Website
 
-Express + MongoDB Atlas + Cloudinary shop website, organized into service boundaries and ready for automated AWS deployment.
+Express + MongoDB Atlas + Amazon S3 shop website, organized into service boundaries and ready for automated AWS deployment.
 
 ## Stack
 
 - Express 5
 - MongoDB Atlas with Mongoose
-- Cloudinary for image storage
+- Amazon S3 for product image storage
 - Static frontend in `public/`
 - Dockerized production runtime
 - GitHub Actions deployment to AWS App Runner through Amazon ECR
@@ -18,7 +18,7 @@ The app runs as one deployable unit today, but the code is split by microservice
 - `src/gateway/` - Express gateway, shared middleware, static frontend serving
 - `src/services/auth/` - admin login and token issuing
 - `src/services/catalog/` - product model, catalog API, admin product API, validation and query logic
-- `src/services/media/` - upload middleware and Cloudinary image lifecycle
+- `src/services/media/` - upload middleware and S3 image lifecycle
 - `src/shared/` - environment, MongoDB connection, auth middleware, async/error helpers
 
 Current API compatibility is preserved:
@@ -35,7 +35,7 @@ Current API compatibility is preserved:
 ## Local setup
 
 1. Copy `.env.example` to `.env`
-2. Fill in MongoDB Atlas, Cloudinary, admin credentials, and JWT secret
+2. Fill in MongoDB Atlas, S3, admin credentials, and JWT secret
 3. Install dependencies:
    ```bash
    npm install
@@ -60,10 +60,10 @@ npm run check
 - `JWT_SECRET`
 - `ADMIN_USERNAME`
 - `ADMIN_PASSWORD`
-- `CLOUDINARY_CLOUD_NAME`
-- `CLOUDINARY_API_KEY`
-- `CLOUDINARY_API_SECRET`
-- `CLOUDINARY_FOLDER` (optional)
+- `AWS_REGION`
+- `AWS_S3_BUCKET`
+- `AWS_S3_KEY_PREFIX` (optional)
+- `AWS_S3_PUBLIC_BASE_URL` (optional, use this for CloudFront/custom domains)
 - `CORS_ORIGIN` (optional)
 
 ## AWS Deployment
@@ -78,7 +78,7 @@ Fast path after you are logged in to AWS and GitHub locally:
 
 ```powershell
 Copy-Item .env.example .env
-# Fill .env with production MongoDB, Cloudinary, and admin values first.
+# Fill .env with production MongoDB, S3, and admin values first.
 .\scripts\aws-bootstrap-apprunner.ps1 -Region ap-southeast-1
 git add .
 git commit -m "Prepare AWS App Runner deployment"
@@ -88,8 +88,10 @@ git push origin main
 The bootstrap script creates or updates:
 
 - Amazon ECR repository
+- Amazon S3 bucket for product images
 - Initial Docker image tagged `latest`
 - App Runner ECR access role
+- App Runner instance role for S3 access
 - App Runner service
 - GitHub OIDC provider and deploy role
 - GitHub Actions secrets and variables
@@ -97,12 +99,14 @@ The bootstrap script creates or updates:
 Manual equivalent if you do not use the bootstrap script:
 
 1. Create an ECR repository, for example `shop-website`.
-2. Push an initial `latest` image to that repository once, so App Runner can be created from it.
-3. Create an AWS App Runner service from the ECR image `shop-website:latest` with an App Runner ECR access role.
-4. Add the app environment variables from `.env.example` to the App Runner service.
-5. Set App Runner health check path to `/health`.
-6. Create a GitHub OIDC IAM role for deployment.
-7. Add GitHub repository secrets and variables below.
+2. Create an S3 bucket for product images and allow public read for product image objects.
+3. Push an initial `latest` image to that repository once, so App Runner can be created from it.
+4. Create an AWS App Runner service from the ECR image `shop-website:latest` with an App Runner ECR access role.
+5. Attach an App Runner instance role with `s3:PutObject`, `s3:DeleteObject`, and `s3:ListBucket` permissions for the image bucket.
+6. Add the app environment variables from `.env.example` to the App Runner service.
+7. Set App Runner health check path to `/health`.
+8. Create a GitHub OIDC IAM role for deployment.
+9. Add GitHub repository secrets and variables below.
 
 GitHub repository secrets:
 
@@ -140,7 +144,7 @@ docker run --env-file .env -p 3000:3000 shop-website
 
 ## Notes
 
-- Product images now live on Cloudinary instead of local disk
+- Product images now live on Amazon S3 instead of local disk
 - Admin routes require a JWT token returned from `/admin/login`
 - Frontend stores the admin token in `localStorage`
 - Products support category, tags, stock, published/draft status, featured status, search, filters, and sorting

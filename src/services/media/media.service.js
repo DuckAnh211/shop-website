@@ -1,46 +1,79 @@
-const { Readable } = require("stream")
-const cloudinary = require("../../shared/config/cloudinary")
+const crypto = require("crypto")
+const { DeleteObjectsCommand, PutObjectCommand, S3Client } = require("@aws-sdk/client-s3")
 const env = require("../../shared/config/env")
 
-function uploadBuffer(buffer, originalName){
-  return new Promise((resolve, reject)=>{
-    const uploadStream = cloudinary.uploader.upload_stream(
-      {
-        folder: env.cloudinary.folder,
-        resource_type: "image",
-        public_id: `${Date.now()}-${String(originalName || "image").replace(/[^a-zA-Z0-9-_]/g, "-")}`
-      },
-      (error, result)=>{
-        if(error){
-          reject(error)
-          return
-        }
+const s3 = new S3Client({
+  region: env.aws.region
+})
 
-        resolve({
-          url: result.secure_url,
-          publicId: result.public_id
-        })
-      }
-    )
+function trimSlashes(value){
+  return String(value || "").replace(/^\/+|\/+$/g, "")
+}
 
-    Readable.from(buffer).pipe(uploadStream)
-  })
+function sanitizeFileName(value){
+  return String(value || "image")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z0-9._-]/g, "-")
+    .replace(/-+/g, "-")
+}
+
+function createObjectKey(originalName){
+  const prefix = trimSlashes(env.aws.s3.keyPrefix)
+  const fileName = sanitizeFileName(originalName)
+  const key = `${Date.now()}-${crypto.randomUUID()}-${fileName}`
+
+  return prefix ? `${prefix}/${key}` : key
+}
+
+function createPublicUrl(key){
+  const encodedKey = key.split("/").map(encodeURIComponent).join("/")
+  const baseUrl = String(env.aws.s3.publicBaseUrl || "").replace(/\/+$/g, "")
+
+  if(baseUrl){
+    return `${baseUrl}/${encodedKey}`
+  }
+
+  return `https://${env.aws.s3.bucket}.s3.${env.aws.region}.amazonaws.com/${encodedKey}`
+}
+
+async function uploadFile(file){
+  const key = createObjectKey(file.originalname)
+
+  await s3.send(new PutObjectCommand({
+    Bucket: env.aws.s3.bucket,
+    Key: key,
+    Body: file.buffer,
+    ContentType: file.mimetype || "application/octet-stream",
+    CacheControl: "public, max-age=31536000, immutable"
+  }))
+
+  return {
+    url: createPublicUrl(key),
+    publicId: key
+  }
 }
 
 async function uploadImages(files){
-  return Promise.all((files || []).map((file)=>uploadBuffer(file.buffer, file.originalname)))
+  return Promise.all((files || []).map(uploadFile))
 }
 
 async function deleteImages(images){
-  const publicIds = (images || [])
+  const keys = (images || [])
     .map((image)=>typeof image === "string" ? "" : image.publicId)
     .filter(Boolean)
 
-  if(!publicIds.length){
+  if(!keys.length){
     return
   }
 
-  await cloudinary.api.delete_resources(publicIds)
+  await s3.send(new DeleteObjectsCommand({
+    Bucket: env.aws.s3.bucket,
+    Delete: {
+      Objects: keys.map((key)=>({ Key: key })),
+      Quiet: true
+    }
+  }))
 }
 
 module.exports = {
