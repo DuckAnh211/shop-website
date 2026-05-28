@@ -360,13 +360,24 @@ function Ensure-SecurityGroup($ResolvedVpcId){
     )
   }
 
-  try{
+  $securityGroup = Invoke-AwsJson @("ec2", "describe-security-groups", "--group-ids", $groupId)
+  $hasHttpRule = $false
+  foreach($permission in $securityGroup.SecurityGroups[0].IpPermissions){
+    if($permission.IpProtocol -eq "tcp" -and $permission.FromPort -eq 80 -and $permission.ToPort -eq 80){
+      foreach($range in $permission.IpRanges){
+        if($range.CidrIp -eq "0.0.0.0/0"){
+          $hasHttpRule = $true
+        }
+      }
+    }
+  }
+
+  if(-not $hasHttpRule){
     Invoke-AwsJson @(
       "ec2", "authorize-security-group-ingress",
       "--group-id", $groupId,
       "--ip-permissions", "IpProtocol=tcp,FromPort=80,ToPort=80,IpRanges=[{CidrIp=0.0.0.0/0,Description=HTTP}]"
     ) | Out-Null
-  }catch{
   }
 
   return $groupId
@@ -575,7 +586,8 @@ function Ensure-GitHubDeployRole($AccountId, $ProviderArn, $RepositoryArn, $Inst
   $trustPath = Join-Path ([System.IO.Path]::GetTempPath()) "$roleName-trust.json"
   $policyPath = Join-Path ([System.IO.Path]::GetTempPath()) "$roleName-policy.json"
   $sub = "repo:$RepositoryName`:ref:refs/heads/$Branch"
-  $documentArn = "arn:aws:ssm:$Region`:*:document/AWS-RunShellScript"
+  $documentArn = "arn:aws:ssm:${Region}:*:document/AWS-RunShellScript"
+  $awsDocumentArn = "arn:aws:ssm:${Region}::document/AWS-RunShellScript"
   $instanceArn = "arn:aws:ec2:$Region`:$AccountId`:instance/$InstanceId"
   $trustPolicy = @{
     Version = "2012-10-17"
@@ -615,7 +627,7 @@ function Ensure-GitHubDeployRole($AccountId, $ProviderArn, $RepositoryArn, $Inst
       @{
         Effect = "Allow"
         Action = @("ssm:SendCommand")
-        Resource = @($documentArn, $instanceArn)
+        Resource = @($documentArn, $awsDocumentArn, $instanceArn)
       },
       @{
         Effect = "Allow"
