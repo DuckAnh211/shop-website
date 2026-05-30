@@ -11,6 +11,13 @@ const categoryFilter = document.getElementById("categoryFilter")
 const statusFilter = document.getElementById("statusFilter")
 const sortFilter = document.getElementById("sortFilter")
 
+const CONTACT_CHANNELS = {
+  phone: "tel:+886973424279",
+  email: "katietran3011@gmail.com",
+  line: "https://line.me/ti/p/TCVn7wKCCy",
+  instagram: "https://www.instagram.com/katienrain__/?hl=en"
+}
+
 let lightboxImages = []
 let lightboxIndex = 0
 let searchTimer
@@ -126,7 +133,42 @@ function createInquiryHref(product, currentPrice){
     `Shop: ${window.location.origin}/#productsSection`
   ].filter(Boolean)
 
-  return `mailto:katietran3011@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`
+  return `mailto:${CONTACT_CHANNELS.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`
+}
+
+function closeInquiryMenus(){
+  document.querySelectorAll(".inquiry-menu.open").forEach((menu)=>{
+    const toggle = menu.querySelector(".inquiry-btn")
+    const panel = menu.querySelector(".inquiry-panel")
+    const card = menu.closest(".product")
+
+    menu.classList.remove("open")
+    card?.classList.remove("contact-open")
+    toggle?.setAttribute("aria-expanded", "false")
+    if(panel){
+      panel.hidden = true
+    }
+  })
+}
+
+function toggleInquiryMenu(menu, forceOpen){
+  const toggle = menu.querySelector(".inquiry-btn")
+  const panel = menu.querySelector(".inquiry-panel")
+  const card = menu.closest(".product")
+  const shouldOpen = forceOpen ?? !menu.classList.contains("open")
+
+  closeInquiryMenus()
+
+  if(!shouldOpen){
+    return
+  }
+
+  menu.classList.add("open")
+  card?.classList.add("contact-open")
+  toggle?.setAttribute("aria-expanded", "true")
+  if(panel){
+    panel.hidden = false
+  }
 }
 
 function renderHeroShowcase(products){
@@ -223,7 +265,15 @@ function createProductCard(product, index){
       ${bundlePromoText ? `<p class="bundle-promo">${escapeHtml(bundlePromoText)}</p>` : ""}
       <div class="product-actions">
         <button class="buy-btn" type="button">View details</button>
-        <a class="inquiry-btn" href="${createInquiryHref(product, currentPrice)}">Ask to buy</a>
+        <div class="inquiry-menu">
+          <button class="inquiry-btn" type="button" aria-expanded="false">Ask to buy</button>
+          <div class="inquiry-panel" role="menu" hidden>
+            <a href="${CONTACT_CHANNELS.phone}" role="menuitem">Phone</a>
+            <a href="${createInquiryHref(product, currentPrice)}" role="menuitem">Email</a>
+            <a href="${CONTACT_CHANNELS.line}" target="_blank" rel="noreferrer" role="menuitem">Line</a>
+            <a href="${CONTACT_CHANNELS.instagram}" target="_blank" rel="noreferrer" role="menuitem">Instagram</a>
+          </div>
+        </div>
       </div>
     </div>
   `
@@ -234,6 +284,22 @@ function createProductCard(product, index){
 
   mainImage.addEventListener("click", openViewer)
   card.querySelector(".buy-btn").addEventListener("click", openViewer)
+
+  const inquiryMenu = card.querySelector(".inquiry-menu")
+  const inquiryToggle = card.querySelector(".inquiry-btn")
+  const inquiryPanel = card.querySelector(".inquiry-panel")
+
+  inquiryToggle.addEventListener("click", (event)=>{
+    event.stopPropagation()
+    toggleInquiryMenu(inquiryMenu)
+  })
+
+  inquiryPanel.addEventListener("click", (event)=>{
+    event.stopPropagation()
+    if(event.target.closest("a")){
+      closeInquiryMenus()
+    }
+  })
 
   images.forEach((image, imageIndex)=>{
     const thumbBtn = document.createElement("button")
@@ -336,7 +402,17 @@ lightbox?.addEventListener("click", (event)=>{
 
 lightboxImage?.addEventListener("click", onLightboxImageClick)
 
+document.addEventListener("click", (event)=>{
+  if(!event.target.closest(".inquiry-menu")){
+    closeInquiryMenus()
+  }
+})
+
 document.addEventListener("keydown", (event)=>{
+  if(event.key === "Escape"){
+    closeInquiryMenus()
+  }
+
   if(!lightbox?.classList.contains("open")){
     return
   }
