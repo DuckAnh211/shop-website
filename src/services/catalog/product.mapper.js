@@ -48,6 +48,14 @@ function mapProduct(productDocument){
     slug: product.slug || createSlug(product.name || product._id),
     category: product.category || "Uncategorized",
     tags,
+    price: Number(product.priceVnd) > 0 ? Number(product.priceVnd) : Number(product.price) || 0,
+    originalPrice: Number(product.originalPriceVnd) > 0
+      ? Number(product.originalPriceVnd)
+      : Number(product.originalPrice) || Number(product.priceVnd) || Number(product.price) || 0,
+    priceVnd: Number(product.priceVnd) || 0,
+    originalPriceVnd: Number(product.originalPriceVnd) || 0,
+    priceTwd: Number(product.priceTwd) || 0,
+    originalPriceTwd: Number(product.originalPriceTwd) || 0,
     stock: Math.max(0, Number(product.stock) || 0),
     isPublished: product.isPublished !== false,
     isFeatured: Boolean(product.isFeatured),
@@ -55,6 +63,8 @@ function mapProduct(productDocument){
     images: images.map((item)=>item.url),
     imageObjects: images,
     bundleDiscountAmount: Number(product.bundleDiscountAmount) || 0,
+    bundleDiscountAmountVnd: Number(product.bundleDiscountAmountVnd) || 0,
+    bundleDiscountAmountTwd: Number(product.bundleDiscountAmountTwd) || 0,
     bundleRequiredProducts: Array.isArray(product.bundleRequiredProducts)
       ? product.bundleRequiredProducts.map(normalizeBundleProduct).filter(Boolean)
       : []

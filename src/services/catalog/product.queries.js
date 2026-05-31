@@ -43,9 +43,9 @@ function buildProductFilter(query, options = {}){
 function buildProductSort(sort){
   switch(sort){
     case "price-asc":
-      return { price: 1, createdAt: -1 }
+      return { priceVnd: 1, price: 1, createdAt: -1 }
     case "price-desc":
-      return { price: -1, createdAt: -1 }
+      return { priceVnd: -1, price: -1, createdAt: -1 }
     case "discount":
       return { discount: -1, createdAt: -1 }
     case "featured":

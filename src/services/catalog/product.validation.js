@@ -24,6 +24,18 @@ function computeDiscount(price, originalPrice, discount){
   return Math.max(0, Math.min(99, safeDiscount))
 }
 
+function pickPrimaryPrice(vndPrice, twdPrice, legacyPrice){
+  if(vndPrice > 0){
+    return vndPrice
+  }
+
+  if(twdPrice > 0){
+    return twdPrice
+  }
+
+  return legacyPrice
+}
+
 function parseBoolean(value, fallback = false){
   if(value === undefined || value === null || String(value).trim() === ""){
     return Boolean(fallback)
@@ -61,13 +73,34 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
   const description = String(payload.description ?? fallbackValues.description ?? "").trim()
   const category = String(payload.category ?? fallbackValues.category ?? "Uncategorized").trim() || "Uncategorized"
   const tags = parseStringList(payload.tags ?? fallbackValues.tags)
-  const price = parseNumber(payload.price, parseNumber(fallbackValues.price, 0))
-  const originalPrice = parseNumber(payload.originalPrice, parseNumber(fallbackValues.originalPrice, price))
-  const discount = computeDiscount(price, originalPrice, payload.discount ?? fallbackValues.discount)
-  const bundleDiscountAmount = parseNumber(
-    payload.bundleDiscountAmount,
-    parseNumber(fallbackValues.bundleDiscountAmount, 0)
+  const priceVnd = parseNumber(payload.priceVnd, parseNumber(fallbackValues.priceVnd, 0))
+  const originalPriceVnd = parseNumber(
+    payload.originalPriceVnd,
+    parseNumber(fallbackValues.originalPriceVnd, priceVnd)
   )
+  const priceTwd = parseNumber(payload.priceTwd, parseNumber(fallbackValues.priceTwd, 0))
+  const originalPriceTwd = parseNumber(
+    payload.originalPriceTwd,
+    parseNumber(fallbackValues.originalPriceTwd, priceTwd)
+  )
+  const legacyPrice = parseNumber(payload.price, parseNumber(fallbackValues.price, 0))
+  const legacyOriginalPrice = parseNumber(payload.originalPrice, parseNumber(fallbackValues.originalPrice, legacyPrice))
+  const price = pickPrimaryPrice(priceVnd, priceTwd, legacyPrice)
+  const originalPrice = pickPrimaryPrice(originalPriceVnd, originalPriceTwd, legacyOriginalPrice || price)
+  const discount = computeDiscount(price, originalPrice, payload.discount ?? fallbackValues.discount)
+  const bundleDiscountAmountVnd = parseNumber(
+    payload.bundleDiscountAmountVnd,
+    parseNumber(fallbackValues.bundleDiscountAmountVnd, 0)
+  )
+  const bundleDiscountAmountTwd = parseNumber(
+    payload.bundleDiscountAmountTwd,
+    parseNumber(fallbackValues.bundleDiscountAmountTwd, 0)
+  )
+  const bundleDiscountAmount = bundleDiscountAmountVnd > 0
+    ? bundleDiscountAmountVnd
+    : (bundleDiscountAmountTwd > 0
+      ? bundleDiscountAmountTwd
+      : parseNumber(payload.bundleDiscountAmount, parseNumber(fallbackValues.bundleDiscountAmount, 0)))
   const bundleRequiredProducts = parseProductIds(
     payload.bundleRequiredProducts ?? fallbackValues.bundleRequiredProducts
   )
@@ -82,8 +115,14 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     throw error
   }
 
-  if(price < 0 || originalPrice < 0){
+  if(price < 0 || originalPrice < 0 || priceVnd < 0 || originalPriceVnd < 0 || priceTwd < 0 || originalPriceTwd < 0){
     const error = new Error("Prices must be zero or greater.")
+    error.statusCode = 400
+    throw error
+  }
+
+  if(priceVnd <= 0 && priceTwd <= 0 && legacyPrice <= 0){
+    const error = new Error("Enter at least one selling price.")
     error.statusCode = 400
     throw error
   }
@@ -94,13 +133,25 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     throw error
   }
 
-  if(bundleDiscountAmount < 0){
+  if(originalPriceVnd > 0 && priceVnd > originalPriceVnd){
+    const error = new Error("VND selling price cannot be greater than VND original price.")
+    error.statusCode = 400
+    throw error
+  }
+
+  if(originalPriceTwd > 0 && priceTwd > originalPriceTwd){
+    const error = new Error("TWD selling price cannot be greater than TWD original price.")
+    error.statusCode = 400
+    throw error
+  }
+
+  if(bundleDiscountAmount < 0 || bundleDiscountAmountVnd < 0 || bundleDiscountAmountTwd < 0){
     const error = new Error("Bundle discount amount must be zero or greater.")
     error.statusCode = 400
     throw error
   }
 
-  if(bundleDiscountAmount > price){
+  if(bundleDiscountAmountVnd > priceVnd || bundleDiscountAmountTwd > priceTwd || bundleDiscountAmount > price){
     const error = new Error("Bundle discount amount cannot be greater than selling price.")
     error.statusCode = 400
     throw error
@@ -120,8 +171,14 @@ function validateAndBuildProductInput(payload, fallbackValues = {}){
     tags,
     price,
     originalPrice,
+    priceVnd,
+    originalPriceVnd,
+    priceTwd,
+    originalPriceTwd,
     discount,
     bundleDiscountAmount,
+    bundleDiscountAmountVnd,
+    bundleDiscountAmountTwd,
     bundleRequiredProducts,
     stock,
     isPublished,

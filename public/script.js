@@ -31,26 +31,33 @@ function escapeHtml(value){
     .replace(/'/g, "&#039;")
 }
 
-function formatCurrency(value){
-  return new Intl.NumberFormat("en-US", {
+function formatCurrency(value, currency = "VND", locale = "vi-VN"){
+  return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    currency,
+    minimumFractionDigits: currency === "VND" ? 0 : 0,
+    maximumFractionDigits: currency === "VND" ? 0 : 0
   }).format(Number(value) || 0)
 }
 
 function getProductPrices(product){
-  const currentPrice = Number(product.price) || 0
-  const originalPrice = Number(product.originalPrice) || currentPrice
+  const hasVndPrice = Number(product.priceVnd) > 0 || (Number(product.priceTwd) <= 0 && Number(product.price) > 0)
+  const currentPrice = hasVndPrice ? Number(product.priceVnd || product.price) || 0 : 0
+  const originalPrice = hasVndPrice ? Number(product.originalPriceVnd || product.originalPrice) || currentPrice : 0
+  const currentPriceTwd = Number(product.priceTwd) || 0
+  const originalPriceTwd = Number(product.originalPriceTwd) || currentPriceTwd
   const parsedDiscount = Number(product.discount)
+  const discountBasePrice = currentPrice || currentPriceTwd
+  const discountBaseOriginalPrice = originalPrice || originalPriceTwd
   const discount = Number.isFinite(parsedDiscount)
     ? parsedDiscount
-    : (originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0)
+    : (discountBaseOriginalPrice > discountBasePrice ? Math.round(((discountBaseOriginalPrice - discountBasePrice) / discountBaseOriginalPrice) * 100) : 0)
 
   return {
     currentPrice,
     originalPrice,
+    currentPriceTwd,
+    originalPriceTwd,
     discount: Math.max(0, Math.min(99, discount))
   }
 }
@@ -68,17 +75,23 @@ function getProductImages(product){
 }
 
 function getBundlePromoText(product){
-  const bundleDiscount = Number(product.bundleDiscountAmount) || 0
+  const bundleDiscountVnd = Number(product.bundleDiscountAmountVnd || product.bundleDiscountAmount) || 0
+  const bundleDiscountTwd = Number(product.bundleDiscountAmountTwd) || 0
   const requiredProducts = Array.isArray(product.bundleRequiredProducts)
     ? product.bundleRequiredProducts
     : []
   const requiredNames = requiredProducts.map((item)=>item.name).filter(Boolean)
 
-  if(bundleDiscount <= 0 || !requiredNames.length){
+  if((bundleDiscountVnd <= 0 && bundleDiscountTwd <= 0) || !requiredNames.length){
     return ""
   }
 
-  return `Buy with ${requiredNames.join(", ")} to get ${formatCurrency(bundleDiscount)} off this item.`
+  const discountParts = [
+    bundleDiscountVnd > 0 ? formatCurrency(bundleDiscountVnd, "VND", "vi-VN") : "",
+    bundleDiscountTwd > 0 ? formatCurrency(bundleDiscountTwd, "TWD", "zh-TW") : ""
+  ].filter(Boolean)
+
+  return `Buy with ${requiredNames.join(", ")} to get ${discountParts.join(" / ")} off this item.`
 }
 
 function getStockLabel(product){
@@ -128,8 +141,10 @@ function createInquiryHref(product, currentPrice){
     "Hi, I am interested in this product:",
     "",
     `Name: ${product.name || "Product"}`,
-    `Price: ${formatCurrency(currentPrice)}`,
+    currentPrice ? `Vietnam price: ${formatCurrency(currentPrice, "VND", "vi-VN")}` : "",
+    product.priceTwd ? `Taiwan price: ${formatCurrency(product.priceTwd, "TWD", "zh-TW")}` : "",
     product.category ? `Category: ${product.category}` : "",
+    "Custom style/color requests are welcome.",
     `Shop: ${window.location.origin}/#productsSection`
   ].filter(Boolean)
 
@@ -230,7 +245,7 @@ function onLightboxImageClick(event){
 }
 
 function createProductCard(product, index){
-  const { currentPrice, originalPrice, discount } = getProductPrices(product)
+  const { currentPrice, originalPrice, currentPriceTwd, originalPriceTwd, discount } = getProductPrices(product)
   const images = getProductImages(product)
   const bundlePromoText = getBundlePromoText(product)
   const stockLabel = getStockLabel(product)
@@ -256,11 +271,14 @@ function createProductCard(product, index){
       </div>
       <h4>${escapeHtml(product.name || "New Product")}</h4>
       <p class="description">${escapeHtml(product.description || "Product description is being updated.")}</p>
+      <p class="custom-note">Can customize style and colors on request.</p>
       <div class="thumbs"></div>
       ${tags.length ? `<div class="tag-list">${tags.map((tag)=>`<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       <div class="prices">
-        <span class="price">${formatCurrency(currentPrice)}</span>
-        ${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice)}</span>` : ""}
+        ${currentPrice > 0 ? `<span class="price">${formatCurrency(currentPrice, "VND", "vi-VN")}</span>` : ""}
+        ${originalPrice > currentPrice ? `<span class="old-price">${formatCurrency(originalPrice, "VND", "vi-VN")}</span>` : ""}
+        ${currentPriceTwd > 0 ? `<span class="price twd">${formatCurrency(currentPriceTwd, "TWD", "zh-TW")}</span>` : ""}
+        ${originalPriceTwd > currentPriceTwd ? `<span class="old-price">${formatCurrency(originalPriceTwd, "TWD", "zh-TW")}</span>` : ""}
       </div>
       ${bundlePromoText ? `<p class="bundle-promo">${escapeHtml(bundlePromoText)}</p>` : ""}
       <div class="product-actions">

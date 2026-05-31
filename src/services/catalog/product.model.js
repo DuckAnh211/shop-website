@@ -16,8 +16,14 @@ const ProductSchema = new mongoose.Schema(
     tags: { type: [String], default: [], index: true },
     price: { type: Number, default: 0, min: 0 },
     originalPrice: { type: Number, default: 0, min: 0 },
+    priceVnd: { type: Number, default: 0, min: 0 },
+    originalPriceVnd: { type: Number, default: 0, min: 0 },
+    priceTwd: { type: Number, default: 0, min: 0 },
+    originalPriceTwd: { type: Number, default: 0, min: 0 },
     discount: { type: Number, default: 0, min: 0, max: 99 },
     bundleDiscountAmount: { type: Number, default: 0, min: 0 },
+    bundleDiscountAmountVnd: { type: Number, default: 0, min: 0 },
+    bundleDiscountAmountTwd: { type: Number, default: 0, min: 0 },
     bundleRequiredProducts: {
       type: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
       default: []

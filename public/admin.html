@@ -120,11 +120,20 @@ textarea{min-height:110px;resize:vertical}
         </div>
 
         <div class="row">
-          <label>Selling price (USD)
-            <input id="price" name="price" type="number" min="0" step="0.01" placeholder="29.90" required>
+          <label>Selling price (VND)
+            <input id="priceVnd" name="priceVnd" type="number" min="0" step="1000" placeholder="250000">
           </label>
-          <label>Original price (USD)
-            <input id="originalPrice" name="originalPrice" type="number" min="0" step="0.01" placeholder="39.90" required>
+          <label>Original price (VND)
+            <input id="originalPriceVnd" name="originalPriceVnd" type="number" min="0" step="1000" placeholder="300000">
+          </label>
+        </div>
+
+        <div class="row">
+          <label>Selling price (TWD)
+            <input id="priceTwd" name="priceTwd" type="number" min="0" step="1" placeholder="320">
+          </label>
+          <label>Original price (TWD)
+            <input id="originalPriceTwd" name="originalPriceTwd" type="number" min="0" step="1" placeholder="390">
           </label>
         </div>
 
@@ -152,9 +161,14 @@ textarea{min-height:110px;resize:vertical}
 
         <fieldset class="bundle-box">
           <legend>Discount when bought with selected products</legend>
-          <label>Bundle discount amount (USD)
-            <input id="bundleDiscountAmount" name="bundleDiscountAmount" type="number" min="0" step="0.01" placeholder="Example: 1.50">
-          </label>
+          <div class="row">
+            <label>Bundle discount amount (VND)
+              <input id="bundleDiscountAmountVnd" name="bundleDiscountAmountVnd" type="number" min="0" step="1000" placeholder="Example: 20000">
+            </label>
+            <label>Bundle discount amount (TWD)
+              <input id="bundleDiscountAmountTwd" name="bundleDiscountAmountTwd" type="number" min="0" step="1" placeholder="Example: 30">
+            </label>
+          </div>
           <div id="bundleProductOptions" class="bundle-products"></div>
           <p id="bundleEmpty" class="bundle-empty">Create another product first to choose bundle conditions.</p>
         </fieldset>
@@ -251,11 +265,20 @@ function handleUnauthorized(response){
 }
 
 function formatCurrency(value){
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("vi-VN", {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+    currency: "VND",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(Number(value) || 0)
+}
+
+function formatTwd(value){
+  return new Intl.NumberFormat("zh-TW", {
+    style: "currency",
+    currency: "TWD",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(Number(value) || 0)
 }
 
@@ -396,13 +419,16 @@ function enterEditMode(product){
   form.name.value = product.name || ""
   form.category.value = product.category || ""
   form.tags.value = Array.isArray(product.tags) ? product.tags.join(", ") : ""
-  form.price.value = product.price || 0
-  form.originalPrice.value = product.originalPrice || 0
+  form.priceVnd.value = product.priceVnd || product.price || 0
+  form.originalPriceVnd.value = product.originalPriceVnd || product.originalPrice || 0
+  form.priceTwd.value = product.priceTwd || 0
+  form.originalPriceTwd.value = product.originalPriceTwd || 0
   form.discount.value = Number.isFinite(Number(product.discount)) ? product.discount : ""
   form.stock.value = Number.isFinite(Number(product.stock)) ? product.stock : 0
   form.isPublished.value = product.isPublished === false ? "false" : "true"
   form.isFeatured.checked = Boolean(product.isFeatured)
-  form.bundleDiscountAmount.value = Number.isFinite(Number(product.bundleDiscountAmount)) ? product.bundleDiscountAmount : ""
+  form.bundleDiscountAmountVnd.value = Number.isFinite(Number(product.bundleDiscountAmountVnd || product.bundleDiscountAmount)) ? (product.bundleDiscountAmountVnd || product.bundleDiscountAmount) : ""
+  form.bundleDiscountAmountTwd.value = Number.isFinite(Number(product.bundleDiscountAmountTwd)) ? product.bundleDiscountAmountTwd : ""
   form.description.value = product.description || ""
   imageInput.value = ""
   selectedFiles = []
@@ -423,16 +449,25 @@ function renderProducts(){
   allProducts.forEach((product)=>{
     const images = getProductImages(product)
     const bundleNames = (product.bundleRequiredProducts || []).map((item)=>item.name).filter(Boolean).join(", ")
-    const bundleText = Number(product.bundleDiscountAmount) > 0 && bundleNames
-      ? ` | Bundle: ${formatCurrency(product.bundleDiscountAmount)} off with ${bundleNames}`
+    const bundleParts = [
+      Number(product.bundleDiscountAmountVnd || product.bundleDiscountAmount) > 0 ? formatCurrency(product.bundleDiscountAmountVnd || product.bundleDiscountAmount) : "",
+      Number(product.bundleDiscountAmountTwd) > 0 ? formatTwd(product.bundleDiscountAmountTwd) : ""
+    ].filter(Boolean)
+    const bundleText = bundleParts.length && bundleNames
+      ? ` | Bundle: ${bundleParts.join(" / ")} off with ${bundleNames}`
       : ""
+    const hasVndPrice = Number(product.priceVnd) > 0 || (Number(product.priceTwd) <= 0 && Number(product.price) > 0)
+    const priceParts = [
+      hasVndPrice ? formatCurrency(product.priceVnd || product.price) : "",
+      Number(product.priceTwd) > 0 ? formatTwd(product.priceTwd) : ""
+    ].filter(Boolean)
     const row = document.createElement("article")
     row.className = "product-row"
     row.innerHTML = `
       <img src="${images[0] || "https://via.placeholder.com/160x120?text=No+Image"}" alt="${product.name || "Product"}">
       <div>
         <h4>${product.name || "Product"}</h4>
-        <p>${formatCurrency(product.price)} | ${product.category || "Uncategorized"} | ${images.length} image(s)${bundleText}</p>
+        <p>${priceParts.join(" / ")} | ${product.category || "Uncategorized"} | ${images.length} image(s)${bundleText}</p>
         <div class="badges">
           <span class="badge ${product.isPublished === false ? "neutral" : "success"}">${product.isPublished === false ? "Draft" : "Published"}</span>
           ${product.isFeatured ? '<span class="badge">Featured</span>' : ""}
@@ -546,11 +581,16 @@ form.addEventListener("submit", async (event)=>{
     formData.set("bundleRequiredProducts", "")
   }
 
-  const price = Number(formData.get("price"))
-  const originalPrice = Number(formData.get("originalPrice"))
+  const priceVnd = Number(formData.get("priceVnd") || 0)
+  const originalPriceVnd = Number(formData.get("originalPriceVnd") || 0)
+  const priceTwd = Number(formData.get("priceTwd") || 0)
+  const originalPriceTwd = Number(formData.get("originalPriceTwd") || 0)
+  const primaryPrice = priceVnd || priceTwd
+  const primaryOriginalPrice = originalPriceVnd || originalPriceTwd || primaryPrice
   const stock = Number(formData.get("stock"))
   const discountText = String(formData.get("discount") || "").trim()
-  const bundleDiscount = Number(formData.get("bundleDiscountAmount") || 0)
+  const bundleDiscountVnd = Number(formData.get("bundleDiscountAmountVnd") || 0)
+  const bundleDiscountTwd = Number(formData.get("bundleDiscountAmountTwd") || 0)
 
   if(!isEditing && !selectedFiles.length){
     statusBox.classList.add("error")
@@ -558,32 +598,44 @@ form.addEventListener("submit", async (event)=>{
     return
   }
 
-  if(price < 0 || originalPrice < 0 || stock < 0){
+  if(priceVnd < 0 || originalPriceVnd < 0 || priceTwd < 0 || originalPriceTwd < 0 || stock < 0){
     statusBox.classList.add("error")
     statusBox.textContent = "Price and stock values must be zero or greater."
     return
   }
 
-  if(originalPrice > 0 && price > originalPrice){
+  if(priceVnd <= 0 && priceTwd <= 0){
     statusBox.classList.add("error")
-    statusBox.textContent = "Selling price cannot be greater than original price."
+    statusBox.textContent = "Enter at least one selling price in VND or TWD."
     return
   }
 
-  if(bundleDiscount > price){
+  if(originalPriceVnd > 0 && priceVnd > originalPriceVnd){
+    statusBox.classList.add("error")
+    statusBox.textContent = "VND selling price cannot be greater than VND original price."
+    return
+  }
+
+  if(originalPriceTwd > 0 && priceTwd > originalPriceTwd){
+    statusBox.classList.add("error")
+    statusBox.textContent = "TWD selling price cannot be greater than TWD original price."
+    return
+  }
+
+  if(bundleDiscountVnd > priceVnd || bundleDiscountTwd > priceTwd){
     statusBox.classList.add("error")
     statusBox.textContent = "Bundle discount amount cannot be greater than selling price."
     return
   }
 
-  if(bundleDiscount > 0 && !selectedBundleProducts.length){
+  if((bundleDiscountVnd > 0 || bundleDiscountTwd > 0) && !selectedBundleProducts.length){
     statusBox.classList.add("error")
     statusBox.textContent = "Choose at least one product for the bundle discount."
     return
   }
 
-  if(!discountText && originalPrice > 0 && originalPrice > price){
-    formData.set("discount", String(Math.round(((originalPrice - price) / originalPrice) * 100)))
+  if(!discountText && primaryOriginalPrice > 0 && primaryOriginalPrice > primaryPrice){
+    formData.set("discount", String(Math.round(((primaryOriginalPrice - primaryPrice) / primaryOriginalPrice) * 100)))
   }
 
   try{
