@@ -17,7 +17,6 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const yarnChase = document.getElementById("yarnChase")
 const chaseCat = document.getElementById("chaseCat")
 const chaseYarn = document.getElementById("chaseYarn")
-const chaseThreadPath = document.querySelector("#chaseThread path")
 const chaseToggle = document.getElementById("chaseToggle")
 
 const CONTACT_CHANNELS = {
@@ -553,7 +552,7 @@ if(hero && heroShowcase && !reduceMotion){
 }
 
 function setupYarnChase(){
-  if(!yarnChase || !chaseCat || !chaseYarn || !chaseThreadPath || !chaseToggle || reduceMotion){
+  if(!yarnChase || !chaseCat || !chaseYarn || !chaseToggle || reduceMotion){
     return
   }
 
@@ -575,6 +574,9 @@ function setupYarnChase(){
     targetY: window.innerHeight * 0.7,
     yarnX: window.innerWidth * 0.68,
     yarnY: window.innerHeight * 0.7,
+    previousYarnX: window.innerWidth * 0.68,
+    previousYarnY: window.innerHeight * 0.7,
+    yarnRotation: 0,
     catX: window.innerWidth * 0.2,
     catY: window.innerHeight * 0.72,
     lastInputAt: performance.now(),
@@ -653,8 +655,16 @@ function setupYarnChase(){
       }
 
       const yarnEase = isCoarse ? 0.055 : 0.11
+      state.previousYarnX = state.yarnX
+      state.previousYarnY = state.yarnY
       state.yarnX += (state.targetX - state.yarnX) * yarnEase * elapsed
       state.yarnY += (state.targetY - state.yarnY) * yarnEase * elapsed
+      const yarnMoveX = state.yarnX - state.previousYarnX
+      const yarnMoveY = state.yarnY - state.previousYarnY
+      const yarnTravel = Math.hypot(yarnMoveX, yarnMoveY)
+      if(yarnTravel > 0.02){
+        state.yarnRotation += yarnTravel * 2.4 * (yarnMoveX < 0 ? -1 : 1)
+      }
 
       const deltaX = state.yarnX - (state.catX + 16)
       const deltaY = state.yarnY - (state.catY + 16)
@@ -677,13 +687,7 @@ function setupYarnChase(){
       const catScale = isCoarse ? 1.35 : 1.5
       chaseCat.style.translate = `${state.catX}px ${state.catY}px`
       chaseCat.style.scale = String(catScale)
-      chaseYarn.style.translate = `${state.yarnX - 24}px ${state.yarnY - 24}px`
-
-      const catAnchorX = state.catX + 16
-      const catAnchorY = state.catY + 18
-      const controlX = (catAnchorX + state.yarnX) / 2
-      const controlY = Math.max(catAnchorY, state.yarnY) + 24 + Math.sin(now / 180) * 5
-      chaseThreadPath.setAttribute("d", `M ${catAnchorX} ${catAnchorY} Q ${controlX} ${controlY} ${state.yarnX} ${state.yarnY}`)
+      chaseYarn.style.transform = `translate3d(${state.yarnX - 28}px, ${state.yarnY - 28}px, 0) rotate(${state.yarnRotation}deg)`
     }
 
     window.requestAnimationFrame(animate)
