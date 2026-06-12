@@ -17,6 +17,7 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
 const yarnChase = document.getElementById("yarnChase")
 const chaseCat = document.getElementById("chaseCat")
 const chaseYarn = document.getElementById("chaseYarn")
+const chaseYarnImage = document.getElementById("chaseYarnImage")
 const chaseToggle = document.getElementById("chaseToggle")
 
 const CONTACT_CHANNELS = {
@@ -552,7 +553,7 @@ if(hero && heroShowcase && !reduceMotion){
 }
 
 function setupYarnChase(){
-  if(!yarnChase || !chaseCat || !chaseYarn || !chaseToggle || reduceMotion){
+  if(!yarnChase || !chaseCat || !chaseYarn || !chaseYarnImage || !chaseToggle || reduceMotion){
     return
   }
 
@@ -650,7 +651,8 @@ function setupYarnChase(){
 
     if(state.visible){
       const isCoarse = coarsePointer.matches
-      if(isCoarse && now - state.lastInputAt > 1800 && (!state.nextAutoMoveAt || now >= state.nextAutoMoveAt)){
+      const idleDelay = isCoarse ? 1800 : 2600
+      if(now - state.lastInputAt > idleDelay && (!state.nextAutoMoveAt || now >= state.nextAutoMoveAt)){
         setRandomTarget(now)
       }
 
@@ -663,13 +665,14 @@ function setupYarnChase(){
       const yarnMoveY = state.yarnY - state.previousYarnY
       const yarnTravel = Math.hypot(yarnMoveX, yarnMoveY)
       if(yarnTravel > 0.02){
-        state.yarnRotation += yarnTravel * 2.4 * (yarnMoveX < 0 ? -1 : 1)
+        const rollDirection = Math.abs(yarnMoveX) > 0.04 ? Math.sign(yarnMoveX) : Math.sign(yarnMoveY) || 1
+        state.yarnRotation += yarnTravel * 2.2 * rollDirection
       }
 
       const deltaX = state.yarnX - (state.catX + 16)
       const deltaY = state.yarnY - (state.catY + 16)
       const distance = Math.hypot(deltaX, deltaY)
-      const stopDistance = isCoarse ? 50 : 58
+      const stopDistance = isCoarse ? 70 : 76
       const isRunning = distance > stopDistance
 
       if(isRunning){
@@ -687,7 +690,8 @@ function setupYarnChase(){
       const catScale = isCoarse ? 1.35 : 1.5
       chaseCat.style.translate = `${state.catX}px ${state.catY}px`
       chaseCat.style.scale = String(catScale)
-      chaseYarn.style.transform = `translate3d(${state.yarnX - 28}px, ${state.yarnY - 28}px, 0) rotate(${state.yarnRotation}deg)`
+      chaseYarn.style.transform = `translate3d(${state.yarnX - 34}px, ${state.yarnY - 34}px, 0)`
+      chaseYarnImage.style.transform = `rotate(${state.yarnRotation}deg)`
     }
 
     window.requestAnimationFrame(animate)
