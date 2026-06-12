@@ -414,3 +414,124 @@ body.login-page :focus-visible{outline:3px solid rgba(217,111,99,.5);outline-off
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Yarn workshop theme */
+body.contact-page,
+body.login-page{
+  --yarn-cream:#fff8e9;
+  --yarn-coral:#d98272;
+  --yarn-berry:#8b4d5d;
+  --yarn-sage:#78917b;
+  --yarn-cocoa:#4d3935;
+  color:var(--yarn-cocoa);
+  background:
+    radial-gradient(circle at 8% 9%,rgba(217,130,114,.38),transparent 25%),
+    radial-gradient(circle at 91% 82%,rgba(120,145,123,.3),transparent 27%),
+    repeating-linear-gradient(45deg,rgba(113,82,67,.025) 0 1px,transparent 1px 7px),
+    linear-gradient(135deg,#f8edda,#f1dcd5 55%,#eee5d5);
+}
+
+.contact-page .page-shell,
+.login-shell{
+  background:
+    linear-gradient(rgba(255,250,240,.88),rgba(255,250,240,.88)),
+    repeating-linear-gradient(90deg,rgba(96,67,55,.05) 0 1px,transparent 1px 5px);
+  border:2px solid rgba(255,255,255,.82);
+  box-shadow:0 34px 90px rgba(93,59,51,.17),inset 0 0 0 1px rgba(137,91,74,.08);
+}
+
+.contact-page .brand-mark.yarn-logo,
+.login-brand-mark.yarn-logo{
+  border-radius:50%;
+  background:var(--yarn-berry);
+  transform:rotate(-7deg);
+  box-shadow:0 10px 0 rgba(96,55,64,.12),0 14px 28px rgba(94,52,62,.22);
+}
+
+.contact-page .brand-mark.yarn-logo::after,
+.login-brand-mark.yarn-logo::after{border-radius:50%;border-style:dashed}
+
+.yarn-logo svg{width:38px;height:38px;overflow:visible}
+.yarn-logo circle{fill:var(--yarn-coral)}
+.yarn-logo path{fill:none;stroke:var(--yarn-cream);stroke-width:2;stroke-linecap:round}
+
+.contact-page .nav a:hover,
+.contact-page .nav a.active{background:var(--yarn-berry)}
+
+.contact-page .hero,
+.login-story{
+  background:
+    radial-gradient(ellipse at 50% 0,transparent 64%,rgba(255,248,233,.09) 66% 71%,transparent 73%) 0 0/22px 14px,
+    radial-gradient(ellipse at 50% 100%,transparent 64%,rgba(255,248,233,.07) 66% 71%,transparent 73%) 11px 0/22px 14px,
+    linear-gradient(145deg,#593b3d,#724954 55%,#536653);
+  box-shadow:0 28px 64px rgba(83,53,49,.25);
+}
+
+.contact-page .hero::after,
+.login-story::before{
+  border-color:rgba(226,152,132,.22);
+  box-shadow:0 0 0 24px rgba(255,248,233,.035),0 0 0 62px rgba(255,248,233,.02);
+  background:
+    repeating-radial-gradient(ellipse,transparent 0 12px,rgba(255,248,233,.07) 13px 16px,transparent 17px 23px),
+    rgba(217,130,114,.24);
+}
+
+.page-eyebrow{border-style:dashed;color:#f2c5b5}
+.page-eyebrow::before{background:var(--yarn-coral)}
+
+.contact-page .panel{
+  background:
+    linear-gradient(rgba(255,253,247,.95),rgba(255,253,247,.95)),
+    repeating-linear-gradient(90deg,rgba(121,85,65,.05) 0 1px,transparent 1px 5px);
+  border-style:dashed;
+}
+
+.contact-page .item{
+  border-style:dashed;
+  background:#fffaf0;
+}
+
+.contact-page .item::before{
+  border-radius:50%;
+  background:
+    repeating-radial-gradient(ellipse,transparent 0 4px,rgba(255,255,255,.34) 5px 6px),
+    var(--yarn-berry);
+  box-shadow:inset -4px -5px 6px rgba(67,38,39,.18);
+}
+
+.contact-page .item:nth-child(2)::before{background-color:var(--yarn-coral)}
+.contact-page .item:nth-child(3)::before{background-color:var(--yarn-sage)}
+.contact-page .item:nth-child(4)::before{background-color:#b68a65}
+
+.contact-visual{
+  background:
+    radial-gradient(ellipse at 50% 0,transparent 65%,rgba(255,248,233,.08) 67% 72%,transparent 74%) 0 0/24px 16px,
+    linear-gradient(145deg,#9d5961,#7b4d5b 60%,#5a6958);
+  border:1px dashed rgba(255,248,233,.28);
+}
+
+.contact-visual::before{
+  border-color:rgba(255,248,233,.14);
+  background:repeating-radial-gradient(ellipse,transparent 0 10px,rgba(255,248,233,.08) 11px 13px);
+}
+
+.response-card{border-style:dashed}
+
+.contact-page .footer-note{
+  background:
+    radial-gradient(ellipse at 50% 0,transparent 65%,rgba(255,248,233,.07) 67% 72%,transparent 74%) 0 0/24px 16px,
+    #563b3f;
+  border:1px dashed rgba(255,248,233,.24);
+}
+
+.login-page .card{
+  background:
+    linear-gradient(rgba(255,250,240,.82),rgba(255,250,240,.82)),
+    repeating-linear-gradient(0deg,rgba(121,85,65,.05) 0 1px,transparent 1px 6px);
+}
+
+.login-page input{border-style:dashed;background:#fffdf7}
+.login-page button[type="submit"]{background:linear-gradient(135deg,#754653,#965663)}
+.login-page button[type="submit"]:hover{background:#754653}
+.password-toggle{color:var(--yarn-berry);background:#f3e4d2}
+.back-link:hover{color:var(--yarn-berry)}

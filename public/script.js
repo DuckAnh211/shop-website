@@ -279,7 +279,7 @@ function createProductCard(product, index){
       </div>
       <h4>${escapeHtml(product.name || "New Product")}</h4>
       <p class="description">${escapeHtml(product.description || "Product description is being updated.")}</p>
-      <p class="custom-note">Can customize style and colors on request.</p>
+      <p class="custom-note">Yarn colors and finishing details can be customized on request.</p>
       <div class="thumbs"></div>
       ${tags.length ? `<div class="tag-list">${tags.map((tag)=>`<span>${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       <div class="prices">
