@@ -1175,16 +1175,15 @@ a{color:inherit}
 <div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
 <div class="ambient-shape one" aria-hidden="true"></div>
 <div class="ambient-shape two" aria-hidden="true"></div>
-<div class="yarn-chase" aria-hidden="true">
-	<div class="chase-cat">
-		<span class="cat-tail"></span>
-		<span class="cat-body"><i class="cat-stripe one"></i><i class="cat-stripe two"></i></span>
-		<span class="cat-head"><i class="cat-ear left"></i><i class="cat-ear right"></i><i class="cat-eye left"></i><i class="cat-eye right"></i><i class="cat-nose"></i></span>
-		<span class="cat-paw front"></span><span class="cat-paw back"></span>
+<div id="yarnChase" class="yarn-chase" aria-hidden="true">
+	<div id="chaseCat" class="chase-cat">
 	</div>
-	<div class="chase-thread"></div>
-	<div class="chase-yarn"><i></i></div>
+	<svg id="chaseThread" class="chase-thread" aria-hidden="true"><path></path></svg>
+	<div id="chaseYarn" class="chase-yarn"><i></i></div>
 </div>
+<button id="chaseToggle" class="chase-toggle" type="button" aria-pressed="true" aria-label="Hide cat and yarn animation">
+	<span aria-hidden="true">🐈</span><b>Hide cat</b>
+</button>
 <div class="page-shell">
 	<header class="topbar">
 		<a class="brand-lockup" href="index.html" aria-label="KaWo Crotchet home">

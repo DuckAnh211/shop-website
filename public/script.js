@@ -14,6 +14,11 @@ const scrollProgress = document.getElementById("scrollProgress")
 const topbar = document.querySelector(".topbar")
 const hero = document.querySelector(".hero")
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+const yarnChase = document.getElementById("yarnChase")
+const chaseCat = document.getElementById("chaseCat")
+const chaseYarn = document.getElementById("chaseYarn")
+const chaseThreadPath = document.querySelector("#chaseThread path")
+const chaseToggle = document.getElementById("chaseToggle")
 
 const CONTACT_CHANNELS = {
   phone: "tel:+886973424279",
@@ -546,3 +551,175 @@ if(hero && heroShowcase && !reduceMotion){
     heroShowcase.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)"
   })
 }
+
+function setupYarnChase(){
+  if(!yarnChase || !chaseCat || !chaseYarn || !chaseThreadPath || !chaseToggle || reduceMotion){
+    return
+  }
+
+  const coarsePointer = window.matchMedia("(pointer: coarse)")
+  // Directional frames from the MIT-licensed adryd325/oneko.js sprite sheet.
+  const spriteSets = {
+    idle: [[-3, -3]],
+    N: [[-1, -2], [-1, -3]],
+    NE: [[0, -2], [0, -3]],
+    E: [[-3, 0], [-3, -1]],
+    SE: [[-5, -1], [-5, -2]],
+    S: [[-6, -3], [-7, -2]],
+    SW: [[-5, -3], [-6, -1]],
+    W: [[-4, -2], [-4, -3]],
+    NW: [[-1, 0], [-1, -1]]
+  }
+  const state = {
+    targetX: window.innerWidth * 0.68,
+    targetY: window.innerHeight * 0.7,
+    yarnX: window.innerWidth * 0.68,
+    yarnY: window.innerHeight * 0.7,
+    catX: window.innerWidth * 0.2,
+    catY: window.innerHeight * 0.72,
+    lastInputAt: performance.now(),
+    nextAutoMoveAt: 0,
+    lastFrameAt: performance.now(),
+    lastSpriteAt: 0,
+    spriteFrame: 0,
+    draggingPointerId: null,
+    visible: localStorage.getItem("kawoYarnChaseVisible") !== "false"
+  }
+
+  function setSprite(name){
+    const frames = spriteSets[name] || spriteSets.idle
+    const sprite = frames[state.spriteFrame % frames.length]
+    chaseCat.style.backgroundPosition = `${sprite[0] * 32}px ${sprite[1] * 32}px`
+  }
+
+  function getDirection(deltaX, deltaY){
+    const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI
+    if(angle >= -22.5 && angle < 22.5) return "E"
+    if(angle >= 22.5 && angle < 67.5) return "SE"
+    if(angle >= 67.5 && angle < 112.5) return "S"
+    if(angle >= 112.5 && angle < 157.5) return "SW"
+    if(angle >= 157.5 || angle < -157.5) return "W"
+    if(angle >= -157.5 && angle < -112.5) return "NW"
+    if(angle >= -112.5 && angle < -67.5) return "N"
+    return "NE"
+  }
+
+  function clampTarget(x, y){
+    state.targetX = Math.max(28, Math.min(window.innerWidth - 60, x))
+    state.targetY = Math.max(76, Math.min(window.innerHeight - 68, y))
+  }
+
+  function setRandomTarget(now){
+    const marginX = Math.min(70, window.innerWidth * 0.12)
+    const topMargin = Math.min(130, window.innerHeight * 0.2)
+    clampTarget(
+      marginX + Math.random() * Math.max(80, window.innerWidth - marginX * 2),
+      topMargin + Math.random() * Math.max(100, window.innerHeight - topMargin - 90)
+    )
+    state.nextAutoMoveAt = now + 1400 + Math.random() * 1700
+  }
+
+  function applyVisibility(){
+    yarnChase.classList.toggle("is-hidden", !state.visible)
+    chaseToggle.setAttribute("aria-pressed", String(state.visible))
+    chaseToggle.setAttribute("aria-label", state.visible ? "Hide cat and yarn animation" : "Show cat and yarn animation")
+    chaseToggle.querySelector("b").textContent = state.visible ? "Hide cat" : "Show cat"
+  }
+
+  function handlePointer(event){
+    if(!state.visible){
+      return
+    }
+
+    if(event.type === "pointerdown"){
+      state.draggingPointerId = event.pointerId
+    }
+
+    if(event.pointerType === "mouse" || state.draggingPointerId === event.pointerId){
+      clampTarget(event.clientX, event.clientY)
+      state.lastInputAt = performance.now()
+      state.nextAutoMoveAt = 0
+    }
+  }
+
+  function animate(now){
+    const elapsed = Math.min((now - state.lastFrameAt) / 16.67, 2.5)
+    state.lastFrameAt = now
+
+    if(state.visible){
+      const isCoarse = coarsePointer.matches
+      if(isCoarse && now - state.lastInputAt > 1800 && (!state.nextAutoMoveAt || now >= state.nextAutoMoveAt)){
+        setRandomTarget(now)
+      }
+
+      const yarnEase = isCoarse ? 0.055 : 0.11
+      state.yarnX += (state.targetX - state.yarnX) * yarnEase * elapsed
+      state.yarnY += (state.targetY - state.yarnY) * yarnEase * elapsed
+
+      const deltaX = state.yarnX - (state.catX + 16)
+      const deltaY = state.yarnY - (state.catY + 16)
+      const distance = Math.hypot(deltaX, deltaY)
+      const stopDistance = isCoarse ? 50 : 58
+      const isRunning = distance > stopDistance
+
+      if(isRunning){
+        const speed = Math.min(9.5, Math.max(2.1, distance * 0.04)) * elapsed
+        state.catX += deltaX / distance * speed
+        state.catY += deltaY / distance * speed
+      }
+
+      if(now - state.lastSpriteAt > 100){
+        state.lastSpriteAt = now
+        state.spriteFrame += 1
+        setSprite(isRunning ? getDirection(deltaX, deltaY) : "idle")
+      }
+
+      const catScale = isCoarse ? 1.35 : 1.5
+      chaseCat.style.translate = `${state.catX}px ${state.catY}px`
+      chaseCat.style.scale = String(catScale)
+      chaseYarn.style.translate = `${state.yarnX - 24}px ${state.yarnY - 24}px`
+
+      const catAnchorX = state.catX + 16
+      const catAnchorY = state.catY + 18
+      const controlX = (catAnchorX + state.yarnX) / 2
+      const controlY = Math.max(catAnchorY, state.yarnY) + 24 + Math.sin(now / 180) * 5
+      chaseThreadPath.setAttribute("d", `M ${catAnchorX} ${catAnchorY} Q ${controlX} ${controlY} ${state.yarnX} ${state.yarnY}`)
+    }
+
+    window.requestAnimationFrame(animate)
+  }
+
+  document.addEventListener("pointermove", handlePointer, { passive: true })
+  document.addEventListener("pointerdown", handlePointer, { passive: true })
+  document.addEventListener("pointerup", (event)=>{
+    if(state.draggingPointerId === event.pointerId){
+      state.draggingPointerId = null
+    }
+  }, { passive: true })
+  document.addEventListener("pointercancel", (event)=>{
+    if(state.draggingPointerId === event.pointerId){
+      state.draggingPointerId = null
+    }
+  }, { passive: true })
+
+  window.addEventListener("resize", ()=>{
+    clampTarget(state.targetX, state.targetY)
+    state.catX = Math.max(0, Math.min(window.innerWidth - 32, state.catX))
+    state.catY = Math.max(60, Math.min(window.innerHeight - 42, state.catY))
+  }, { passive: true })
+
+  chaseToggle.addEventListener("click", ()=>{
+    state.visible = !state.visible
+    localStorage.setItem("kawoYarnChaseVisible", String(state.visible))
+    if(state.visible){
+      state.lastInputAt = performance.now()
+    }
+    applyVisibility()
+  })
+
+  applyVisibility()
+  setSprite("idle")
+  window.requestAnimationFrame(animate)
+}
+
+setupYarnChase()

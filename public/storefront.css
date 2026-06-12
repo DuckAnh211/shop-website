@@ -1001,146 +1001,81 @@ body.storefront-page{
 .storefront-page .promo-photo span{max-width:14ch}
 
 .yarn-chase{
-  --chase-scale:1;
+  position:fixed;
+  inset:0;
+  z-index:90;
+  pointer-events:none;
+  transition:opacity .25s ease,visibility .25s ease;
+}
+
+.yarn-chase.is-hidden{opacity:0;visibility:hidden}
+
+.chase-cat{
   position:fixed;
   left:0;
   top:0;
-  z-index:90;
-  width:210px;
-  height:90px;
-  pointer-events:none;
-  filter:drop-shadow(0 8px 8px rgba(75,43,39,.2));
+  width:32px;
+  height:32px;
+  background-image:url("vendor/oneko/oneko.gif");
+  background-repeat:no-repeat;
+  image-rendering:pixelated;
   transform-origin:center;
+  filter:drop-shadow(0 8px 8px rgba(75,43,39,.2));
   will-change:transform;
-  animation:chaseRoute 24s linear infinite;
 }
-
-.chase-cat{
-  position:absolute;
-  left:6px;
-  bottom:11px;
-  width:92px;
-  height:58px;
-  transform-origin:center bottom;
-  animation:catGallop .42s ease-in-out infinite alternate;
-}
-
-.cat-body{
-  position:absolute;
-  left:25px;
-  bottom:9px;
-  width:62px;
-  height:37px;
-  border-radius:50% 47% 42% 44%;
-  background:linear-gradient(145deg,#e8b06f,#c87950);
-  box-shadow:inset -7px -7px 8px rgba(112,61,42,.18);
-}
-
-.cat-head{
-  position:absolute;
-  right:-3px;
-  top:4px;
-  width:42px;
-  height:39px;
-  border-radius:48% 48% 45% 45%;
-  background:linear-gradient(145deg,#f0bd7b,#cf7c50);
-  transform-origin:left bottom;
-  animation:catLook .84s ease-in-out infinite alternate;
-}
-
-.cat-ear{
-  position:absolute;
-  top:-8px;
-  width:16px;
-  height:18px;
-  background:#d88758;
-  clip-path:polygon(50% 0,100% 100%,0 100%);
-}
-
-.cat-ear::after{content:"";position:absolute;inset:5px 4px 2px;background:#eeb0a2;clip-path:inherit}
-.cat-ear.left{left:4px;transform:rotate(-12deg)}
-.cat-ear.right{right:3px;transform:rotate(13deg)}
-.cat-eye{position:absolute;top:15px;width:5px;height:7px;border-radius:50%;background:#3d302c}
-.cat-eye.left{left:10px}.cat-eye.right{right:9px}
-.cat-eye::after{content:"";position:absolute;left:1px;top:1px;width:2px;height:2px;border-radius:50%;background:#fff}
-.cat-nose{position:absolute;left:19px;top:25px;width:5px;height:4px;border-radius:50% 50% 60% 60%;background:#a95355}
-
-.cat-tail{
-  position:absolute;
-  left:1px;
-  top:3px;
-  width:47px;
-  height:37px;
-  border:10px solid #d88b58;
-  border-right-color:transparent;
-  border-bottom-color:transparent;
-  border-radius:50%;
-  transform-origin:right bottom;
-  animation:tailSwish .55s ease-in-out infinite alternate;
-}
-
-.cat-stripe{position:absolute;width:6px;height:18px;border-radius:50%;border-left:3px solid rgba(113,63,45,.34);transform:rotate(-22deg)}
-.cat-stripe.one{left:20px;top:3px}.cat-stripe.two{left:32px;top:5px}
-
-.cat-paw{
-  position:absolute;
-  bottom:2px;
-  width:29px;
-  height:9px;
-  border-radius:999px;
-  background:#df955e;
-  transform-origin:right center;
-}
-
-.cat-paw.front{right:-5px;animation:frontPaw .42s ease-in-out infinite alternate}
-.cat-paw.back{left:27px;animation:backPaw .42s ease-in-out infinite alternate}
 
 .chase-thread{
-  position:absolute;
-  right:39px;
-  bottom:30px;
-  width:82px;
-  height:28px;
-  border-bottom:3px solid #b65f68;
-  border-radius:50%;
-  transform-origin:right;
-  animation:chaseThread .7s ease-in-out infinite alternate;
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  overflow:visible;
+  pointer-events:none;
 }
 
+.chase-thread path{fill:none;stroke:#b65f68;stroke-width:3;stroke-linecap:round;stroke-dasharray:5 4;opacity:.72}
+
 .chase-yarn{
-  position:absolute;
-  right:4px;
-  bottom:15px;
+  position:fixed;
+  left:0;
+  top:0;
   width:48px;
   height:48px;
   border-radius:50%;
   background:repeating-radial-gradient(ellipse at 48% 50%,transparent 0 4px,rgba(255,248,233,.5) 5px 6px,transparent 7px 10px),#b65f68;
   box-shadow:inset -7px -8px 10px rgba(89,45,51,.24),0 6px 10px rgba(72,42,38,.2);
-  animation:yarnRollScreen .7s linear infinite;
+  transform-origin:center;
+  will-change:transform;
 }
 
-.chase-yarn i{position:absolute;inset:7px 4px;border:2px solid rgba(255,248,233,.4);border-left-color:transparent;border-right-color:transparent;border-radius:50%;transform:rotate(32deg)}
+.chase-yarn i{position:absolute;inset:7px 4px;border:2px solid rgba(255,248,233,.4);border-left-color:transparent;border-right-color:transparent;border-radius:50%;animation:yarnRollScreen .7s linear infinite}
 
-@keyframes catGallop{to{transform:translateY(-7px) rotate(-1deg)}}
-@keyframes catLook{to{transform:rotate(-5deg) translateY(-1px)}}
-@keyframes tailSwish{to{transform:rotate(-22deg) scaleY(.9)}}
-@keyframes frontPaw{to{transform:rotate(-28deg) translateX(6px)}}
-@keyframes backPaw{to{transform:rotate(24deg) translateX(-5px)}}
-@keyframes chaseThread{to{transform:scaleX(.88) translateY(-5px) rotate(-4deg)}}
+.chase-toggle{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  z-index:110;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px dashed rgba(139,77,93,.34);
+  border-radius:999px;
+  color:#6f4450;
+  background:rgba(255,248,233,.92);
+  box-shadow:0 10px 26px rgba(75,43,39,.14);
+  backdrop-filter:blur(12px);
+  font:700 12px "Be Vietnam Pro",sans-serif;
+  cursor:pointer;
+  transition:transform .2s ease,background .2s ease;
+}
+
+.chase-toggle:hover{transform:translateY(-2px);background:#fffaf1}
+.chase-toggle span{font-size:16px;line-height:1}
+.chase-toggle b{font:inherit}
+
 @keyframes yarnRollScreen{to{transform:rotate(360deg)}}
-
-@keyframes chaseRoute{
-  0%{transform:translate3d(-230px,calc(100vh - 125px),0) scaleX(1) scale(var(--chase-scale))}
-  22%{transform:translate3d(calc(100vw - 120px),calc(100vh - 125px),0) scaleX(1) scale(var(--chase-scale))}
-  24%{transform:translate3d(calc(100vw - 120px),calc(100vh - 125px),0) scaleX(-1) scale(var(--chase-scale))}
-  46%{transform:translate3d(38vw,52vh,0) scaleX(-1) scale(var(--chase-scale))}
-  48%{transform:translate3d(38vw,52vh,0) scaleX(1) scale(var(--chase-scale))}
-  69%{transform:translate3d(calc(100vw - 160px),18vh,0) scaleX(1) scale(var(--chase-scale))}
-  71%{transform:translate3d(calc(100vw - 160px),18vh,0) scaleX(-1) scale(var(--chase-scale))}
-  88%{transform:translate3d(8vw,32vh,0) scaleX(-1) scale(var(--chase-scale))}
-  90%{transform:translate3d(8vw,32vh,0) scaleX(1) scale(var(--chase-scale))}
-  100%{transform:translate3d(-230px,calc(100vh - 125px),0) scaleX(1) scale(var(--chase-scale))}
-}
 
 .storefront-page .contact-card{background:linear-gradient(135deg,#f1dac1,#ead3c8)}
 .storefront-page .contact-item{border:1px dashed rgba(139,77,93,.2)}
@@ -1157,9 +1092,11 @@ body.storefront-page{
   .yarn-cluster{left:-6px;bottom:12px;transform:scale(.8)}
   .storefront-page .hero-thread{opacity:.45}
   .storefront-page .product img{border-radius:54px 16px 16px 16px}
-  .yarn-chase{--chase-scale:.72;animation-duration:19s}
+  .chase-yarn{scale:.82;transform-origin:center}
+  .chase-toggle{right:10px;bottom:10px;padding:8px 10px}
 }
 
 @media (prefers-reduced-motion:reduce){
   .yarn-chase{display:none}
+  .chase-toggle{display:none}
 }
