@@ -1167,29 +1167,39 @@ a{color:inherit}
 	}
 }
 </style>
+<link rel="stylesheet" href="storefront.css">
 </head>
 
-<body>
+<body class="storefront-page">
+<div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
+<div class="ambient-shape one" aria-hidden="true"></div>
+<div class="ambient-shape two" aria-hidden="true"></div>
 <div class="page-shell">
 	<header class="topbar">
-		<div>
+		<a class="brand-lockup" href="index.html" aria-label="KaWo Crotchet home">
+			<span class="brand-mark" aria-hidden="true">K</span>
 			<h1 class="brand">KaWo Crotchet<small>Handcrafted Collection</small></h1>
-		</div>
+		</a>
 		<nav class="nav">
-			<a href="index.html">Home</a>
+			<a class="active" href="index.html" aria-current="page">Home</a>
 			<a href="contact.html">Contact</a>
 			<a href="login.html">Login</a>
 		</nav>
 	</header>
 
 	<section class="hero" data-reveal>
+		<div class="hero-thread" aria-hidden="true"></div>
 		<div class="hero-copy">
-			<p class="eyebrow">Handmade pieces with a soft, curated feel</p>
-			<h2>Soft, handcrafted pieces made to feel personal</h2>
+			<p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Handmade pieces with a soft, curated feel</p>
+			<h2>Made slowly, loved <em>deeply.</em></h2>
 			<p>Fresh collections are updated daily. Prices are shown in Vietnamese dong and Taiwan dollars, with custom style and color requests welcome.</p>
 			<div class="hero-actions">
 				<a class="hero-btn primary" href="#productsSection">Shop the Collection</a>
 				<a class="hero-btn secondary" href="contact.html">Contact Us</a>
+			</div>
+			<div class="hero-proof">
+				<div class="proof-stitches" aria-hidden="true"><span></span><span></span><span></span></div>
+				<span>Made by hand, one thoughtful stitch at a time</span>
 			</div>
 		</div>
 
@@ -1197,21 +1207,44 @@ a{color:inherit}
 			<div class="hero-stats">
 				<div class="hero-stat">
 					<strong>Limited</strong>
+					<span>Small-batch drops</span>
+				</div>
+				<div class="hero-stat">
+					<strong>Custom</strong>
+					<span>Colors & details</span>
+				</div>
+				<div class="hero-stat">
+					<strong>Personal</strong>
+					<span>Made for you</span>
 				</div>
 			</div>
 			<div id="heroShowcase" class="hero-showcase" aria-label="Featured product preview">
 				<div class="showcase-fallback">New handmade favorites are loading</div>
 			</div>
+			<div class="floating-note one">Small-batch crafted</div>
+			<div class="floating-note two">Custom colors</div>
 		</div>
 	</section>
+
+	<div class="craft-marquee" aria-label="Shop highlights">
+		<div class="marquee-track">
+			<div class="marquee-group">
+				<span>Handmade with care</span><span>Custom colors</span><span>Limited collections</span><span>Thoughtful gifting</span>
+			</div>
+			<div class="marquee-group" aria-hidden="true">
+				<span>Handmade with care</span><span>Custom colors</span><span>Limited collections</span><span>Thoughtful gifting</span>
+			</div>
+		</div>
+	</div>
 
 	<main>
 		<section id="productsSection" class="section" data-reveal>
 			<div class="section-title">
 				<div>
+					<span class="section-kicker">Fresh from the studio</span>
 					<h3>Featured Products</h3>
-					<p><span id="productCount">0</span> products available</p>
 				</div>
+				<p class="catalog-summary"><span id="productCount">0</span> pieces available</p>
 			</div>
 			<div class="catalog-toolbar" aria-label="Product filters">
 				<input id="productSearch" type="search" placeholder="Search products">

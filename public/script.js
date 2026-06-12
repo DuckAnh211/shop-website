@@ -10,6 +10,10 @@ const productSearch = document.getElementById("productSearch")
 const categoryFilter = document.getElementById("categoryFilter")
 const statusFilter = document.getElementById("statusFilter")
 const sortFilter = document.getElementById("sortFilter")
+const scrollProgress = document.getElementById("scrollProgress")
+const topbar = document.querySelector(".topbar")
+const hero = document.querySelector(".hero")
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
 const CONTACT_CHANNELS = {
   phone: "tel:+886973424279",
@@ -200,7 +204,11 @@ function renderHeroShowcase(products){
   heroShowcase.innerHTML = `
     <img class="showcase-main" src="${mainImage}" alt="${escapeHtml(featured.name || "Featured handmade product")}">
     <div class="showcase-thumbs">
-      ${images.slice(1, 4).map((image, index)=>`<img src="${image}" alt="Featured product preview ${index + 2}">`).join("")}
+      ${images.slice(1, 4).map((image, index)=>`
+        <button class="showcase-thumb" type="button" data-image="${image}" aria-label="Show featured product image ${index + 2}">
+          <img src="${image}" alt="">
+        </button>
+      `).join("")}
     </div>
     <div class="showcase-caption">
       <strong>${escapeHtml(featured.name || "Featured handmade pick")}</strong>
@@ -254,7 +262,7 @@ function createProductCard(product, index){
 
   const card = document.createElement("article")
   card.className = "product"
-  card.style.animationDelay = `${index * 60}ms`
+  card.style.animationDelay = `${Math.min(index * 70, 560)}ms`
 
   card.innerHTML = `
     <div class="product-media">
@@ -335,6 +343,27 @@ function createProductCard(product, index){
     thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex))
     thumbs.appendChild(thumbBtn)
   })
+
+  if(!reduceMotion){
+    card.addEventListener("pointermove", (event)=>{
+      if(event.pointerType === "touch"){
+        return
+      }
+
+      const rect = card.getBoundingClientRect()
+      const x = (event.clientX - rect.left) / rect.width
+      const y = (event.clientY - rect.top) / rect.height
+      card.style.setProperty("--tilt-x", `${(0.5 - y) * 4}deg`)
+      card.style.setProperty("--tilt-y", `${(x - 0.5) * 5}deg`)
+      card.style.setProperty("--glow-x", `${x * 100}%`)
+      card.style.setProperty("--glow-y", `${y * 100}%`)
+    })
+
+    card.addEventListener("pointerleave", ()=>{
+      card.style.setProperty("--tilt-x", "0deg")
+      card.style.setProperty("--tilt-y", "0deg")
+    })
+  }
 
   return card
 }
@@ -420,6 +449,20 @@ lightbox?.addEventListener("click", (event)=>{
 
 lightboxImage?.addEventListener("click", onLightboxImageClick)
 
+heroShowcase?.addEventListener("click", (event)=>{
+  const thumb = event.target.closest(".showcase-thumb")
+  const mainImage = heroShowcase.querySelector(".showcase-main")
+  if(!thumb || !mainImage){
+    return
+  }
+
+  heroShowcase.classList.add("is-switching")
+  window.setTimeout(()=>{
+    mainImage.src = thumb.dataset.image
+    heroShowcase.classList.remove("is-switching")
+  }, reduceMotion ? 0 : 180)
+})
+
 document.addEventListener("click", (event)=>{
   if(!event.target.closest(".inquiry-menu")){
     closeInquiryMenus()
@@ -465,4 +508,41 @@ if("IntersectionObserver" in window){
   revealItems.forEach((item)=>revealObserver.observe(item))
 }else{
   revealItems.forEach((item)=>item.classList.add("is-visible"))
+}
+
+let scrollFrame
+
+function updateScrollEffects(){
+  const scrollable = document.documentElement.scrollHeight - window.innerHeight
+  const progress = scrollable > 0 ? Math.min(window.scrollY / scrollable, 1) : 0
+  scrollProgress?.style.setProperty("transform", `scaleX(${progress})`)
+  topbar?.classList.toggle("is-scrolled", window.scrollY > 24)
+  scrollFrame = null
+}
+
+window.addEventListener("scroll", ()=>{
+  if(scrollFrame){
+    return
+  }
+
+  scrollFrame = window.requestAnimationFrame(updateScrollEffects)
+}, { passive: true })
+
+updateScrollEffects()
+
+if(hero && heroShowcase && !reduceMotion){
+  hero.addEventListener("pointermove", (event)=>{
+    if(event.pointerType === "touch"){
+      return
+    }
+
+    const rect = hero.getBoundingClientRect()
+    const x = (event.clientX - rect.left) / rect.width - 0.5
+    const y = (event.clientY - rect.top) / rect.height - 0.5
+    heroShowcase.style.transform = `perspective(1000px) rotateX(${-y * 3}deg) rotateY(${x * 4}deg) translate3d(${x * 5}px, ${y * 5}px, 0)`
+  })
+
+  hero.addEventListener("pointerleave", ()=>{
+    heroShowcase.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)"
+  })
 }

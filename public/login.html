@@ -6,7 +6,7 @@
 <title>Admin Login</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&family=Cormorant+Garamond:wght@500;600;700&family=Fraunces:opsz,wght@9..144,700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#fff8ef;
@@ -85,29 +85,60 @@ button:hover{background:var(--brand-strong)}
 .status.error{color:#b33425}
 .status.success{color:#1f8b47}
 </style>
+<link rel="stylesheet" href="secondary-pages.css">
 </head>
-<body>
-  <main class="card">
-    <h1 class="title">Admin Login</h1>
-    <p class="subtitle">Sign in to manage your products.</p>
+<body class="login-page">
+  <div class="page-orb left" aria-hidden="true"></div>
+  <div class="page-orb right" aria-hidden="true"></div>
+  <div class="login-shell">
+    <aside class="login-story">
+      <a class="login-brand" href="index.html" aria-label="KaWo Crotchet home">
+        <span class="login-brand-mark" aria-hidden="true">K</span>
+        <span class="login-brand-text"><strong>KaWo Crotchet</strong><span>Handcrafted Collection</span></span>
+      </a>
+      <div class="login-copy">
+        <span class="page-eyebrow">Studio access</span>
+        <h2>Carefully made, thoughtfully <em>managed.</em></h2>
+        <p>A calm workspace for keeping the handmade collection fresh, accurate, and ready to discover.</p>
+      </div>
+      <span class="login-story-note">Private access for shop administrators</span>
+    </aside>
 
-    <form id="loginForm">
-      <label>Username
-        <input type="text" name="username" placeholder="Enter admin username" required>
-      </label>
+    <main class="card">
+      <h1 class="title">Welcome back</h1>
+      <p class="subtitle">Sign in to manage products and collections.</p>
 
-      <label>Password
-        <input type="password" name="password" placeholder="Enter admin password" required>
-      </label>
+      <form id="loginForm">
+        <label>Username
+          <input type="text" name="username" placeholder="Enter admin username" autocomplete="username" required>
+        </label>
 
-      <button type="submit">Sign in</button>
-      <div id="status" class="status" aria-live="polite"></div>
-    </form>
-  </main>
+        <label>Password
+          <span class="password-field">
+            <input id="passwordInput" type="password" name="password" placeholder="Enter admin password" autocomplete="current-password" required>
+            <button id="passwordToggle" class="password-toggle" type="button" aria-pressed="false">Show</button>
+          </span>
+        </label>
+
+        <button type="submit">Sign in</button>
+        <div id="status" class="status" aria-live="polite"></div>
+      </form>
+      <a class="back-link" href="index.html">Back to storefront</a>
+    </main>
+  </div>
 
 <script>
 const loginForm = document.getElementById("loginForm")
 const statusBox = document.getElementById("status")
+const passwordInput = document.getElementById("passwordInput")
+const passwordToggle = document.getElementById("passwordToggle")
+
+passwordToggle.addEventListener("click", ()=>{
+  const shouldShow = passwordInput.type === "password"
+  passwordInput.type = shouldShow ? "text" : "password"
+  passwordToggle.textContent = shouldShow ? "Hide" : "Show"
+  passwordToggle.setAttribute("aria-pressed", String(shouldShow))
+})
 
 loginForm.addEventListener("submit", async (event)=>{
   event.preventDefault()
