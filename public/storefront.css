@@ -602,12 +602,15 @@ body.storefront-page::before{
 .storefront-page .footer-col a:hover{color:var(--peach);transform:translateX(3px)}
 
 .storefront-page [data-reveal]{
-  transform:translateY(34px) scale(.985);
-  filter:blur(6px);
   transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1),filter .8s ease;
 }
 
-.storefront-page [data-reveal].is-visible{transform:none;filter:none}
+.reveal-enabled .storefront-page [data-reveal]{
+  transform:translateY(34px) scale(.985);
+  filter:blur(6px);
+}
+
+.reveal-enabled .storefront-page [data-reveal].is-visible{transform:none;filter:none}
 
 .storefront-page :focus-visible{
   outline:3px solid rgba(217,111,99,.52);

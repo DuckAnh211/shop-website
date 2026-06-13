@@ -498,6 +498,15 @@ document.addEventListener("keydown", (event)=>{
 
 const revealItems = document.querySelectorAll("[data-reveal]")
 
+revealItems.forEach((item)=>{
+  const rect = item.getBoundingClientRect()
+  if(rect.top < window.innerHeight && rect.bottom > 0){
+    item.classList.add("is-visible")
+  }
+})
+
+document.documentElement.classList.add("reveal-enabled")
+
 if("IntersectionObserver" in window){
   const revealObserver = new IntersectionObserver((entries)=>{
     entries.forEach((entry)=>{
@@ -507,10 +516,17 @@ if("IntersectionObserver" in window){
       }
     })
   }, {
-    threshold: 0.15
+    rootMargin: "0px 0px -5% 0px",
+    threshold: 0
   })
 
   revealItems.forEach((item)=>revealObserver.observe(item))
+
+  // Never leave content hidden if an embedded browser fails to dispatch intersections.
+  window.setTimeout(()=>{
+    revealItems.forEach((item)=>item.classList.add("is-visible"))
+    revealObserver.disconnect()
+  }, 1800)
 }else{
   revealItems.forEach((item)=>item.classList.add("is-visible"))
 }

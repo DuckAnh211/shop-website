@@ -1041,12 +1041,17 @@ a{color:inherit}
 }
 
 [data-reveal]{
-	opacity:0;
-	transform:translateY(22px);
+	opacity:1;
+	transform:none;
 	transition:opacity .7s ease, transform .7s ease;
 }
 
-[data-reveal].is-visible{
+.reveal-enabled [data-reveal]{
+	opacity:0;
+	transform:translateY(22px);
+}
+
+.reveal-enabled [data-reveal].is-visible{
 	opacity:1;
 	transform:translateY(0);
 }
