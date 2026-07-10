@@ -57,6 +57,7 @@ npm run check
 ## Environment variables
 
 - `MONGODB_URI`
+- `SITE_URL` (public website URL used for sitemap, robots.txt, and product canonical links)
 - `JWT_SECRET`
 - `ADMIN_USERNAME`
 - `ADMIN_PASSWORD`

@@ -5,6 +5,7 @@ const env = require("../shared/config/env")
 const { connectDatabase } = require("../shared/db/mongo")
 const authRoutes = require("../services/auth/auth.routes")
 const { publicProductRouter, adminProductRouter } = require("../services/catalog/product.routes")
+const seoRoutes = require("../services/seo/seo.routes")
 const { notFoundHandler, errorHandler } = require("../shared/http/error-handler")
 
 const app = express()
@@ -36,6 +37,7 @@ app.get("/ready", async (req, res)=>{
 app.use("/admin", authRoutes)
 app.use("/products", publicProductRouter)
 app.use("/admin", adminProductRouter)
+app.use(seoRoutes)
 
 const publicDirectory = path.join(__dirname, "..", "..", "public")
 app.use(express.static(publicDirectory))

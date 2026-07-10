@@ -3,6 +3,8 @@ const dotenv = require("dotenv")
 
 dotenv.config({ path: path.join(__dirname, "..", "..", "..", ".env"), quiet: true })
 
+const port = Number(process.env.PORT) || 3000
+
 function requireEnv(name, fallback){
   const value = process.env[name] ?? fallback
   if(value === undefined || value === null || String(value).trim() === ""){
@@ -11,9 +13,19 @@ function requireEnv(name, fallback){
   return String(value).trim()
 }
 
+function normalizeSiteUrl(value){
+  const trimmedValue = String(value || "").trim()
+  if(!trimmedValue || trimmedValue === "*"){
+    return ""
+  }
+
+  return trimmedValue.replace(/\/+$/, "")
+}
+
 module.exports = {
   nodeEnv: process.env.NODE_ENV || "development",
-  port: Number(process.env.PORT) || 3000,
+  port,
+  siteUrl: normalizeSiteUrl(process.env.SITE_URL || process.env.PUBLIC_SITE_URL) || `http://localhost:${port}`,
   mongodbUri: requireEnv("MONGODB_URI"),
   corsOrigin: process.env.CORS_ORIGIN || "*",
   jwtSecret: requireEnv("JWT_SECRET"),

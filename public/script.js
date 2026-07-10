@@ -40,6 +40,19 @@ function escapeHtml(value){
     .replace(/'/g, "&#039;")
 }
 
+function createSlug(value){
+  return String(value || "product")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "product"
+}
+
+function getProductUrl(product){
+  return `/shop/${encodeURIComponent(product.slug || createSlug(product.name || product._id || "product"))}`
+}
+
 function formatCurrency(value, currency = "VND", locale = "vi-VN"){
   return new Intl.NumberFormat(locale, {
     style: "currency",
@@ -154,7 +167,7 @@ function createInquiryHref(product, currentPrice){
     product.priceTwd ? `Taiwan price: ${formatCurrency(product.priceTwd, "TWD", "zh-TW")}` : "",
     product.category ? `Category: ${product.category}` : "",
     "Custom style/color requests are welcome.",
-    `Shop: ${window.location.origin}/#productsSection`
+    `Shop: ${window.location.origin}${getProductUrl(product)}`
   ].filter(Boolean)
 
   return `mailto:${CONTACT_CHANNELS.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`
@@ -207,11 +220,11 @@ function renderHeroShowcase(products){
   const mainImage = images[0]
 
   heroShowcase.innerHTML = `
-    <img class="showcase-main" src="${mainImage}" alt="${escapeHtml(featured.name || "Featured handmade product")}">
+    <img class="showcase-main" src="${escapeHtml(mainImage)}" alt="${escapeHtml(featured.name || "Featured handmade product")}" fetchpriority="high" decoding="async">
     <div class="showcase-thumbs">
       ${images.slice(1, 4).map((image, index)=>`
-        <button class="showcase-thumb" type="button" data-image="${image}" aria-label="Show featured product image ${index + 2}">
-          <img src="${image}" alt="">
+        <button class="showcase-thumb" type="button" data-image="${escapeHtml(image)}" aria-label="Show featured product image ${index + 2}">
+          <img src="${escapeHtml(image)}" alt="" loading="lazy" decoding="async">
         </button>
       `).join("")}
     </div>
@@ -263,6 +276,8 @@ function createProductCard(product, index){
   const bundlePromoText = getBundlePromoText(product)
   const stockLabel = getStockLabel(product)
   const tags = Array.isArray(product.tags) ? product.tags.slice(0, 3) : []
+  const productUrl = getProductUrl(product)
+  const productName = product.name || "New Product"
   let selectedImageIndex = 0
 
   const card = document.createElement("article")
@@ -271,7 +286,7 @@ function createProductCard(product, index){
 
   card.innerHTML = `
     <div class="product-media">
-      <img src="${images[0]}" alt="${escapeHtml(product.name || "Product")}">
+      <img src="${escapeHtml(images[0])}" alt="${escapeHtml(`${productName} handmade crochet piece by KaWo Crotchet`)}" loading="${index === 0 ? "eager" : "lazy"}" decoding="async"${index === 0 ? ' fetchpriority="high"' : ""}>
       <div class="product-flags">
         ${product.isFeatured ? '<span class="flag featured">Featured</span>' : ""}
         ${discount > 0 ? `<span class="flag discount">-${discount}%</span>` : ""}
@@ -282,7 +297,7 @@ function createProductCard(product, index){
       <div class="product-meta">
         <span>${escapeHtml(product.category || "Uncategorized")}</span>
       </div>
-      <h4>${escapeHtml(product.name || "New Product")}</h4>
+      <h4><a href="${escapeHtml(productUrl)}">${escapeHtml(productName)}</a></h4>
       <p class="description">${escapeHtml(product.description || "Product description is being updated.")}</p>
       <p class="custom-note">Yarn colors and finishing details can be customized on request.</p>
       <div class="thumbs"></div>
@@ -295,12 +310,12 @@ function createProductCard(product, index){
       </div>
       ${bundlePromoText ? `<p class="bundle-promo">${escapeHtml(bundlePromoText)}</p>` : ""}
       <div class="product-actions">
-        <button class="buy-btn" type="button">View details</button>
+        <a class="buy-btn" href="${escapeHtml(productUrl)}">View details</a>
         <div class="inquiry-menu">
           <button class="inquiry-btn" type="button" aria-expanded="false">Ask to buy</button>
           <div class="inquiry-panel" role="menu" hidden>
             <a href="${CONTACT_CHANNELS.phone}" role="menuitem">Phone</a>
-            <a href="${createInquiryHref(product, currentPrice)}" role="menuitem">Email</a>
+            <a href="${escapeHtml(createInquiryHref(product, currentPrice))}" role="menuitem">Email</a>
             <a href="${CONTACT_CHANNELS.line}" target="_blank" rel="noreferrer" role="menuitem">Line</a>
             <a href="${CONTACT_CHANNELS.instagram}" target="_blank" rel="noreferrer" role="menuitem">Instagram</a>
           </div>
@@ -314,7 +329,6 @@ function createProductCard(product, index){
   const openViewer = ()=>openLightbox(images, selectedImageIndex)
 
   mainImage.addEventListener("click", openViewer)
-  card.querySelector(".buy-btn").addEventListener("click", openViewer)
 
   const inquiryMenu = card.querySelector(".inquiry-menu")
   const inquiryToggle = card.querySelector(".inquiry-btn")
@@ -336,7 +350,7 @@ function createProductCard(product, index){
     const thumbBtn = document.createElement("button")
     thumbBtn.type = "button"
     thumbBtn.className = `thumb${imageIndex === 0 ? " active" : ""}`
-    thumbBtn.innerHTML = `<img src="${image}" alt="Image ${imageIndex + 1} of ${escapeHtml(product.name || "product")}">`
+    thumbBtn.innerHTML = `<img src="${escapeHtml(image)}" alt="Image ${imageIndex + 1} of ${escapeHtml(product.name || "product")}" loading="lazy" decoding="async">`
 
     thumbBtn.addEventListener("click", ()=>{
       selectedImageIndex = imageIndex
@@ -432,6 +446,11 @@ async function loadProducts(){
 function scheduleProductsReload(){
   window.clearTimeout(searchTimer)
   searchTimer = window.setTimeout(loadProducts, 250)
+}
+
+const initialSearchParams = new URLSearchParams(window.location.search)
+if(productSearch && initialSearchParams.has("q")){
+  productSearch.value = initialSearchParams.get("q").trim()
 }
 
 loadCategories()
