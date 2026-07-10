@@ -26,6 +26,10 @@ function createObjectKey(originalName){
   return prefix ? `${prefix}/${key}` : key
 }
 
+function requireS3Bucket(){
+  return env.requireConfigured(env.aws.s3.bucket, "AWS_S3_BUCKET")
+}
+
 function createPublicUrl(key){
   const encodedKey = key.split("/").map(encodeURIComponent).join("/")
   const baseUrl = String(env.aws.s3.publicBaseUrl || "").replace(/\/+$/g, "")
@@ -34,14 +38,15 @@ function createPublicUrl(key){
     return `${baseUrl}/${encodedKey}`
   }
 
-  return `https://${env.aws.s3.bucket}.s3.${env.aws.region}.amazonaws.com/${encodedKey}`
+  return `https://${requireS3Bucket()}.s3.${env.aws.region}.amazonaws.com/${encodedKey}`
 }
 
 async function uploadFile(file){
+  const bucket = requireS3Bucket()
   const key = createObjectKey(file.originalname)
 
   await s3.send(new PutObjectCommand({
-    Bucket: env.aws.s3.bucket,
+    Bucket: bucket,
     Key: key,
     Body: file.buffer,
     ContentType: file.mimetype || "application/octet-stream",
@@ -67,8 +72,10 @@ async function deleteImages(images){
     return
   }
 
+  const bucket = requireS3Bucket()
+
   await s3.send(new DeleteObjectsCommand({
-    Bucket: env.aws.s3.bucket,
+    Bucket: bucket,
     Delete: {
       Objects: keys.map((key)=>({ Key: key })),
       Quiet: true

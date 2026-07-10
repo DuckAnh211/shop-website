@@ -27,11 +27,19 @@ app.get("/health", async (req, res)=>{
 })
 
 app.get("/ready", async (req, res)=>{
-  await connectDatabase()
-  res.json({
-    status: "ready",
-    services: ["gateway", "auth", "catalog", "media"]
-  })
+  try{
+    await connectDatabase()
+    res.json({
+      status: "ready",
+      services: ["gateway", "auth", "catalog", "media"]
+    })
+  }catch(error){
+    res.status(503).json({
+      status: "not-ready",
+      message: error.message,
+      services: ["gateway", "auth", "catalog", "media"]
+    })
+  }
 })
 
 app.use("/admin", authRoutes)

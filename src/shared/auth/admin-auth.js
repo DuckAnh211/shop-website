@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken")
 const env = require("../config/env")
 
 function createAdminToken(){
-  return jwt.sign({ role: "admin" }, env.jwtSecret, { expiresIn: "7d" })
+  return jwt.sign({ role: "admin" }, env.requireConfigured(env.jwtSecret, "JWT_SECRET"), { expiresIn: "7d" })
 }
 
 function authenticateAdmin(req, res, next){
@@ -14,7 +14,7 @@ function authenticateAdmin(req, res, next){
   }
 
   try{
-    req.admin = jwt.verify(token, env.jwtSecret)
+    req.admin = jwt.verify(token, env.requireConfigured(env.jwtSecret, "JWT_SECRET"))
     next()
   }catch(error){
     return res.status(401).json({ message: "Invalid or expired admin token." })

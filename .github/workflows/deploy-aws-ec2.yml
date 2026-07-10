@@ -94,7 +94,7 @@ jobs:
               "CADDYEOF",
               "docker stop shop-website || true",
               "docker rm shop-website || true",
-              "docker run -d --name shop-website --restart unless-stopped --env-file /opt/shop-website/.env --network shop-website-net $IMAGE_URI",
+              "docker run -d --name shop-website --restart unless-stopped --env-file /opt/shop-website/.env -e SITE_URL=https://$PRIMARY_DOMAIN --network shop-website-net $IMAGE_URI",
               "docker stop shop-website-caddy || true",
               "docker rm shop-website-caddy || true",
               "docker run -d --name shop-website-caddy --restart unless-stopped --network shop-website-net -p 80:80 -p 443:443 -v /opt/shop-website/Caddyfile:/etc/caddy/Caddyfile:ro -v /opt/shop-website/caddy/data:/data -v /opt/shop-website/caddy/config:/config caddy:2-alpine",

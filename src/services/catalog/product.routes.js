@@ -2,6 +2,7 @@ const mongoose = require("mongoose")
 const router = require("express").Router
 const Product = require("./product.model")
 const asyncHandler = require("../../shared/http/async-handler")
+const { connectDatabase } = require("../../shared/db/mongo")
 const upload = require("../media/upload.middleware")
 const { uploadImages, deleteImages } = require("../media/media.service")
 const { authenticateAdmin } = require("../../shared/auth/admin-auth")
@@ -12,9 +13,17 @@ const { buildProductFilter, buildProductSort, parseLimit } = require("./product.
 const publicProductRouter = router()
 const adminProductRouter = router()
 
+const ensureCatalogDatabase = asyncHandler(async (req, res, next)=>{
+  await connectDatabase()
+  next()
+})
+
 function populateBundleNames(query){
   return query.populate("bundleRequiredProducts", "name slug")
 }
+
+publicProductRouter.use(ensureCatalogDatabase)
+adminProductRouter.use(ensureCatalogDatabase)
 
 publicProductRouter.get(
   "/",

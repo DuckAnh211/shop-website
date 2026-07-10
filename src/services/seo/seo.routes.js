@@ -1,12 +1,12 @@
 const mongoose = require("mongoose")
-const router = require("express").Router()
+const seoRouter = require("express").Router()
 const env = require("../../shared/config/env")
 const asyncHandler = require("../../shared/http/async-handler")
+const { connectDatabase } = require("../../shared/db/mongo")
 const Product = require("../catalog/product.model")
 const { createSlug } = require("../catalog/product.helpers")
 const { mapProduct } = require("../catalog/product.mapper")
 
-const seoRouter = router()
 const SHOP_NAME = "KaWo Crotchet"
 const SHOP_EMAIL = "katietran3011@gmail.com"
 const SHOP_PHONE = "+886973424279"
@@ -286,6 +286,7 @@ seoRouter.get("/robots.txt", (req, res)=>{
 seoRouter.get(
   "/sitemap.xml",
   asyncHandler(async (req, res)=>{
+    await connectDatabase()
     const products = await Product.find({ isPublished: { $ne: false } }, "name slug isFeatured updatedAt createdAt")
       .sort({ updatedAt: -1 })
       .limit(5000)
@@ -320,6 +321,7 @@ ${urls.map((url)=>`  <url>
 seoRouter.get(
   "/shop/:identifier",
   asyncHandler(async (req, res)=>{
+    await connectDatabase()
     const identifier = String(req.params.identifier || "").trim()
     const productFilter = mongoose.Types.ObjectId.isValid(identifier)
       ? { _id: identifier, isPublished: { $ne: false } }

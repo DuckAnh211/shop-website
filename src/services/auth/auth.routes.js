@@ -6,6 +6,10 @@ const { createAdminToken } = require("../../shared/auth/admin-auth")
 router.post(
   "/login",
   asyncHandler(async (req, res)=>{
+    env.requireConfigured(env.adminUsername, "ADMIN_USERNAME")
+    env.requireConfigured(env.adminPassword, "ADMIN_PASSWORD")
+    env.requireConfigured(env.jwtSecret, "JWT_SECRET")
+
     const username = String(req.body.username || "").trim()
     const password = String(req.body.password || "")
 
