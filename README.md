@@ -1,81 +1,147 @@
-# Shop Website
+# KaWo Crotchet Shop Website
 
-Express + MongoDB Atlas + Amazon S3 shop website, organized into service boundaries and ready for automated AWS deployment.
+<div align="center">
+  <img src="public/images/yarn-ball.png" width="92" alt="KaWo Crotchet yarn ball" />
+  <h3>Handcrafted crochet storefront with admin product management</h3>
+  <p>
+    Built with Express, MongoDB Atlas, Amazon S3, Docker, and GitHub Actions deployment to AWS EC2.
+  </p>
+  <p>
+    <a href="https://kawocrotchet.site/">Live Website</a>
+    |
+    <a href="#screenshots">Screenshots</a>
+    |
+    <a href="#features">Features</a>
+    |
+    <a href="#api">API</a>
+    |
+    <a href="#deployment">Deployment</a>
+  </p>
+</div>
 
-## Stack
+![KaWo Crotchet live storefront](docs/assets/kawo-home-desktop.png)
 
-- Express 5
-- MongoDB Atlas with Mongoose
-- Amazon S3 for product image storage
-- Static frontend in `public/`
-- Dockerized production runtime
-- GitHub Actions deployment to AWS EC2 through Amazon ECR and SSM
+## Overview
+
+KaWo Crotchet is a full-stack shop website for a handmade crochet brand. It combines a polished static storefront with an Express backend for product data, admin authentication, catalog management, media uploads, SEO routes, and production deployment.
+
+The app is deployed as one runtime today, while the code is organized into service boundaries so it can evolve cleanly as the project grows.
+
+## Screenshots
+
+The images below were captured from the live production website at [kawocrotchet.site](https://kawocrotchet.site/).
+
+| Storefront | Admin access |
+| --- | --- |
+| <img src="docs/assets/kawo-home-desktop.png" alt="KaWo Crotchet storefront" width="100%" /> | <img src="docs/assets/kawo-login.png" alt="KaWo Crotchet admin login" width="100%" /> |
+
+## Features
+
+- Public storefront with featured products, categories, search, filters, sorting, stock state, and product detail pages
+- JWT-protected admin workflow for creating, editing, publishing, featuring, and deleting products
+- Product image upload and lifecycle management through Amazon S3
+- MongoDB Atlas catalog storage with Mongoose models and validation
+- SEO support for sitemap, robots.txt, canonical product URLs, and social preview metadata
+- Dockerized production runtime with health and readiness endpoints
+- GitHub Actions deployment pipeline to AWS EC2 through Amazon ECR and Systems Manager
+
+## Tech Stack
+
+| Layer | Tools |
+| --- | --- |
+| Frontend | HTML, CSS, vanilla JavaScript |
+| Backend | Node.js, Express 5 |
+| Database | MongoDB Atlas, Mongoose |
+| Auth | JSON Web Tokens |
+| Media | Amazon S3, Multer |
+| Deployment | Docker, Amazon ECR, AWS EC2, AWS SSM, GitHub Actions |
 
 ## Architecture
 
-The app runs as one deployable unit today, but the code is split by microservice-ready boundaries:
+```text
+src/
+  gateway/             Express app, static frontend, shared middleware
+  services/
+    auth/              Admin login and token issuing
+    catalog/           Product model, validation, mapping, routes, queries
+    media/             Upload middleware and S3 image handling
+    seo/               Sitemap, robots.txt, SEO routes
+  shared/
+    auth/              JWT admin middleware
+    config/            Environment loading and validation
+    db/                MongoDB connection
+    http/              Async and error helpers
+```
 
-- `src/gateway/` - Express gateway, shared middleware, static frontend serving
-- `src/services/auth/` - admin login and token issuing
-- `src/services/catalog/` - product model, catalog API, admin product API, validation and query logic
-- `src/services/media/` - upload middleware and S3 image lifecycle
-- `src/shared/` - environment, MongoDB connection, auth middleware, async/error helpers
+## API
 
-Current API compatibility is preserved:
+Public catalog:
 
 - `GET /products`
 - `GET /products/meta/categories`
 - `GET /products/:identifier`
+
+Admin:
+
 - `POST /admin/login`
 - `GET /admin/products`
 - `POST /admin/add-product`
 - `PUT /admin/products/:id`
 - `DELETE /admin/products/:id`
 
-## Local setup
+Operational:
+
+- `GET /health`
+- `GET /ready`
+
+## Local Setup
 
 1. Copy `.env.example` to `.env`
 2. Fill in MongoDB Atlas, S3, admin credentials, and JWT secret
 3. Install dependencies:
-   ```bash
-   npm install
-   ```
+
+```bash
+npm install
+```
+
 4. Run locally:
-   ```bash
-   npm run dev
-   ```
+
+```bash
+npm run dev
+```
+
 5. Open `http://localhost:3000`
 
-## Checks
-
-Run a lightweight syntax check before pushing:
+Run a lightweight JavaScript syntax check before pushing:
 
 ```bash
 npm run check
 ```
 
-## Environment variables
+## Environment Variables
 
-- `MONGODB_URI`
-- `SITE_URL` (public website URL used for sitemap, robots.txt, and product canonical links)
-- `JWT_SECRET`
-- `ADMIN_USERNAME`
-- `ADMIN_PASSWORD`
-- `AWS_REGION`
-- `AWS_S3_BUCKET`
-- `AWS_S3_KEY_PREFIX` (optional)
-- `AWS_S3_PUBLIC_BASE_URL` (optional, use this for CloudFront/custom domains)
-- `CORS_ORIGIN` (optional)
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | MongoDB Atlas connection string |
+| `SITE_URL` | Public website URL for sitemap, robots.txt, and canonical links |
+| `JWT_SECRET` | Token signing secret |
+| `ADMIN_USERNAME` | Admin login username |
+| `ADMIN_PASSWORD` | Admin login password |
+| `AWS_REGION` | AWS region for S3/ECR/EC2 deployment |
+| `AWS_S3_BUCKET` | Product image bucket |
+| `AWS_S3_KEY_PREFIX` | Optional S3 object prefix |
+| `AWS_S3_PUBLIC_BASE_URL` | Optional CloudFront or custom image domain |
+| `CORS_ORIGIN` | Optional allowed frontend origin |
 
-## AWS Deployment
+## Deployment
 
-This repo includes automated deployment with GitHub Actions:
+This repository includes an automated AWS deployment path:
 
-- Build Docker image
-- Push image to Amazon ECR
+- Build the Docker image
+- Push the image to Amazon ECR
 - Deploy the container on AWS EC2 through AWS Systems Manager
 
-Fast path after you are logged in to AWS and GitHub locally:
+Fast path after logging in to AWS and GitHub locally:
 
 ```powershell
 Copy-Item .env.example .env
@@ -97,19 +163,7 @@ The bootstrap script creates or updates:
 - GitHub OIDC provider and deploy role
 - GitHub Actions secrets and variables
 
-Manual equivalent if you do not use the bootstrap script:
-
-1. Create an ECR repository, for example `shop-website`.
-2. Create an S3 bucket for product images and allow public read for product image objects.
-3. Push an initial `latest` image to that repository.
-4. Create an EC2 IAM instance profile with `AmazonSSMManagedInstanceCore`, ECR pull access, and S3 image permissions.
-5. Launch an Amazon Linux 2023 EC2 instance in a public subnet and attach the instance profile.
-6. Allow inbound TCP port 80 on the EC2 security group.
-7. Install Docker on the instance and run the app with `--env-file /opt/shop-website/.env -p 80:3000`.
-8. Create a GitHub OIDC IAM role for deployment.
-9. Add GitHub repository secrets and variables below.
-
-GitHub repository secrets:
+GitHub repository secret:
 
 - `AWS_ROLE_TO_ASSUME` - IAM role ARN used by GitHub Actions
 
@@ -119,37 +173,15 @@ GitHub repository variables:
 - `ECR_REPOSITORY` - for example `shop-website`
 - `EC2_INSTANCE_ID` - target instance for SSM deployment
 
-Minimum permissions for the GitHub deployment role:
-
-- `ecr:GetAuthorizationToken`
-- `ecr:DescribeRepositories`
-- `ecr:CreateRepository`
-- `ecr:BatchCheckLayerAvailability`
-- `ecr:InitiateLayerUpload`
-- `ecr:UploadLayerPart`
-- `ecr:CompleteLayerUpload`
-- `ecr:PutImage`
-- `ssm:SendCommand`
-- `ssm:GetCommandInvocation`
-- `ssm:ListCommandInvocations`
-- `ec2:DescribeInstances`
-
-After this setup, every push to `main` deploys automatically. You can also run the workflow manually from GitHub Actions.
-Keep app runtime secrets in `/opt/shop-website/.env` on EC2; the GitHub workflow only needs deployment permissions.
+Every push to `main` can deploy automatically after the AWS and GitHub configuration is in place.
 
 ## Docker
-
-Build and run locally with Docker:
 
 ```bash
 docker build -t shop-website .
 docker run --env-file .env -p 3000:3000 shop-website
 ```
 
-## Notes
+## Portfolio Notes
 
-- Product images now live on Amazon S3 instead of local disk
-- Admin routes require a JWT token returned from `/admin/login`
-- Frontend stores the admin token in `localStorage`
-- Products support category, tags, stock, published/draft status, featured status, search, filters, and sorting
-- `/health` is a lightweight liveness check, while `/ready` verifies MongoDB connectivity
+This project demonstrates a practical production workflow: a real storefront, authenticated admin product management, cloud-hosted media, database-backed catalog data, containerization, CI/CD, and AWS infrastructure automation.
