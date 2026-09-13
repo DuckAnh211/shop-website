@@ -5,6 +5,11 @@ const lightboxImage = document.getElementById("lightboxImage")
 const closeLightboxBtn = document.getElementById("closeLightbox")
 const prevImageBtn = document.getElementById("prevImage")
 const nextImageBtn = document.getElementById("nextImage")
+const lightboxTitle = document.getElementById("lightboxTitle")
+const lightboxCount = document.getElementById("lightboxCount")
+const lightboxThumbs = document.getElementById("lightboxThumbs")
+const lightboxHint = document.getElementById("lightboxHint")
+const lightboxStage = document.getElementById("lightboxStage")
 const heroShowcase = document.getElementById("heroShowcase")
 const productSearch = document.getElementById("productSearch")
 const categoryFilter = document.getElementById("categoryFilter")
@@ -241,13 +246,40 @@ function renderHeroShowcase(products){
   `
 }
 
-function openLightbox(images, startIndex){
+function openLightbox(images, startIndex = 0, productName = "Handmade crochet piece"){
+  if(!Array.isArray(images) || !images.length) return
   lightboxTrigger = document.activeElement
   lightboxImages = images
-  lightboxIndex = startIndex
-  lightboxImage.src = lightboxImages[lightboxIndex]
+  lightboxIndex = Math.max(0, Math.min(startIndex, images.length - 1))
+  lightboxTitle.textContent = productName
+  lightboxThumbs.replaceChildren()
+  const multipleImages = images.length > 1
+  prevImageBtn.hidden = !multipleImages
+  nextImageBtn.hidden = !multipleImages
+  lightboxThumbs.hidden = !multipleImages
+  lightboxHint.hidden = !multipleImages
+  lightboxStage.classList.toggle("single-image", !multipleImages)
+  if(multipleImages){
+    images.forEach((source, index)=>{
+      const button = document.createElement("button")
+      button.type = "button"
+      button.className = "lightbox-thumb"
+      button.setAttribute("aria-label", `View image ${index + 1} of ${productName}`)
+      const thumbnail = document.createElement("img")
+      thumbnail.src = source
+      thumbnail.alt = ""
+      thumbnail.draggable = false
+      button.appendChild(thumbnail)
+      button.addEventListener("click", ()=>{
+        lightboxIndex = index
+        updateLightboxImage()
+      })
+      lightboxThumbs.appendChild(button)
+    })
+  }
   lightbox.classList.add("open")
   lightbox.setAttribute("aria-hidden", "false")
+  updateLightboxImage()
   document.body.classList.add("lightbox-open")
   document.querySelector(".page-shell").inert = true
   prevImageBtn.disabled = images.length < 2
@@ -255,11 +287,26 @@ function openLightbox(images, startIndex){
   closeLightboxBtn.focus()
 }
 
+function updateLightboxImage(){
+  delete lightboxImage.dataset.fallback
+  lightboxImage.src = lightboxImages[lightboxIndex]
+  lightboxImage.alt = `${lightboxTitle.textContent}, image ${lightboxIndex + 1} of ${lightboxImages.length}`
+  lightboxCount.textContent = `${String(lightboxIndex + 1).padStart(2, "0")} / ${String(lightboxImages.length).padStart(2, "0")}`
+  lightboxThumbs.querySelectorAll("button").forEach((button, index)=>{
+    button.setAttribute("aria-pressed", String(index === lightboxIndex))
+  })
+  const activeThumb = lightboxThumbs.children[lightboxIndex]
+  if(activeThumb){
+    lightboxThumbs.scrollTo?.({ left: activeThumb.offsetLeft - lightboxThumbs.clientWidth / 2 + activeThumb.clientWidth / 2, behavior: reduceMotion ? "instant" : "smooth" })
+  }
+}
+
 function closeLightbox(){
   if(!lightbox.classList.contains("open")) return
   lightbox.classList.remove("open")
   lightbox.setAttribute("aria-hidden", "true")
   lightboxImage.removeAttribute("src")
+  lightboxThumbs.replaceChildren()
   document.body.classList.remove("lightbox-open")
   document.querySelector(".page-shell").inert = false
   lightboxTrigger?.focus()
@@ -268,22 +315,12 @@ function closeLightbox(){
 }
 
 function showRelativeImage(step){
-  if(!lightboxImages.length){
+  if(lightboxImages.length < 2){
     return
   }
 
   lightboxIndex = (lightboxIndex + step + lightboxImages.length) % lightboxImages.length
-  lightboxImage.src = lightboxImages[lightboxIndex]
-}
-
-function onLightboxImageClick(event){
-  if(lightboxImages.length <= 1){
-    return
-  }
-
-  const rect = lightboxImage.getBoundingClientRect()
-  const clickX = event.clientX - rect.left
-  showRelativeImage(clickX < rect.width / 2 ? -1 : 1)
+  updateLightboxImage()
 }
 
 function createProductCard(product, index){
@@ -342,7 +379,7 @@ function createProductCard(product, index){
 
   const mainImage = card.querySelector(".product-media img")
   const thumbs = card.querySelector(".thumbs")
-  const openViewer = ()=>openLightbox(images, selectedImageIndex)
+  const openViewer = ()=>openLightbox(images, selectedImageIndex, productName)
 
   mainImage.addEventListener("click", openViewer)
   mainImage.tabIndex = 0
@@ -390,7 +427,7 @@ function createProductCard(product, index){
       thumbBtn.setAttribute("aria-pressed", "true")
     })
 
-    thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex))
+    thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex, productName))
     thumbs.appendChild(thumbBtn)
   })
 
@@ -560,7 +597,20 @@ lightbox?.addEventListener("click", (event)=>{
   }
 })
 
-lightboxImage?.addEventListener("click", onLightboxImageClick)
+let lightboxTouchStart
+lightboxStage?.addEventListener("touchstart", (event)=>{
+  lightboxTouchStart = event.touches.length === 1 ? { x: event.touches[0].clientX, y: event.touches[0].clientY } : null
+}, { passive: true })
+lightboxStage?.addEventListener("touchend", (event)=>{
+  if(!lightboxTouchStart || !event.changedTouches.length) return
+  const dx = event.changedTouches[0].clientX - lightboxTouchStart.x
+  const dy = event.changedTouches[0].clientY - lightboxTouchStart.y
+  if(Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5 && lightboxImages.length > 1){
+    showRelativeImage(dx < 0 ? 1 : -1)
+  }
+  lightboxTouchStart = null
+}, { passive: true })
+lightboxStage?.addEventListener("touchcancel", ()=>{ lightboxTouchStart = null }, { passive: true })
 
 heroShowcase?.addEventListener("click", (event)=>{
   const thumb = event.target.closest(".showcase-thumb")
@@ -596,7 +646,7 @@ document.addEventListener("keydown", (event)=>{
   }
 
   if(event.key === "Tab"){
-    const buttons = Array.from(lightbox.querySelectorAll("button:not(:disabled)"))
+    const buttons = Array.from(lightbox.querySelectorAll("button:not(:disabled):not([hidden])"))
     const first = buttons[0]
     const last = buttons[buttons.length - 1]
     if(event.shiftKey && document.activeElement === first){
@@ -609,10 +659,12 @@ document.addEventListener("keydown", (event)=>{
   }
 
   if(event.key === "ArrowLeft"){
+    event.preventDefault()
     showRelativeImage(-1)
   }
 
   if(event.key === "ArrowRight"){
+    event.preventDefault()
     showRelativeImage(1)
   }
 })

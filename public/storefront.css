@@ -169,14 +169,57 @@ h2 em, h3 em { font-weight: 500; color: #7a8862; }
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 1000; pointer-events: none; }
 .scroll-progress span { display: block; height: 100%; background: #96a57a; transform: scaleX(0); transform-origin: left; }
 .chase-toggle { background: var(--bg); color: var(--text); border: 1px solid var(--line); box-shadow: none; font-size: 10px; }
-.lightbox { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 20px; background: #12241dea; backdrop-filter: blur(8px); z-index: 999; }
+.lightbox { position:fixed; inset:0; display:none; align-items:center; justify-content:center; padding:28px; background:#0b1411ed; backdrop-filter:blur(18px); z-index:999; color:#f4f5ec; }
 .lightbox.open { display: flex; }
 body.lightbox-open { overflow: hidden; }
-.lightbox-box { position: relative; width: min(900px, 100%); max-height: 95dvh; padding: 16px; background: var(--bg); border-radius: 10px; }
-.lightbox img { display: block; width: 100%; max-height: 73dvh; object-fit: contain; border-radius: 5px; background: var(--panel); }
-.lightbox-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 14px; }
-.lightbox-btn { border: 1px solid var(--line); border-radius: 4px; background: var(--bg); color: var(--text); padding: 10px 17px; min-height: 44px; }
-.lightbox-btn.close { position: absolute; top: 24px; right: 24px; width: 44px; padding: 0; border-radius: 50%; font-size: 26px; box-shadow: 0 2px 15px #263f3520; }
+.lightbox-box { position:relative; display:grid; grid-template-rows:auto minmax(0,1fr) auto; gap:20px; width:min(1100px,100%); height:min(940px,calc(100dvh - 56px)); padding:0; background:transparent; animation:gallery-in .22s ease both; }
+.lightbox-header { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:0 3px; }
+.lightbox-kicker { display:block; margin-bottom:7px; font-size:9px; font-weight:500; letter-spacing:.17em; text-transform:uppercase; color:#b0c79b; }
+.lightbox-header h2 { margin:0; font:500 22px/1.3 "Be Vietnam Pro",sans-serif; letter-spacing:-.7px; overflow-wrap:anywhere; }
+.lightbox-stage { position:relative; display:flex; align-items:center; justify-content:center; min-height:0; min-width:0; touch-action:pan-y pinch-zoom; }
+.lightbox-stage > img { display:block; width:auto; height:auto; max-width:calc(100% - 128px); max-height:100%; min-width:0; min-height:0; object-fit:contain; border-radius:12px; box-shadow:0 16px 60px #00000030; user-select:none; }
+.lightbox-stage.single-image > img { max-width:100%; }
+.lightbox-btn { display:grid; place-items:center; flex:0 0 44px; width:44px; height:44px; padding:0; border:1px solid #ffffff26; border-radius:50%; background:#ffffff0a; color:#f4f5ec; font-size:22px; transition:background .2s,border-color .2s,transform .2s; }
+.lightbox-btn:hover { background:#ffffff1c; border-color:#ffffff55; transform:scale(1.06); }
+.lightbox-btn:focus-visible, .lightbox-thumb:focus-visible { outline:2px solid #d9f393; outline-offset:4px; }
+.lightbox-btn.close { font-size:29px; line-height:1; }
+.lightbox-prev, .lightbox-next { position:absolute; top:50%; transform:translateY(-50%); z-index:2; backdrop-filter:blur(12px); }
+.lightbox-prev { left:0; }
+.lightbox-next { right:0; }
+.lightbox-prev:hover, .lightbox-next:hover { transform:translateY(-50%) scale(1.06); }
+.lightbox-footer { padding:0 3px; min-width:0; }
+.lightbox-meta { display:flex; justify-content:space-between; align-items:center; gap:20px; padding-top:15px; border-top:1px solid #ffffff18; color:#a5b1a6; font-size:10px; }
+.lightbox-count { color:#dce9ce; font-size:11px; font-variant-numeric:tabular-nums; letter-spacing:.16em; white-space:nowrap; }
+.lightbox-thumbs { position:relative; display:flex; justify-content:safe center; gap:9px; max-width:100%; overflow-x:auto; padding:8px 5px; margin:12px auto 0; scrollbar-width:thin; scrollbar-color:#718065 transparent; }
+.lightbox-thumb { display:block; width:51px; height:57px; flex:0 0 51px; padding:3px; border:1px solid transparent; border-radius:9px; background:transparent; opacity:.5; transition:opacity .2s,border-color .2s; }
+.lightbox-thumb img { display:block; width:100%; height:100%; object-fit:cover; border-radius:5px; }
+.lightbox-thumb[aria-pressed="true"] { border-color:#cde8a3; opacity:1; }
+.lightbox-thumb:hover { opacity:1; }
+.lightbox-hint { margin:5px 0 0; text-align:center; font-size:9px; color:#8e9c8e; }
+@keyframes gallery-in { from { opacity:0; transform:translateY(8px) scale(.99); } to { opacity:1; transform:none; } }
+@media (max-width:600px) {
+  .lightbox { padding:18px 14px; }
+  .lightbox-box { height:calc(100dvh - 36px); gap:17px; }
+  .lightbox-header { gap:15px; }
+  .lightbox-header h2 { font-size:18px; letter-spacing:-.4px; }
+  .lightbox-kicker { font-size:8px; margin-bottom:5px; }
+  .lightbox-stage > img { max-width:100%; border-radius:9px; }
+  .lightbox-prev { left:7px; }
+  .lightbox-next { right:7px; }
+  .lightbox-prev, .lightbox-next { background:#14211bbd; border-color:#ffffff40; }
+  .lightbox-meta { font-size:8px; gap:12px; }
+  .lightbox-count { font-size:10px; }
+  .lightbox-thumb { width:44px; height:50px; flex-basis:44px; }
+}
+@media (max-height:500px) {
+  .lightbox { padding:12px; }
+  .lightbox-box { height:calc(100dvh - 24px); gap:10px; }
+  .lightbox-header h2 { font-size:16px; }
+  .lightbox-kicker, .lightbox-hint { display:none; }
+  .lightbox-meta { padding-top:8px; }
+  .lightbox-thumbs { margin-top:4px; padding:5px; }
+  .lightbox-thumb { height:38px; width:38px; flex-basis:38px; }
+}
 
 /* Expressive studio direction. Shared components above retain their behavior. */
 :root { --bg:#f5f4ee; --text:#20372e; --muted:#637068; --brand:#213d32; --brand-strong:#213d32; --line:#dfe3d8; --accent:#d9f393; --coral:#f69c7c; --sans:"Be Vietnam Pro",sans-serif; }

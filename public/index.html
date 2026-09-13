@@ -252,13 +252,21 @@
 </div>
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
-	<div class="lightbox-box" role="dialog" aria-modal="true" aria-label="Zoomed product image viewer">
-		<button id="closeLightbox" class="lightbox-btn close" type="button" aria-label="Close image viewer">&times;</button>
-		<img id="lightboxImage" alt="Zoomed product image">
-		<div class="lightbox-actions">
-			<button id="prevImage" class="lightbox-btn" type="button">Previous</button>
-			<button id="nextImage" class="lightbox-btn" type="button">Next</button>
+	<div class="lightbox-box" role="dialog" aria-modal="true" aria-labelledby="lightboxTitle">
+		<header class="lightbox-header">
+			<div><span class="lightbox-kicker">KaWo / A closer look</span><h2 id="lightboxTitle">Handmade crochet piece</h2></div>
+			<button id="closeLightbox" class="lightbox-btn close" type="button" aria-label="Close image viewer"><span aria-hidden="true">&times;</span></button>
+		</header>
+		<div id="lightboxStage" class="lightbox-stage">
+			<button id="prevImage" class="lightbox-btn lightbox-prev" type="button" aria-label="Previous image" hidden><span aria-hidden="true">&#8592;</span></button>
+			<img id="lightboxImage" alt="Zoomed product image" draggable="false">
+			<button id="nextImage" class="lightbox-btn lightbox-next" type="button" aria-label="Next image" hidden><span aria-hidden="true">&#8594;</span></button>
 		</div>
+		<footer class="lightbox-footer">
+			<div class="lightbox-meta"><span>Made by hand. Every little detail.</span><span id="lightboxCount" class="lightbox-count" role="status" aria-live="polite" aria-atomic="true">01 / 01</span></div>
+			<div id="lightboxThumbs" class="lightbox-thumbs" role="group" aria-label="Product images" hidden></div>
+			<p id="lightboxHint" class="lightbox-hint" hidden>Swipe or use the arrow keys to explore</p>
+		</footer>
 	</div>
 </div>
 
