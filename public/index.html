@@ -20,7 +20,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="companion.css">
 <link rel="stylesheet" href="storefront.css">
@@ -64,7 +64,7 @@
 
 <body class="storefront-page">
 <a class="skip-link" href="#productsSection">Skip to collection</a>
-<div class="announcement">A little handmade happiness. <a href="contact.html">Make it yours <span aria-hidden="true">&#8599;</span></a></div>
+<div class="announcement"><span class="announcement-dot" aria-hidden="true"></span> GOOD THINGS ARE MADE BY HAND. <a href="contact.html">Your colors. Your crochet. &#8599;</a></div>
 <div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
 <div id="yarnChase" class="yarn-chase is-hidden" aria-hidden="true">
 	<div id="chaseCat" class="chase-cat">
@@ -89,32 +89,37 @@
 			<a class="active" href="index.html" aria-current="page">Home</a>
 			<a href="#productsSection">Collection</a>
 			<a href="#ourStory">Our story</a>
-			<a href="contact.html">Contact</a>
 			<a class="nav-contact" href="contact.html">Let's talk <span aria-hidden="true">&#8599;</span></a>
 		</nav>
 	</header>
 
 
 	<section class="hero" aria-labelledby="heroHeading">
+		<span class="hero-orbit" aria-hidden="true"></span>
 		<div class="hero-copy">
-			<p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> A small crochet studio, a whole lot of heart</p>
-			<h2 id="heroHeading">Little stitches.<br>Everyday <em>joy.</em></h2>
-			<p>Thoughtful crochet pieces for the little moments. Made slowly, in colors you love, to bring a little warmth wherever you go.</p>
+			<p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> THE HANDMADE EDIT &nbsp; / &nbsp; KaWo STUDIO</p>
+			<h2 id="heroHeading">Small things.<br>Big <em>feelings.</em><span class="heading-spark" aria-hidden="true">✳</span></h2>
+			<p>A little playful. A little personal. Crochet bags and everyday companions, made by hand to be completely you.</p>
 			<div class="hero-actions">
-				<a class="hero-btn primary" href="#productsSection">Explore the collection <span aria-hidden="true">&#8599;</span></a>
-				<a class="hero-btn secondary" href="contact.html">Something just for you <span aria-hidden="true">&#8599;</span></a>
+				<a class="hero-btn primary" href="#productsSection">Find your favorite <span aria-hidden="true">&#8599;</span></a>
+				<a class="hero-btn secondary" href="#ourStory">Meet the studio <span aria-hidden="true">&#8594;</span></a>
 			</div>
-			<div class="hero-proof"><span class="proof-flower" aria-hidden="true">&#10035;</span><span>Made by hand.<br><strong>Meant to be a little different.</strong></span></div>
+			<div class="hero-proof"><span class="proof-swatches" aria-hidden="true"><i></i><i></i><i></i></span><span>Picked by you. Stitched by us.<br><strong>A whole palette of possibilities.</strong></span></div>
 		</div>
 		<div class="hero-visual">
-			<div class="studio-stamp" aria-hidden="true">HANDMADE<br><span>with love</span><br>BY KaWo</div>
+			<div class="visual-label"><span>OBJECTS WITH A LITTLE SOUL</span><span>01 / KaWo</span></div>
+			<div class="studio-stamp" aria-hidden="true"><span>100%</span>HANDMADE<br>ZERO BORING.</div>
 			<div id="heroShowcase" class="hero-showcase" aria-label="Featured product preview">
 				<img class="showcase-main" src="images/studio-feature.jpg" alt="Handmade turquoise Sunflower Mini Bag with a yellow crochet flower" fetchpriority="high" width="800" height="1000">
 				<div class="showcase-caption"><div><small>FROM THE STUDIO</small><strong>Sunflower Mini Bag</strong></div><a href="#productsSection" aria-label="Explore the collection">&#8599;</a></div>
 			</div>
-			<p class="photo-note">A little sunshine, to take with you.</p>
+			<a class="floating-product" href="/?q=Strawbeshake#productsSection"><img src="images/studio-tote.jpg" alt="Pink and cream Strawbeshake crochet tote" width="1071" height="1071" decoding="async"><span>A softer kind of statement. <b aria-hidden="true">↗</b></span></a>
+			<div class="floating-label"><span aria-hidden="true">✳</span> Made to be yours.</div>
+			<p class="photo-note">Real yarn. Real hands. Really you.</p>
 		</div>
+		<div class="hero-bottom"><span>SMALL BATCHES. BIG PERSONALITY.</span><a href="#discover">A little more to love <span aria-hidden="true">↓</span></a></div>
 	</section>
+	<div class="studio-ticker" aria-label="Soft yarn. Bold colors. Made slowly. Loved daily."><div class="ticker-track"><span>SOFT YARN <b>✳</b> BOLD COLORS <b>✳</b> MADE SLOWLY <b>✳</b> LOVED DAILY <b>✳</b></span><span aria-hidden="true">SOFT YARN <b>✳</b> BOLD COLORS <b>✳</b> MADE SLOWLY <b>✳</b> LOVED DAILY <b>✳</b></span></div></div>
 	<div class="craft-values" aria-label="What makes our pieces special">
 		<div><span aria-hidden="true">&#10035;</span><strong>Thoughtfully handmade</strong><small>One careful stitch at a time</small></div>
 		<div><span aria-hidden="true">&#9676;</span><strong>Your favorite colors</strong><small>A palette that feels like you</small></div>
@@ -122,11 +127,19 @@
 	</div>
 
 	<main>
+		<section id="discover" class="discovery" aria-labelledby="discoverHeading" data-reveal>
+			<div class="discovery-heading"><span class="section-kicker">A LITTLE SOMETHING FOR EVERY YOU</span><h3 id="discoverHeading">What's your <em>kind of happy?</em></h3></div>
+			<div class="discovery-grid">
+				<a class="discovery-card discovery-bags" href="/?category=Bag#productsSection" data-category-link="Bag"><div class="discovery-copy"><span class="tile-index">01 / CARRY A LITTLE JOY</span><h4>Not your<br>ordinary bag.</h4><span class="tile-link">Explore bags <b aria-hidden="true">↗</b></span></div><img src="images/studio-tote.jpg" alt="Strawbeshake Tote, pink floral crochet bag" width="1071" height="1071" loading="lazy"></a>
+				<a class="discovery-card discovery-accessories" href="/?category=Bottle%20Holder#productsSection" data-category-link="Bottle Holder"><div class="discovery-copy"><span class="tile-index">02 / EVERYDAY, REMIXED</span><h4>Little extras.<br>Lots of character.</h4><span class="tile-link">Explore accessories <b aria-hidden="true">↗</b></span></div><img src="images/studio-flori.jpg" alt="Flori Bottle Holder with a handmade daisy" width="1265" height="1265" loading="lazy"></a>
+				<a class="discovery-card discovery-custom" href="contact.html"><span class="tile-index">03 / ONE OF A YOU</span><span class="custom-flower" aria-hidden="true">✳</span><h4>Your colors.<br>Your rules.</h4><p>Dream it up.<br>We'll stitch it together.</p><span class="tile-link">Make it personal <b aria-hidden="true">↗</b></span></a>
+			</div>
+		</section>
 		<section id="productsSection" class="section" data-reveal>
 			<div class="section-title">
 				<div>
 					<span class="section-kicker">Fresh off the hook</span>
-					<h3>Find your little happy.</h3>
+					<h3>Your next <em>favorite thing.</em></h3>
 				</div>
 				<p class="catalog-summary" role="status"><span id="productCount">&hellip;</span> <span id="productCountLabel">pieces to explore</span></p>
 			</div>
@@ -157,7 +170,7 @@
 
 		<section id="ourStory" class="promo" data-reveal aria-labelledby="storyHeading">
 			<div class="promo-copy">
-				<span class="section-kicker">A note from our studio</span><h3 id="storyHeading">Good things<br>take a little <em>time.</em></h3>
+				<span class="section-kicker">THE ART OF TAKING IT SLOW</span><h3 id="storyHeading">Less assembly line.<br>More <em>heart.</em></h3>
 				<p>Explore crochet pieces shaped by soft fibers, warm colors, and the charming little differences that make handmade work special.</p>
 				<div class="promo-points">
 					<div>
@@ -169,10 +182,11 @@
 						<span>Ask for different yarn colors, accents, and finishing details before ordering.</span>
 					</div>
 				</div>
+				<a class="hero-btn secondary" href="contact.html">Say hello to the studio <span aria-hidden="true">↗</span></a>
 			</div>
 
 			<div class="promo-card">
-				<div class="studio-yarn"><img src="images/yarn-ball.png" alt="A soft berry-colored ball of yarn" width="512" height="512" loading="lazy"><span>From a simple thread,<br>something <em>special.</em></span></div>
+				<div class="studio-yarn"><span class="yarn-orbit" aria-hidden="true"></span><span class="yarn-label">THE START OF SOMETHING GOOD.</span><img src="images/yarn-ball.png" alt="A soft berry-colored ball of yarn" width="512" height="512" loading="lazy"><span>One thread.<br><em>Endless possibilities.</em></span></div>
 			</div>
 		</section>
 
@@ -207,6 +221,7 @@
 		</section>
 	</main>
 
+	<div class="footer-wordmark" aria-hidden="true">KaWo<span>✳</span></div>
 	<footer class="site-footer" data-reveal>
 		<div class="footer-col">
 			<h4>KaWo Crotchet</h4>

@@ -417,11 +417,38 @@ async function loadCategories(){
       option.textContent = category
       categoryFilter.appendChild(option)
     })
-    categoryFilter.value = currentCategory
+    selectProductCategory(currentCategory)
   }catch(error){
+    // Keep an explicitly selected collection usable if category metadata is unavailable.
+    const currentCategory = categoryFilter.value
     categoryFilter.innerHTML = '<option value="">All categories</option>'
+    selectProductCategory(currentCategory)
   }
 }
+
+function selectProductCategory(category){
+  if(category && !Array.from(categoryFilter.options).some((option)=>option.value === category)){
+    const option = document.createElement("option")
+    option.value = category
+    option.textContent = category
+    categoryFilter.appendChild(option)
+  }
+  categoryFilter.value = category
+}
+
+document.querySelectorAll("[data-category-link]").forEach((link)=>{
+  link.addEventListener("click", (event)=>{
+    if(event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    event.preventDefault()
+    productSearch.value = ""
+    statusFilter.value = ""
+    sortFilter.value = "featured"
+    selectProductCategory(link.dataset.categoryLink)
+    loadProducts()
+    document.getElementById("productsSection").scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth", block: "start" })
+    productSearch.focus({ preventScroll: true })
+  })
+})
 
 async function loadProducts(){
   window.clearTimeout(searchTimer)
@@ -510,6 +537,9 @@ function scheduleProductsReload(){
 const initialSearchParams = new URLSearchParams(window.location.search)
 if(productSearch && initialSearchParams.has("q")){
   productSearch.value = initialSearchParams.get("q").trim()
+}
+if(categoryFilter && initialSearchParams.has("category")){
+  selectProductCategory(initialSearchParams.get("category").trim())
 }
 
 loadCategories()

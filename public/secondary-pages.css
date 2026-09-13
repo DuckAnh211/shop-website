@@ -740,7 +740,7 @@ body.login-page{
 .login-page button[type="submit"]:hover{background:#754653}
 .password-toggle{color:var(--yarn-berry);background:#f3e4d2}
 .back-link:hover{color:var(--yarn-berry)}
-/* Shared boutique palette across contact, product details, and studio access. */
+/* Shared studio palette across contact, product details, and studio access. */
 :root { --bg:#faf8f1; --panel:#faf8f1; --text:#263f35; --muted:#687166; --brand:#375641; --brand-strong:#284c3b; --line:#dedfd2; --yarn-berry:#375641; --yarn-coral:#a8b58b; }
 body.contact-page, body.login-page { background:#faf8f1; color:#263f35; }
 body.contact-page::before, body.login-page::before, .page-orb { display:none; }
@@ -775,3 +775,29 @@ body.contact-page::before, body.login-page::before, .page-orb { display:none; }
 :focus-visible { outline:3px solid #ae653b; outline-offset:4px; }
 @media(max-width:680px) { .contact-page .page-shell { padding:18px; } .contact-page .hero { padding:30px 24px; } }
 @media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }
+
+/* Continue the expressive storefront through the customer journey. */
+:root { --bg:#f5f4ee; --panel:#fffdf7; --text:#20372e; --brand:#213d32; --brand-strong:#213d32; --line:#dfe3d8; --yarn-berry:#213d32; }
+body.contact-page, body.login-page { background:#f5f4ee; }
+.contact-page .hero { background:#20392f; color:#fffdf3; border-radius:25px; overflow:hidden; }
+.contact-page .hero h1 { font-family:"Be Vietnam Pro",sans-serif; font-size:clamp(38px,5vw,64px); letter-spacing:-3px; max-width:17ch; line-height:1.12; }
+.contact-page .hero p { color:#c3cfc4; }
+.contact-page .hero .page-eyebrow { color:#d9f393; }
+.contact-page .nav a { border-radius:999px; }
+.contact-page .nav a.active { background:#20392f; }
+.contact-page .panel, .product-gallery, .product-detail-copy { border-radius:20px; background:#fffdf7; }
+.contact-visual { background:#d9f393; color:#20372e; border-radius:22px; }
+.contact-visual h3 { font-family:"Be Vietnam Pro",sans-serif; font-size:38px; letter-spacing:-1.5px; line-height:1.15; }
+.contact-visual p { color:#53663f; }
+.contact-visual .page-eyebrow { color:#405536; border-color:#53663f40; }
+.response-card { background:#ffffff40; border-color:#53663f25; }
+.response-card strong, .response-card span { color:#405536; }
+.contact-page .footer-note { background:#20392f; border-radius:20px; }
+.login-shell { border-radius:24px; }
+.login-story { background:#20392f; }
+.login-copy h2 em { color:#d9f393; }
+.login-page .card { background:#fffdf7; }
+.login-page button[type="submit"] { background:#20392f; border-radius:999px; }
+.product-contact-actions a { border-radius:999px; }
+.product-gallery-strip img, .product-hero-image { border-radius:13px; }
+@media(max-width:680px) { .contact-page .hero h1 { font-size:39px; letter-spacing:-2px; } .contact-visual h3 { font-size:32px; } }
