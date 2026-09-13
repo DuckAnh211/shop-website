@@ -740,3 +740,38 @@ body.login-page{
 .login-page button[type="submit"]:hover{background:#754653}
 .password-toggle{color:var(--yarn-berry);background:#f3e4d2}
 .back-link:hover{color:var(--yarn-berry)}
+/* Shared boutique palette across contact, product details, and studio access. */
+:root { --bg:#faf8f1; --panel:#faf8f1; --text:#263f35; --muted:#687166; --brand:#375641; --brand-strong:#284c3b; --line:#dedfd2; --yarn-berry:#375641; --yarn-coral:#a8b58b; }
+body.contact-page, body.login-page { background:#faf8f1; color:#263f35; }
+body.contact-page::before, body.login-page::before, .page-orb { display:none; }
+.contact-page .page-shell { max-width:1224px; margin:0 auto; padding:24px; border:0; border-radius:0; background:transparent; box-shadow:none; backdrop-filter:none; }
+.contact-page .topbar { padding:10px 0 25px; border-bottom:1px solid #dedfd2; }
+.contact-page .brand-mark.yarn-logo, .login-brand-mark.yarn-logo { background:#375641; border:0; box-shadow:none; transform:none; border-radius:50%; }
+.contact-page .nav { background:transparent; border:0; gap:14px; }
+.contact-page .nav a { border-radius:4px; font-size:12px; box-shadow:none; }
+.contact-page .nav a.active, .contact-page .nav a:hover { background:#284c3b; }
+.contact-page .hero { margin-top:28px; padding:44px; background:#e9eddf; color:#263f35; border:0; border-radius:8px; box-shadow:none; }
+.contact-page .hero::after, .login-story::before, .contact-visual::before { display:none; }
+.contact-page .hero h1 { max-width:16ch; font-weight:500; }
+.contact-page .hero p { color:#64725c; }
+.contact-page .hero .page-eyebrow { color:#53654a; background:transparent; border:0; padding-left:0; }
+.contact-page .panel, .product-gallery, .product-detail-copy { border:1px solid #dedfd2; border-radius:8px; background:#faf8f1; box-shadow:none; }
+.contact-page .item { background:transparent; border:0; border-bottom:1px solid #dedfd2; border-radius:0; box-shadow:none; }
+.contact-page .item:hover { transform:none; background:#f0eee5; }
+.contact-page .value, .contact-page .label { color:#375641; }
+.contact-visual, .contact-page .footer-note { background:#284c3b; border:0; border-radius:8px; box-shadow:none; }
+.response-card { border:1px solid #ffffff30; background:#ffffff0a; border-radius:5px; }
+.login-shell { border:1px solid #dedfd2; border-radius:10px; background:#faf8f1; box-shadow:0 16px 50px #263f3510; }
+.login-story { background:#284c3b; }
+.login-page .card { background:#faf8f1; border:0; box-shadow:none; }
+.login-page input { background:#fffef9; border:1px solid #dedfd2; border-radius:5px; }
+.login-page button[type="submit"] { background:#284c3b; border-radius:5px; }
+.login-page button[type="submit"]:hover { background:#41604a; }
+.password-toggle { background:#e9eddf; color:#375641; }
+.product-custom-note { color:#4d6545; background:#edf0e3; border:1px solid #dedfd2; border-radius:5px; }
+.product-gallery-strip img, .product-hero-image { border-radius:5px; }
+.product-contact-actions a { border-radius:4px; }
+.product-contact-actions .primary-action { background:#284c3b; }
+:focus-visible { outline:3px solid #ae653b; outline-offset:4px; }
+@media(max-width:680px) { .contact-page .page-shell { padding:18px; } .contact-page .hero { padding:30px 24px; } }
+@media(prefers-reduced-motion:reduce) { *, *::before, *::after { animation:none !important; transition:none !important; } }

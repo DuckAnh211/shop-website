@@ -22,1183 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
 
-<style>
-:root{
-	--bg:#fff7f2;
-	--panel:#fffaf7;
-	--panel-soft:#f8e7df;
-	--card:#ffffff;
-	--text:#352a2f;
-	--muted:#76666a;
-	--brand:#c87186;
-	--brand-strong:#9d4f67;
-	--sage:#809f87;
-	--gold:#c69a4e;
-	--ink:#2f3941;
-	--line:#ead8cf;
-	--shadow:0 26px 70px rgba(73, 48, 45, 0.14);
-	--shadow-strong:0 30px 80px rgba(82, 44, 58, .22);
-	--radius-xl:30px;
-	--radius-lg:22px;
-	--radius-md:16px;
-}
-
-*{box-sizing:border-box}
-
-html{scroll-behavior:smooth}
-
-body{
-	margin:0;
-	font-family:"Be Vietnam Pro",sans-serif;
-	color:var(--text);
-	background:
-		linear-gradient(115deg, rgba(128,159,135,.13) 0 18%, transparent 18% 100%),
-		linear-gradient(245deg, rgba(198,154,78,.16) 0 22%, transparent 22% 100%),
-		linear-gradient(180deg, #fff8f3 0%, #f2d4dd 48%, #fffaf6 100%);
-	min-height:100vh;
-	overflow-x:hidden;
-}
-
-body::before{
-	content:"";
-	position:fixed;
-	inset:0;
-	pointer-events:none;
-	background-image:
-		linear-gradient(rgba(157,79,103,.055) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(47,57,65,.045) 1px, transparent 1px);
-	background-size:44px 44px;
-	mask-image:linear-gradient(180deg, rgba(0,0,0,.8), transparent 78%);
-	z-index:-1;
-}
-
-a{color:inherit}
-
-.page-shell{
-	max-width:1180px;
-	margin:28px auto;
-	padding:22px;
-	background:linear-gradient(180deg, rgba(255,255,255,.68) 0%, rgba(255,250,247,.94) 100%);
-	border:1px solid rgba(255,255,255,.82);
-	border-radius:34px;
-	box-shadow:var(--shadow);
-	backdrop-filter:blur(18px);
-}
-
-.topbar{
-	display:flex;
-	justify-content:space-between;
-	align-items:center;
-	gap:16px;
-	padding:8px 8px 22px;
-	position:sticky;
-	top:0;
-	z-index:20;
-	backdrop-filter:blur(18px);
-}
-
-.brand{
-	margin:0;
-	font-family:"Cormorant Garamond",serif;
-	font-size:42px;
-	font-weight:700;
-	letter-spacing:.6px;
-}
-
-.brand small{
-	display:block;
-	font-family:"Be Vietnam Pro",sans-serif;
-	font-size:12px;
-	letter-spacing:.3em;
-	text-transform:uppercase;
-	color:var(--muted);
-	margin-top:4px;
-}
-
-.nav{
-	display:flex;
-	flex-wrap:wrap;
-	gap:10px;
-}
-
-.nav a{
-	text-decoration:none;
-	padding:10px 18px;
-	border-radius:999px;
-	border:1px solid var(--line);
-	background:rgba(255,255,255,.78);
-	font-weight:700;
-	color:var(--muted);
-	transition:transform .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
-}
-
-.nav a:hover{
-	transform:translateY(-2px);
-	color:var(--text);
-	border-color:rgba(157,79,103,.28);
-	box-shadow:0 12px 24px rgba(82,44,58,.1);
-}
-
-.hero{
-	display:grid;
-	grid-template-columns:minmax(0,1fr) minmax(360px,.85fr);
-	gap:24px;
-	padding:34px;
-	border-radius:var(--radius-xl);
-	background:
-		linear-gradient(120deg, rgba(255,250,247,.92) 0%, rgba(248,231,223,.72) 42%, rgba(128,159,135,.24) 100%),
-		linear-gradient(135deg, #fff1ec 0%, #e9c1cb 100%);
-	overflow:hidden;
-	position:relative;
-	min-height:530px;
-	isolation:isolate;
-}
-
-.hero::before,
-.hero::after{
-	content:"";
-	position:absolute;
-}
-
-.hero::before{
-	inset:0;
-	background:
-		linear-gradient(90deg, transparent 0 48%, rgba(255,255,255,.42) 48% 52%, transparent 52% 100%),
-		repeating-linear-gradient(135deg, rgba(157,79,103,.06) 0 1px, transparent 1px 18px);
-	opacity:.75;
-	z-index:-2;
-}
-
-.hero::after{
-	width:46%;
-	inset:0 0 0 auto;
-	background:linear-gradient(90deg, transparent, rgba(255,255,255,.58));
-	z-index:-1;
-}
-
-.hero-copy,
-.hero-visual{
-	position:relative;
-	z-index:1;
-}
-
-.eyebrow{
-	display:inline-block;
-	margin:0 0 14px;
-	padding:8px 14px;
-	border-radius:999px;
-	background:rgba(255,255,255,.78);
-	border:1px solid rgba(255,255,255,.76);
-	color:var(--muted);
-	font-size:13px;
-	font-weight:700;
-	box-shadow:0 10px 24px rgba(82,44,58,.08);
-}
-
-.hero h2,
-.section-title h3,
-.promo-copy h3,
-.contact-card h3,
-.footer-col h4{
-	font-family:"Cormorant Garamond",serif;
-}
-
-.hero h2{
-	margin:0 0 14px;
-	font-size:64px;
-	line-height:.98;
-	max-width:11ch;
-}
-
-.hero p{
-	margin:0;
-	max-width:54ch;
-	font-size:16px;
-	line-height:1.7;
-	color:var(--muted);
-}
-
-.hero-actions{
-	display:flex;
-	flex-wrap:wrap;
-	gap:12px;
-	margin-top:24px;
-}
-
-.hero-btn{
-	display:inline-flex;
-	align-items:center;
-	justify-content:center;
-	text-decoration:none;
-	padding:12px 18px;
-	border-radius:999px;
-	font-weight:700;
-	border:1px solid transparent;
-	box-shadow:0 14px 30px rgba(82,44,58,.1);
-	transition:transform .22s ease, box-shadow .22s ease, background .22s ease;
-}
-
-.hero-btn:hover{
-	transform:translateY(-3px);
-	box-shadow:0 18px 36px rgba(82,44,58,.16);
-}
-
-.hero-btn.primary{
-	background:linear-gradient(135deg, var(--brand-strong), #ba657b 58%, var(--gold));
-	color:#fff;
-}
-
-.hero-btn.secondary{
-	background:rgba(255,255,255,.72);
-	border-color:rgba(255,255,255,.8);
-	color:var(--muted);
-}
-
-.hero-visual{
-	display:grid;
-	grid-template-rows:auto 1fr;
-	gap:14px;
-	align-content:stretch;
-	min-height:100%;
-}
-
-.hero-stats{
-	display:grid;
-	grid-template-columns:1fr;
-	gap:14px;
-}
-
-.hero-stat{
-	padding:18px;
-	border-radius:20px;
-	background:rgba(255,255,255,.76);
-	border:1px solid rgba(255,255,255,.84);
-	backdrop-filter:blur(8px);
-	box-shadow:0 18px 36px rgba(82,44,58,.09);
-}
-
-.hero-stat strong{
-	display:block;
-	font-size:30px;
-	color:var(--brand-strong);
-	line-height:1.05;
-	word-break:break-word;
-}
-
-.hero-stat span{
-	color:var(--muted);
-	display:block;
-	margin-top:6px;
-	font-size:15px;
-	line-height:1.35;
-}
-
-.hero-showcase{
-	position:relative;
-	min-height:330px;
-	border-radius:26px;
-	overflow:hidden;
-	border:1px solid rgba(255,255,255,.84);
-	background:
-		linear-gradient(135deg, rgba(255,255,255,.72), rgba(255,255,255,.2)),
-		linear-gradient(135deg, #f7d8dc 0%, #dce7da 100%);
-	box-shadow:var(--shadow-strong);
-}
-
-.hero-showcase::before{
-	content:"";
-	position:absolute;
-	inset:0;
-	background:linear-gradient(180deg, transparent 42%, rgba(47,57,65,.42));
-	z-index:1;
-	pointer-events:none;
-}
-
-.hero-showcase::after{
-	content:"";
-	position:absolute;
-	top:0;
-	bottom:0;
-	width:42%;
-	left:-55%;
-	background:linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent);
-	transform:skewX(-18deg);
-	animation:shine 5.8s ease-in-out infinite;
-	z-index:2;
-	pointer-events:none;
-}
-
-@keyframes shine{
-	0%, 45%{left:-55%}
-	70%, 100%{left:112%}
-}
-
-.showcase-main{
-	width:100%;
-	height:100%;
-	min-height:330px;
-	object-fit:cover;
-	display:block;
-	transform:scale(1.04);
-	transition:transform .8s ease;
-}
-
-.hero-showcase:hover .showcase-main{
-	transform:scale(1.1);
-}
-
-.showcase-fallback{
-	position:absolute;
-	inset:0;
-	display:grid;
-	place-items:center;
-	padding:34px;
-	text-align:center;
-	font-family:"Cormorant Garamond",serif;
-	font-size:42px;
-	line-height:.96;
-	color:#6f5060;
-}
-
-.showcase-caption{
-	position:absolute;
-	left:18px;
-	right:18px;
-	bottom:18px;
-	z-index:3;
-	display:flex;
-	justify-content:space-between;
-	align-items:end;
-	gap:12px;
-	color:#fff;
-}
-
-.showcase-caption strong{
-	font-size:15px;
-	max-width:22ch;
-}
-
-.showcase-caption span{
-	padding:8px 11px;
-	border:1px solid rgba(255,255,255,.44);
-	border-radius:999px;
-	background:rgba(255,255,255,.18);
-	backdrop-filter:blur(8px);
-	font-size:12px;
-	font-weight:800;
-}
-
-.showcase-thumbs{
-	position:absolute;
-	top:18px;
-	right:18px;
-	z-index:3;
-	display:grid;
-	gap:9px;
-}
-
-.showcase-thumbs img{
-	width:64px;
-	height:64px;
-	object-fit:cover;
-	border-radius:16px;
-	border:2px solid rgba(255,255,255,.82);
-	box-shadow:0 10px 22px rgba(47,57,65,.22);
-}
-
-.section{
-	margin-top:24px;
-	padding:28px;
-	border-radius:var(--radius-xl);
-	background:linear-gradient(180deg, rgba(255,250,247,.96), rgba(255,255,255,.9));
-	border:1px solid rgba(238,210,219,.7);
-	box-shadow:0 18px 48px rgba(82,44,58,.08);
-}
-
-.section-title{
-	display:flex;
-	justify-content:space-between;
-	align-items:end;
-	gap:16px;
-	margin-bottom:22px;
-}
-
-.section-title h3{
-	margin:0;
-	font-size:52px;
-	line-height:.95;
-}
-
-.section-title p{
-	margin:0;
-	color:var(--muted);
-	max-width:38ch;
-	line-height:1.6;
-}
-
-.catalog-toolbar{
-	display:grid;
-	grid-template-columns:1.5fr repeat(3, minmax(150px, .7fr));
-	gap:12px;
-	margin-bottom:22px;
-}
-
-.catalog-toolbar input,
-.catalog-toolbar select{
-	width:100%;
-	border:1px solid var(--line);
-	border-radius:14px;
-	background:#fff;
-	color:var(--text);
-	font:inherit;
-	font-size:14px;
-	padding:12px 14px;
-	box-shadow:0 10px 20px rgba(123,73,91,.06);
-}
-
-.products{
-	display:grid;
-	grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
-	gap:20px;
-}
-
-.product{
-	background:linear-gradient(180deg, #fff 0%, #fff7fa 100%);
-	border:1px solid var(--line);
-	border-radius:var(--radius-lg);
-	overflow:hidden;
-	display:flex;
-	flex-direction:column;
-	box-shadow:0 12px 26px rgba(123, 73, 91, .08);
-	translate:0 18px;
-	opacity:0;
-	animation:cardIn .55s ease forwards;
-	transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
-	will-change:transform;
-}
-
-.product:hover{
-	transform:translateY(-8px);
-	border-color:rgba(157,79,103,.28);
-	box-shadow:0 26px 54px rgba(82,44,58,.16);
-}
-
-@keyframes cardIn{
-	to{
-		opacity:1;
-		translate:0 0;
-	}
-}
-
-.product-media{
-	position:relative;
-	padding:16px 16px 0;
-}
-
-.product img{
-	width:100%;
-	height:220px;
-	object-fit:cover;
-	display:block;
-	cursor:zoom-in;
-	border-radius:18px;
-	background:#f8e8ee;
-	transition:transform .45s ease, filter .45s ease;
-}
-
-.product:hover .product-media > img{
-	transform:scale(1.04);
-	filter:saturate(1.08) contrast(1.02);
-}
-
-.thumbs{
-	display:flex;
-	gap:8px;
-	margin-top:12px;
-	flex-wrap:wrap;
-}
-
-.thumb{
-	border:1px solid var(--line);
-	border-radius:10px;
-	padding:0;
-	background:#fff;
-	cursor:pointer;
-	width:54px;
-	height:54px;
-	overflow:hidden;
-	transition:transform .18s ease, border-color .18s ease;
-}
-
-.thumb:hover{
-	transform:translateY(-2px);
-	border-color:rgba(157,79,103,.36);
-}
-
-.thumb img{
-	width:100%;
-	height:100%;
-	object-fit:cover;
-	border-radius:0;
-}
-
-.thumb.active{
-	outline:2px solid var(--brand-strong);
-	outline-offset:2px;
-}
-
-.product-flags{
-	position:absolute;
-	left:28px;
-	right:28px;
-	top:28px;
-	display:flex;
-	flex-wrap:wrap;
-	gap:7px;
-	align-items:flex-start;
-}
-
-.flag{
-	color:#fff;
-	padding:7px 11px;
-	font-size:12px;
-	font-weight:800;
-	border-radius:999px;
-	background:rgba(169,95,119,.96);
-	box-shadow:0 10px 20px rgba(47,57,65,.16);
-}
-
-.flag.featured{
-	background:rgba(128,159,135,.96);
-}
-
-.flag.stock{
-	margin-left:auto;
-	background:rgba(47,57,65,.78);
-}
-
-.flag.low-stock{
-	background:rgba(198,154,78,.96);
-}
-
-.flag.sold-out{
-	background:rgba(85,74,78,.9);
-}
-
-.info{
-	padding:18px 16px 18px;
-	display:flex;
-	flex-direction:column;
-	gap:12px;
-	flex:1;
-}
-
-.info h4{
-	margin:0;
-	font-size:19px;
-}
-
-.info h4 a{
-	text-decoration:none;
-	color:inherit;
-}
-
-.info h4 a:hover{
-	color:var(--brand-strong);
-}
-
-.product-meta{
-	display:flex;
-	align-items:center;
-	gap:8px;
-	color:#8d6b76;
-	font-size:12px;
-	font-weight:800;
-	text-transform:uppercase;
-	letter-spacing:.08em;
-}
-
-.description{
-	margin:0;
-	color:var(--muted);
-	font-size:14px;
-	line-height:1.6;
-	min-height:44px;
-}
-
-.custom-note{
-	margin:0;
-	color:#7e4d5f;
-	font-size:13px;
-	font-weight:800;
-	line-height:1.45;
-	background:#fff4e4;
-	border:1px solid var(--line);
-	border-radius:12px;
-	padding:8px 10px;
-}
-
-.tag-list{
-	display:flex;
-	flex-wrap:wrap;
-	gap:6px;
-}
-
-.tag-list span{
-	border:1px solid var(--line);
-	border-radius:999px;
-	background:#fff;
-	color:#8d6b76;
-	font-size:12px;
-	font-weight:700;
-	padding:5px 8px;
-}
-
-.prices{
-	display:flex;
-	align-items:center;
-	flex-wrap:wrap;
-	gap:10px;
-}
-
-.price{
-	color:var(--brand-strong);
-	font-weight:800;
-	font-size:22px;
-}
-
-.price.twd{
-	color:#4f7f58;
-	font-size:18px;
-}
-
-.old-price{
-	color:#af8a97;
-	text-decoration:line-through;
-}
-
-.bundle-promo{
-	margin:0;
-	color:#7e4d5f;
-	font-size:13px;
-	line-height:1.45;
-	font-weight:700;
-	background:#f9e6ed;
-	border:1px solid var(--line);
-	border-radius:12px;
-	padding:8px 10px;
-}
-
-.product-actions{
-	margin-top:auto;
-	display:grid;
-	grid-template-columns:1fr 1fr;
-	gap:10px;
-}
-
-.inquiry-menu{
-	position:relative;
-	min-width:0;
-}
-
-.buy-btn{
-	display:inline-flex;
-	align-items:center;
-	justify-content:center;
-	text-decoration:none;
-	border:none;
-	background:linear-gradient(135deg, var(--brand-strong) 0%, #be6e81 55%, var(--sage) 100%);
-	color:#fff;
-	padding:12px;
-	border-radius:12px;
-	font-weight:700;
-	cursor:pointer;
-	box-shadow:0 12px 26px rgba(157,79,103,.18);
-	transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
-}
-
-.inquiry-btn{
-	display:inline-flex;
-	align-items:center;
-	justify-content:center;
-	width:100%;
-	text-decoration:none;
-	border:1px solid var(--line);
-	background:#fff;
-	color:var(--brand-strong);
-	padding:12px;
-	border-radius:12px;
-	font:inherit;
-	font-weight:800;
-	cursor:pointer;
-	box-shadow:0 12px 26px rgba(157,79,103,.08);
-	transition:transform .2s ease, filter .2s ease, box-shadow .2s ease;
-}
-
-.inquiry-panel{
-	position:absolute;
-	right:0;
-	bottom:calc(100% + 8px);
-	z-index:30;
-	width:min(220px, 76vw);
-	padding:6px;
-	border:1px solid var(--line);
-	border-radius:14px;
-	background:#fff;
-	box-shadow:0 18px 38px rgba(82,44,58,.18);
-}
-
-.inquiry-panel a{
-	display:flex;
-	align-items:center;
-	min-height:40px;
-	padding:9px 11px;
-	border-radius:10px;
-	color:#7e4d5f;
-	text-decoration:none;
-	font-size:14px;
-	font-weight:800;
-	transition:background .18s ease, color .18s ease;
-}
-
-.inquiry-panel a:hover{
-	background:#fff1f6;
-	color:var(--brand-strong);
-}
-
-.product.contact-open{
-	z-index:20;
-}
-
-.buy-btn:hover,
-.inquiry-btn:hover{
-	transform:translateY(-2px);
-	filter:brightness(.97);
-	box-shadow:0 16px 32px rgba(157,79,103,.24);
-}
-
-.status{
-	border:1px dashed var(--line);
-	border-radius:18px;
-	padding:18px;
-	text-align:center;
-	color:var(--muted);
-	background:#fff;
-}
-
-.promo{
-	margin-top:24px;
-	display:grid;
-	grid-template-columns:1fr .92fr;
-	gap:22px;
-	padding:28px;
-	border-radius:var(--radius-xl);
-	background:
-		linear-gradient(120deg, rgba(255,255,255,.36), transparent 38%),
-		linear-gradient(120deg, #f0cbd1 0%, #dfe9dc 100%);
-	box-shadow:0 22px 54px rgba(82,44,58,.12);
-}
-
-.promo-copy h3{
-	margin:0 0 12px;
-	font-size:50px;
-	line-height:.95;
-	max-width:11ch;
-}
-
-.promo-copy p{
-	margin:0;
-	max-width:40ch;
-	color:#6f5060;
-	line-height:1.7;
-}
-
-.promo-points{
-	display:grid;
-	grid-template-columns:repeat(2, minmax(0, 1fr));
-	gap:12px;
-	margin-top:20px;
-}
-
-.promo-points div{
-	padding:16px;
-	border-radius:18px;
-	background:rgba(255,255,255,.54);
-	border:1px solid rgba(255,255,255,.65);
-	transition:transform .22s ease, background .22s ease;
-}
-
-.promo-points div:hover{
-	transform:translateY(-4px);
-	background:rgba(255,255,255,.72);
-}
-
-.promo-points strong{
-	display:block;
-	font-size:14px;
-	margin-bottom:6px;
-}
-
-.promo-points span{
-	font-size:14px;
-	line-height:1.6;
-	color:#7d5d6c;
-}
-
-.promo-card{
-	display:grid;
-	gap:14px;
-}
-
-.promo-photo,
-.promo-panel{
-	border-radius:24px;
-	min-height:180px;
-	padding:22px;
-	position:relative;
-	overflow:hidden;
-}
-
-.promo-photo{
-	background:
-		repeating-linear-gradient(90deg, rgba(255,255,255,.26) 0 2px, transparent 2px 18px),
-		linear-gradient(145deg, #f7d9e2 0%, #d7e5d5 100%);
-}
-
-.promo-photo::before,
-.promo-photo::after{
-	content:"";
-	position:absolute;
-	background:rgba(255,255,255,.46);
-	transform:rotate(-18deg);
-}
-
-.promo-photo::before{
-	width:220px;
-	height:52px;
-	right:-42px;
-	top:42px;
-}
-
-.promo-photo::after{
-	width:150px;
-	height:38px;
-	left:18px;
-	bottom:32px;
-}
-
-.promo-photo span{
-	position:relative;
-	z-index:1;
-	display:inline-block;
-	max-width:18ch;
-	font-family:"Cormorant Garamond",serif;
-	font-size:34px;
-	line-height:.95;
-}
-
-.promo-panel{
-	background:rgba(255,255,255,.6);
-	border:1px solid rgba(255,255,255,.7);
-	display:flex;
-	align-items:end;
-}
-
-.promo-panel p{
-	margin:0;
-	line-height:1.7;
-	color:#6f5060;
-}
-
-.contact-grid{
-	margin-top:24px;
-	display:grid;
-	grid-template-columns:1fr 1fr;
-	gap:22px;
-}
-
-.contact-card{
-	padding:28px;
-	border-radius:var(--radius-xl);
-	background:linear-gradient(120deg, #fff3ef 0%, #f3cfda 58%, #e7efe3 100%);
-	border:1px solid rgba(238,210,219,.7);
-}
-
-.contact-card h3{
-	margin:0 0 12px;
-	font-size:44px;
-	line-height:.95;
-}
-
-.contact-card p{
-	margin:0;
-	color:var(--muted);
-	line-height:1.7;
-}
-
-.contact-list{
-	margin-top:18px;
-	display:grid;
-	gap:12px;
-}
-
-.contact-item{
-	display:flex;
-	flex-direction:column;
-	gap:6px;
-	padding:16px 18px;
-	border-radius:18px;
-	background:rgba(255,255,255,.72);
-	border:1px solid rgba(255,255,255,.8);
-	transition:transform .2s ease, box-shadow .2s ease;
-}
-
-.contact-item:hover{
-	transform:translateX(4px);
-	box-shadow:0 12px 28px rgba(82,44,58,.08);
-}
-
-.contact-item span{
-	font-size:12px;
-	font-weight:800;
-	text-transform:uppercase;
-	letter-spacing:.12em;
-	color:#a37c8c;
-}
-
-.contact-item a{
-	text-decoration:none;
-	font-weight:700;
-	word-break:break-word;
-}
-
-.contact-aside{
-	padding:28px;
-	border-radius:var(--radius-xl);
-	background:
-		linear-gradient(135deg, rgba(255,255,255,.6), rgba(255,255,255,.2)),
-		linear-gradient(135deg, #f8dbe4 0%, #dce8d8 100%);
-	border:1px solid rgba(238,210,219,.7);
-	display:grid;
-	align-content:space-between;
-	gap:24px;
-}
-
-.contact-aside .quote{
-	font-family:"Cormorant Garamond",serif;
-	font-size:42px;
-	line-height:.95;
-	max-width:10ch;
-}
-
-.contact-aside .note{
-	padding:18px;
-	border-radius:18px;
-	background:rgba(255,255,255,.62);
-	color:var(--muted);
-	line-height:1.7;
-}
-
-.site-footer{
-	margin-top:24px;
-	padding:26px 28px;
-	border-radius:var(--radius-xl);
-	background:#fff;
-	border:1px solid var(--line);
-	display:grid;
-	grid-template-columns:1.2fr .8fr .8fr;
-	gap:20px;
-}
-
-.footer-col h4{
-	margin:0 0 12px;
-	font-size:34px;
-}
-
-.footer-col p,
-.footer-col a{
-	margin:0;
-	color:var(--muted);
-	line-height:1.8;
-	text-decoration:none;
-}
-
-.footer-links{
-	display:grid;
-	gap:8px;
-}
-
-.copyright{
-	margin:18px 0 0;
-	text-align:center;
-	color:var(--muted);
-	font-size:13px;
-}
-
-.lightbox{
-	position:fixed;
-	inset:0;
-	background:rgba(30, 24, 28, .78);
-	display:none;
-	align-items:center;
-	justify-content:center;
-	padding:20px;
-	z-index:999;
-	backdrop-filter:blur(14px);
-}
-
-.lightbox.open{display:flex}
-
-.lightbox-box{
-	position:relative;
-	max-width:min(940px,95vw);
-	max-height:90vh;
-	width:100%;
-	background:#fff;
-	border-radius:24px;
-	padding:16px;
-	box-shadow:0 20px 50px rgba(0,0,0,.28);
-	animation:viewerIn .22s ease both;
-}
-
-@keyframes viewerIn{
-	from{opacity:0;transform:translateY(12px) scale(.98)}
-	to{opacity:1;transform:translateY(0) scale(1)}
-}
-
-[data-reveal]{
-	opacity:1;
-	transform:none;
-	transition:opacity .7s ease, transform .7s ease;
-}
-
-.reveal-enabled [data-reveal]{
-	opacity:0;
-	transform:translateY(22px);
-}
-
-.reveal-enabled [data-reveal].is-visible{
-	opacity:1;
-	transform:translateY(0);
-}
-
-.lightbox img{
-	width:100%;
-	max-height:72vh;
-	object-fit:contain;
-	border-radius:18px;
-	background:#f8edf2;
-	cursor:ew-resize;
-}
-
-.lightbox-actions{
-	margin-top:12px;
-	display:flex;
-	justify-content:space-between;
-	gap:10px;
-}
-
-.lightbox-btn{
-	border:1px solid var(--line);
-	background:#fff;
-	border-radius:12px;
-	padding:10px 14px;
-	cursor:pointer;
-	font-weight:700;
-	color:var(--text);
-}
-
-.lightbox-btn.close{
-	position:absolute;
-	right:14px;
-	top:14px;
-	border:none;
-	width:38px;
-	height:38px;
-	border-radius:50%;
-	font-size:18px;
-	line-height:1;
-	background:rgba(79,49,64,.08);
-}
-
-@media (max-width:980px){
-	.hero,
-	.promo,
-	.contact-grid,
-	.site-footer{
-		grid-template-columns:1fr;
-	}
-
-	.hero h2{max-width:none}
-	.section-title{align-items:start;flex-direction:column}
-	.hero{min-height:auto}
-
-	.catalog-toolbar{
-		grid-template-columns:1fr 1fr;
-	}
-}
-
-@media (max-width:680px){
-	.page-shell{
-		margin:14px;
-		padding:14px;
-		border-radius:28px;
-	}
-
-	.topbar{
-		flex-direction:column;
-		align-items:flex-start;
-	}
-
-	.hero,
-	.section,
-	.promo,
-	.contact-card,
-	.contact-aside,
-	.site-footer{
-		padding:22px;
-	}
-
-	.hero h2,
-	.section-title h3,
-	.promo-copy h3,
-	.contact-card h3{
-		font-size:40px;
-	}
-
-	.hero-visual,
-	.promo-points{
-		grid-template-columns:1fr;
-	}
-
-	.hero{
-		padding:20px;
-	}
-
-	.hero h2{
-		font-size:42px;
-	}
-
-	.hero-stats{
-		grid-template-columns:1fr;
-	}
-
-	.catalog-toolbar,
-	.product-actions{
-		grid-template-columns:1fr;
-	}
-
-	.hero-showcase,
-	.showcase-main{
-		min-height:270px;
-	}
-
-	.showcase-thumbs img{
-		width:52px;
-		height:52px;
-	}
-}
-</style>
+<link rel="stylesheet" href="companion.css">
 <link rel="stylesheet" href="storefront.css">
 <script type="application/ld+json">
 {
@@ -1239,10 +63,10 @@ a{color:inherit}
 </head>
 
 <body class="storefront-page">
+<a class="skip-link" href="#productsSection">Skip to collection</a>
+<div class="announcement">A little handmade happiness. <a href="contact.html">Make it yours <span aria-hidden="true">&#8599;</span></a></div>
 <div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
-<div class="ambient-shape one" aria-hidden="true"></div>
-<div class="ambient-shape two" aria-hidden="true"></div>
-<div id="yarnChase" class="yarn-chase" aria-hidden="true">
+<div id="yarnChase" class="yarn-chase is-hidden" aria-hidden="true">
 	<div id="chaseCat" class="chase-cat">
 	</div>
 	<div id="chaseYarn" class="chase-yarn">
@@ -1250,8 +74,8 @@ a{color:inherit}
 		<img id="chaseYarnImage" class="chase-yarn-image" src="images/yarn-ball.png" alt="" width="512" height="512" draggable="false">
 	</div>
 </div>
-<button id="chaseToggle" class="chase-toggle" type="button" aria-pressed="true" aria-label="Hide cat and yarn animation">
-	<span aria-hidden="true">🐈</span><b>Hide cat</b>
+<button id="chaseToggle" class="chase-toggle" type="button" aria-pressed="false" aria-label="Show cat and yarn animation">
+	<span aria-hidden="true">🐈</span><b>Show cat</b>
 </button>
 <div class="page-shell">
 	<header class="topbar">
@@ -1261,67 +85,40 @@ a{color:inherit}
 			</span>
 			<h1 class="brand">KaWo Crotchet<small>Handcrafted Collection</small></h1>
 		</a>
-		<nav class="nav">
+		<nav class="nav" aria-label="Main navigation">
 			<a class="active" href="index.html" aria-current="page">Home</a>
+			<a href="#productsSection">Collection</a>
+			<a href="#ourStory">Our story</a>
 			<a href="contact.html">Contact</a>
-			<a href="login.html">Login</a>
+			<a class="nav-contact" href="contact.html">Let's talk <span aria-hidden="true">&#8599;</span></a>
 		</nav>
 	</header>
 
-	<section class="hero" data-reveal>
-		<div class="hero-thread" aria-hidden="true"></div>
-		<div class="hero-copy">
-			<p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> Crochet pieces, warm yarn, thoughtful details</p>
-			<h2>Warm stitches, made to feel like <em>home.</em></h2>
-			<p>Small crochet collections made from soft yarn, one careful loop at a time. Choose your favorite colors or request a piece made especially for you.</p>
-			<div class="hero-actions">
-				<a class="hero-btn primary" href="#productsSection">Shop the Collection</a>
-				<a class="hero-btn secondary" href="contact.html">Contact Us</a>
-			</div>
-			<div class="hero-proof">
-				<div class="proof-stitches" aria-hidden="true"><span></span><span></span><span></span></div>
-				<span>Crocheted by hand, one thoughtful stitch at a time</span>
-			</div>
-		</div>
 
+	<section class="hero" aria-labelledby="heroHeading">
+		<div class="hero-copy">
+			<p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span> A small crochet studio, a whole lot of heart</p>
+			<h2 id="heroHeading">Little stitches.<br>Everyday <em>joy.</em></h2>
+			<p>Thoughtful crochet pieces for the little moments. Made slowly, in colors you love, to bring a little warmth wherever you go.</p>
+			<div class="hero-actions">
+				<a class="hero-btn primary" href="#productsSection">Explore the collection <span aria-hidden="true">&#8599;</span></a>
+				<a class="hero-btn secondary" href="contact.html">Something just for you <span aria-hidden="true">&#8599;</span></a>
+			</div>
+			<div class="hero-proof"><span class="proof-flower" aria-hidden="true">&#10035;</span><span>Made by hand.<br><strong>Meant to be a little different.</strong></span></div>
+		</div>
 		<div class="hero-visual">
-			<div class="hero-stats">
-				<div class="hero-stat">
-					<strong>Soft yarn</strong>
-					<span>Comfort-first fibers</span>
-				</div>
-				<div class="hero-stat">
-					<strong>Your colors</strong>
-					<span>Custom yarn palettes</span>
-				</div>
-				<div class="hero-stat">
-					<strong>Handmade</strong>
-					<span>Loop by careful loop</span>
-				</div>
-			</div>
-			<div class="yarn-cluster" aria-hidden="true">
-				<span class="yarn-ball yarn-coral"></span>
-				<span class="yarn-ball yarn-cream"></span>
-				<span class="yarn-ball yarn-sage"></span>
-				<span class="crochet-hook"></span>
-			</div>
+			<div class="studio-stamp" aria-hidden="true">HANDMADE<br><span>with love</span><br>BY KaWo</div>
 			<div id="heroShowcase" class="hero-showcase" aria-label="Featured product preview">
-				<div class="showcase-fallback">New handmade favorites are loading</div>
+				<img class="showcase-main" src="images/studio-feature.jpg" alt="Handmade turquoise Sunflower Mini Bag with a yellow crochet flower" fetchpriority="high" width="800" height="1000">
+				<div class="showcase-caption"><div><small>FROM THE STUDIO</small><strong>Sunflower Mini Bag</strong></div><a href="#productsSection" aria-label="Explore the collection">&#8599;</a></div>
 			</div>
-			<div class="floating-note one">Soft yarn texture</div>
-			<div class="floating-note two">Made off the hook</div>
+			<p class="photo-note">A little sunshine, to take with you.</p>
 		</div>
 	</section>
-
-	<div class="craft-marquee" aria-label="Shop highlights">
-		<div class="marquee-track">
-			<div class="marquee-group">
-				<span>Crocheted with care</span><span>Soft yarn palettes</span><span>Stitch by stitch</span><span>Cozy handmade gifts</span>
-			</div>
-			<div class="marquee-group" aria-hidden="true">
-				<span>Crocheted with care</span><span>Soft yarn palettes</span><span>Stitch by stitch</span><span>Cozy handmade gifts</span>
-			</div>
-		</div>
+	<div class="craft-values" aria-label="What makes our pieces special">
+		<div><span aria-hidden="true">&#10035;</span><strong>Thoughtfully handmade</strong><small>One careful stitch at a time</small></div>
+		<div><span aria-hidden="true">&#9676;</span><strong>Your favorite colors</strong><small>A palette that feels like you</small></div>
+		<div><span aria-hidden="true">&#9825;</span><strong>Little gifts, big feelings</strong><small>For someone special. Or yourself.</small></div>
 	</div>
 
 	<main>
@@ -1329,12 +126,12 @@ a{color:inherit}
 			<div class="section-title">
 				<div>
 					<span class="section-kicker">Fresh off the hook</span>
-					<h3>Featured Products</h3>
+					<h3>Find your little happy.</h3>
 				</div>
-				<p class="catalog-summary"><span id="productCount">0</span> pieces available</p>
+				<p class="catalog-summary" role="status"><span id="productCount">&hellip;</span> <span id="productCountLabel">pieces to explore</span></p>
 			</div>
 			<div class="catalog-toolbar" aria-label="Product filters">
-				<input id="productSearch" type="search" placeholder="Search products">
+				<label class="search-field"><span class="search-symbol" aria-hidden="true"></span><input id="productSearch" type="search" placeholder="Find something lovely..." aria-label="Search products"></label>
 				<select id="categoryFilter" aria-label="Filter by category">
 					<option value="">All categories</option>
 				</select>
@@ -1353,12 +150,14 @@ a{color:inherit}
 					<option value="name">Name A-Z</option>
 				</select>
 			</div>
-			<div id="products" class="products"></div>
+			<div class="filter-summary"><p id="filterSummary">Little things, made with a lot of love.</p><button id="resetFilters" class="text-button" type="button" hidden>Clear filters <span aria-hidden="true">&times;</span></button></div>
+			<div id="products" class="products" aria-busy="true"></div>
+			<noscript><p class="status">Please enable JavaScript to browse the collection, or <a href="contact.html">contact the studio</a> for available pieces.</p></noscript>
 		</section>
 
-		<section class="promo" data-reveal>
+		<section id="ourStory" class="promo" data-reveal aria-labelledby="storyHeading">
 			<div class="promo-copy">
-				<h3>A softer world, stitched by hand</h3>
+				<span class="section-kicker">A note from our studio</span><h3 id="storyHeading">Good things<br>take a little <em>time.</em></h3>
 				<p>Explore crochet pieces shaped by soft fibers, warm colors, and the charming little differences that make handmade work special.</p>
 				<div class="promo-points">
 					<div>
@@ -1373,20 +172,14 @@ a{color:inherit}
 			</div>
 
 			<div class="promo-card">
-				<div class="promo-photo">
-					<div class="promo-yarn" aria-hidden="true"><i></i><i></i><i></i></div>
-					<span>Soft yarn, tiny loops, handmade charm</span>
-				</div>
-				<div class="promo-panel">
-					<p>Every texture tells the story of the yarn, the hook, and the hands behind the piece.</p>
-				</div>
+				<div class="studio-yarn"><img src="images/yarn-ball.png" alt="A soft berry-colored ball of yarn" width="512" height="512" loading="lazy"><span>From a simple thread,<br>something <em>special.</em></span></div>
 			</div>
 		</section>
 
 		<section class="contact-grid" data-reveal>
 			<div class="contact-card">
-				<h3>Contact & Social</h3>
-				<p>For product questions, custom requests, or order support, use the channels below. The contact information has been updated exactly with the details you provided.</p>
+				<span class="section-kicker">Let's make it personal</span><h3>Your idea.<br>Our next little project.</h3>
+				<p>A favorite color, a thoughtful gift, or an idea you can't stop thinking about. Tell us what you have in mind. We'll work out the little details together.</p>
 				<div class="contact-list">
 					<div class="contact-item">
 						<span>Phone</span>
@@ -1398,18 +191,18 @@ a{color:inherit}
 					</div>
 					<div class="contact-item">
 						<span>Line</span>
-						<a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">https://line.me/ti/p/TCVn7wKCCy</a>
+						<a href="https://line.me/ti/p/TCVn7wKCCy" target="_blank" rel="noreferrer">Chat with us on Line &#8599;</a>
 					</div>
 					<div class="contact-item">
 						<span>Instagram</span>
-						<a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">https://www.instagram.com/katienrain__/?hl=en</a>
+						<a href="https://www.instagram.com/katienrain__/?hl=en" target="_blank" rel="noreferrer">@katienrain__ &#8599;</a>
 					</div>
 				</div>
 			</div>
 
 			<aside class="contact-aside">
-				<div class="quote">Ready to explore handmade pieces with a more polished presentation?</div>
-				<div class="note">The product grid still loads from your existing backend endpoint, so the redesign is visual only and does not alter current product content.</div>
+				<div class="quote">Not quite off the shelf.<br>Just right for you.</div>
+				<div class="note">Choose your colors, share your inspiration, and let's create something that feels like yours.</div><a class="hero-btn primary" href="contact.html">Start a conversation <span aria-hidden="true">&#8599;</span></a>
 			</aside>
 		</section>
 	</main>
@@ -1417,7 +210,7 @@ a{color:inherit}
 	<footer class="site-footer" data-reveal>
 		<div class="footer-col">
 			<h4>KaWo Crotchet</h4>
-			<p>Handcrafted goods with a unique touch.</p>
+			<p>Little stitches. Everyday joy.</p>
 			<p>Phone: <a href="tel:+886973424279">+886 0973424279</a></p>
 			<p>Email: <a href="mailto:katietran3011@gmail.com">katietran3011@gmail.com</a></p>
 		</div>
@@ -1445,7 +238,7 @@ a{color:inherit}
 
 <div id="lightbox" class="lightbox" aria-hidden="true">
 	<div class="lightbox-box" role="dialog" aria-modal="true" aria-label="Zoomed product image viewer">
-		<button id="closeLightbox" class="lightbox-btn close" type="button" aria-label="Close">x</button>
+		<button id="closeLightbox" class="lightbox-btn close" type="button" aria-label="Close image viewer">&times;</button>
 		<img id="lightboxImage" alt="Zoomed product image">
 		<div class="lightbox-actions">
 			<button id="prevImage" class="lightbox-btn" type="button">Previous</button>

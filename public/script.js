@@ -30,6 +30,12 @@ const CONTACT_CHANNELS = {
 let lightboxImages = []
 let lightboxIndex = 0
 let searchTimer
+let productsRequest
+let productsRequestId = 0
+let lightboxTrigger
+const resetFilters = document.getElementById("resetFilters")
+const filterSummary = document.getElementById("filterSummary")
+const productCountLabel = document.getElementById("productCountLabel")
 
 function escapeHtml(value){
   return String(value ?? "")
@@ -93,7 +99,7 @@ function getProductImages(product){
     return [product.image]
   }
 
-  return ["https://via.placeholder.com/640x480?text=No+Image"]
+  return ["/images/yarn-ball.png"]
 }
 
 function getBundlePromoText(product){
@@ -229,24 +235,34 @@ function renderHeroShowcase(products){
       `).join("")}
     </div>
     <div class="showcase-caption">
-      <strong>${escapeHtml(featured.name || "Featured handmade pick")}</strong>
-      <span>${featured.isFeatured ? "Featured" : "Just added"}</span>
+      <div><small>${featured.isFeatured ? "A STUDIO FAVORITE" : "FROM THE STUDIO"}</small><strong>${escapeHtml(featured.name || "Featured handmade pick")}</strong></div>
+      <a href="${escapeHtml(getProductUrl(featured))}" aria-label="View ${escapeHtml(featured.name || "featured product")}">↗</a>
     </div>
   `
 }
 
 function openLightbox(images, startIndex){
+  lightboxTrigger = document.activeElement
   lightboxImages = images
   lightboxIndex = startIndex
   lightboxImage.src = lightboxImages[lightboxIndex]
   lightbox.classList.add("open")
   lightbox.setAttribute("aria-hidden", "false")
+  document.body.classList.add("lightbox-open")
+  document.querySelector(".page-shell").inert = true
+  prevImageBtn.disabled = images.length < 2
+  nextImageBtn.disabled = images.length < 2
+  closeLightboxBtn.focus()
 }
 
 function closeLightbox(){
+  if(!lightbox.classList.contains("open")) return
   lightbox.classList.remove("open")
   lightbox.setAttribute("aria-hidden", "true")
-  lightboxImage.src = ""
+  lightboxImage.removeAttribute("src")
+  document.body.classList.remove("lightbox-open")
+  document.querySelector(".page-shell").inert = false
+  lightboxTrigger?.focus()
   lightboxImages = []
   lightboxIndex = 0
 }
@@ -329,6 +345,15 @@ function createProductCard(product, index){
   const openViewer = ()=>openLightbox(images, selectedImageIndex)
 
   mainImage.addEventListener("click", openViewer)
+  mainImage.tabIndex = 0
+  mainImage.setAttribute("role", "button")
+  mainImage.setAttribute("aria-label", `Enlarge ${productName}`)
+  mainImage.addEventListener("keydown", (event)=>{
+    if(event.key === "Enter" || event.key === " "){
+      event.preventDefault()
+      openViewer()
+    }
+  })
 
   const inquiryMenu = card.querySelector(".inquiry-menu")
   const inquiryToggle = card.querySelector(".inquiry-btn")
@@ -350,39 +375,24 @@ function createProductCard(product, index){
     const thumbBtn = document.createElement("button")
     thumbBtn.type = "button"
     thumbBtn.className = `thumb${imageIndex === 0 ? " active" : ""}`
+    thumbBtn.setAttribute("aria-label", `Show image ${imageIndex + 1} of ${productName}`)
+    thumbBtn.setAttribute("aria-pressed", String(imageIndex === 0))
     thumbBtn.innerHTML = `<img src="${escapeHtml(image)}" alt="Image ${imageIndex + 1} of ${escapeHtml(product.name || "product")}" loading="lazy" decoding="async">`
 
     thumbBtn.addEventListener("click", ()=>{
       selectedImageIndex = imageIndex
       mainImage.src = image
-      thumbs.querySelectorAll(".thumb").forEach((btn)=>btn.classList.remove("active"))
+      thumbs.querySelectorAll(".thumb").forEach((btn)=>{
+        btn.classList.remove("active")
+        btn.setAttribute("aria-pressed", "false")
+      })
       thumbBtn.classList.add("active")
+      thumbBtn.setAttribute("aria-pressed", "true")
     })
 
     thumbBtn.addEventListener("dblclick", ()=>openLightbox(images, imageIndex))
     thumbs.appendChild(thumbBtn)
   })
-
-  if(!reduceMotion){
-    card.addEventListener("pointermove", (event)=>{
-      if(event.pointerType === "touch"){
-        return
-      }
-
-      const rect = card.getBoundingClientRect()
-      const x = (event.clientX - rect.left) / rect.width
-      const y = (event.clientY - rect.top) / rect.height
-      card.style.setProperty("--tilt-x", `${(0.5 - y) * 4}deg`)
-      card.style.setProperty("--tilt-y", `${(x - 0.5) * 5}deg`)
-      card.style.setProperty("--glow-x", `${x * 100}%`)
-      card.style.setProperty("--glow-y", `${y * 100}%`)
-    })
-
-    card.addEventListener("pointerleave", ()=>{
-      card.style.setProperty("--tilt-x", "0deg")
-      card.style.setProperty("--tilt-y", "0deg")
-    })
-  }
 
   return card
 }
@@ -414,37 +424,86 @@ async function loadCategories(){
 }
 
 async function loadProducts(){
-  productsContainer.innerHTML = '<div class="status">Loading products...</div>'
+  window.clearTimeout(searchTimer)
+  productsRequest?.abort()
+  productsRequest = new AbortController()
+  const requestId = ++productsRequestId
+  const hasFilters = Boolean(productSearch?.value.trim() || categoryFilter?.value || statusFilter?.value || sortFilter?.value !== "featured")
+  resetFilters.hidden = !hasFilters
+  filterSummary.textContent = hasFilters ? "A little closer to your perfect piece." : "Little things, made with a lot of love."
+  productsContainer.setAttribute("aria-busy", "true")
+  productCount.textContent = "…"
+  productCountLabel.textContent = "finding lovely things"
+  productsContainer.innerHTML = '<div class="skeleton" aria-hidden="true"></div>'.repeat(3)
 
   try{
-    const response = await fetch(buildProductsUrl())
+    const response = await fetch(buildProductsUrl(), { signal: productsRequest.signal })
     if(!response.ok){
       throw new Error(`HTTP ${response.status}`)
     }
 
     const products = await response.json()
+    if(requestId !== productsRequestId) return
+    if(!Array.isArray(products)) throw new Error("Invalid catalog response")
     productsContainer.innerHTML = ""
     if(productCount){
       productCount.textContent = String(products.length)
+      productCountLabel.textContent = products.length === 1 ? "piece to explore" : "pieces to explore"
     }
 
     if(!products.length){
-      productsContainer.innerHTML = '<div class="status">No products match the current filters.</div>'
+      productsContainer.innerHTML = hasFilters
+        ? '<div class="status"><strong>No little treasures found. Yet.</strong><p>Try another search or clear your filters to explore the collection.</p><button class="status-action" type="button" data-catalog-action="reset">Clear filters</button></div>'
+        : '<div class="status"><strong>Something lovely is on its way.</strong><p>New pieces will appear here. In the meantime, we’d love to hear your ideas.</p><a class="status-action" href="contact.html">Ask about a custom piece ↗</a></div>'
       return
     }
 
-    renderHeroShowcase(products)
+    if(!heroShowcase.dataset.loaded){
+      renderHeroShowcase(products)
+      heroShowcase.dataset.loaded = "true"
+    }
 
     products.forEach((product, index)=>{
       productsContainer.appendChild(createProductCard(product, index))
     })
   }catch(error){
-    productsContainer.innerHTML = '<div class="status">Unable to load products. Please try again.</div>'
+    if(error.name === "AbortError" || requestId !== productsRequestId) return
+    productCount.textContent = ""
+    productCountLabel.textContent = "Collection temporarily unavailable"
+    productsContainer.innerHTML = '<div class="status"><strong>A little pause at the studio.</strong><p>We couldn’t load the collection. Please try again, or <a href="contact.html">get in touch</a> for help finding your piece.</p><button class="status-action" type="button" data-catalog-action="retry">Try again</button></div>'
+  }finally{
+    if(requestId === productsRequestId) productsContainer.setAttribute("aria-busy", "false")
   }
 }
 
+function clearProductFilters(){
+  productSearch.value = ""
+  categoryFilter.value = ""
+  statusFilter.value = ""
+  sortFilter.value = "featured"
+  productSearch.focus()
+  loadProducts()
+}
+
+resetFilters?.addEventListener("click", clearProductFilters)
+productsContainer.addEventListener("click", (event)=>{
+  const action = event.target.closest("[data-catalog-action]")?.dataset.catalogAction
+  if(action === "reset") clearProductFilters()
+  if(action === "retry") loadProducts()
+})
+
+document.addEventListener("error", (event)=>{
+  const image = event.target
+  if(image.tagName === "IMG" && !image.dataset.fallback){
+    image.dataset.fallback = "true"
+    image.src = "/images/yarn-ball.png"
+  }
+}, true)
+
 function scheduleProductsReload(){
   window.clearTimeout(searchTimer)
+  productsRequest?.abort()
+  productsRequestId++
   searchTimer = window.setTimeout(loadProducts, 250)
 }
 
@@ -504,6 +563,19 @@ document.addEventListener("keydown", (event)=>{
 
   if(event.key === "Escape"){
     closeLightbox()
+  }
+
+  if(event.key === "Tab"){
+    const buttons = Array.from(lightbox.querySelectorAll("button:not(:disabled)"))
+    const first = buttons[0]
+    const last = buttons[buttons.length - 1]
+    if(event.shiftKey && document.activeElement === first){
+      event.preventDefault()
+      last.focus()
+    }else if(!event.shiftKey && document.activeElement === last){
+      event.preventDefault()
+      first.focus()
+    }
   }
 
   if(event.key === "ArrowLeft"){
@@ -570,21 +642,9 @@ window.addEventListener("scroll", ()=>{
 
 updateScrollEffects()
 
-if(hero && heroShowcase && !reduceMotion){
-  hero.addEventListener("pointermove", (event)=>{
-    if(event.pointerType === "touch"){
-      return
-    }
-
-    const rect = hero.getBoundingClientRect()
-    const x = (event.clientX - rect.left) / rect.width - 0.5
-    const y = (event.clientY - rect.top) / rect.height - 0.5
-    heroShowcase.style.transform = `perspective(1000px) rotateX(${-y * 3}deg) rotateY(${x * 4}deg) translate3d(${x * 5}px, ${y * 5}px, 0)`
-  })
-
-  hero.addEventListener("pointerleave", ()=>{
-    heroShowcase.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) translate3d(0, 0, 0)"
-  })
+function readChasePreference(){
+  try { return localStorage.getItem("kawoYarnChaseVisible") === "true" }
+  catch { return false }
 }
 
 function setupYarnChase(){
@@ -621,7 +681,7 @@ function setupYarnChase(){
     lastSpriteAt: 0,
     spriteFrame: 0,
     draggingPointerId: null,
-    visible: localStorage.getItem("kawoYarnChaseVisible") !== "false"
+    visible: readChasePreference()
   }
 
   function setSprite(name){
@@ -753,7 +813,7 @@ function setupYarnChase(){
 
   chaseToggle.addEventListener("click", ()=>{
     state.visible = !state.visible
-    localStorage.setItem("kawoYarnChaseVisible", String(state.visible))
+    try { localStorage.setItem("kawoYarnChaseVisible", String(state.visible)) } catch { /* Preference storage is optional. */ }
     if(state.visible){
       state.lastInputAt = performance.now()
     }

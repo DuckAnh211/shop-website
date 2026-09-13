@@ -1,0 +1,90 @@
+.yarn-chase{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  pointer-events:none;
+  transition:opacity .25s ease,visibility .25s ease;
+}
+
+.yarn-chase.is-hidden{opacity:0;visibility:hidden}
+
+.chase-cat{
+  position:fixed;
+  left:0;
+  top:0;
+  width:32px;
+  height:32px;
+  background-image:url("vendor/oneko/oneko.gif");
+  background-repeat:no-repeat;
+  image-rendering:pixelated;
+  transform-origin:center;
+  filter:drop-shadow(0 8px 8px rgba(75,43,39,.2));
+  will-change:transform;
+}
+
+.chase-yarn{
+  position:fixed;
+  left:0;
+  top:0;
+  width:68px;
+  height:74px;
+  transform-origin:center;
+  will-change:transform;
+}
+
+.chase-yarn-image{
+  position:absolute;
+  left:0;
+  top:0;
+  display:block;
+  width:68px;
+  height:68px;
+  object-fit:contain;
+  pointer-events:none;
+  filter:drop-shadow(0 7px 7px rgba(63,35,42,.28));
+  transform-origin:center;
+  user-select:none;
+  will-change:transform;
+}
+
+.chase-yarn-shadow{
+  position:absolute;
+  left:11px;
+  bottom:0;
+  width:46px;
+  height:12px;
+  border-radius:50%;
+  background:rgba(57,31,35,.34);
+  filter:blur(4px);
+  opacity:.72;
+  pointer-events:none;
+  transform:scaleY(.62);
+}
+
+.chase-toggle{
+  position:fixed;
+  right:16px;
+  bottom:16px;
+  z-index:110;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  min-height:38px;
+  padding:8px 12px;
+  border:1px dashed rgba(139,77,93,.34);
+  border-radius:999px;
+  color:#6f4450;
+  background:rgba(255,248,233,.92);
+  box-shadow:0 10px 26px rgba(75,43,39,.14);
+  backdrop-filter:blur(12px);
+  font:700 12px "Be Vietnam Pro",sans-serif;
+  cursor:pointer;
+  transition:transform .2s ease,background .2s ease;
+}
+
+.chase-toggle:hover{transform:translateY(-2px);background:#fffaf1}
+.chase-toggle span{font-size:16px;line-height:1}
+.chase-toggle b{font:inherit}
+
+
+@media(prefers-reduced-motion:reduce){.yarn-chase,.chase-toggle{display:none}}
